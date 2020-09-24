@@ -99,7 +99,7 @@ void Testing_SolveLinear()
         {{ 1,                    1,            &x,        0           },      {    SE_HAVE_EERRORS,    SE_ERR_INVALID_ACCURACY,      0 }}
     };
 
-    printf("========Testing function \"SolveLinear========\n");
+    printf("========Testing function \"SolveLinear\"========\n");
 
     Output_SL answ;
     for (int i = 0; i < sizeof(data) / sizeof(Collection_SL); i++)
@@ -196,7 +196,7 @@ void Testing_SolveSquare()
         {{    1,                    DBL_MAX/2.0,      1,    &x1,&x2,    SE_ACCURACY },    { SE_HAVE_EERRORS,    SE_ERR_DISCRIMINANT_FAILED,   0,0}}
     };
 
-    printf("========Testing function \"SolveSquare========\n");
+    printf("========Testing function \"SolveSquare\"========\n");
 
     Output_SS answ;
     for (int i = 0; i < sizeof(data) / sizeof(Collection_SS); i++)
