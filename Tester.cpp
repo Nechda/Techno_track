@@ -101,7 +101,7 @@ void Testing_SolveLinear()
 
     printf("========Testing function \"SolveLinear\"========\n");
 
-    Output_SL answ;
+    const Output_SL answ;
     for (int i = 0; i < sizeof(data) / sizeof(Collection_SL); i++)
     {
         printf("Start test %d\n", i + 1);
@@ -184,7 +184,7 @@ void Testing_SolveSquare()
 {
     double x1 = 0, x2 = 0;
     int nRoots = 0;
-    Collection_SS data[] = {
+    const Collection_SS data[] = {
         {{    1,                    2,                1,    &x1,&x2,    SE_ACCURACY },    { 1,                  0,                           -1,0}},
         {{    1,                    0,                0,    &x1,&x2,    SE_ACCURACY },    { 1,                  0,                            0,0}},
         {{    0,                    0,                0,    &x1,&x2,    SE_ACCURACY },    { SE_INFTY,           0,                            0,0}},
