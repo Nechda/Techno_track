@@ -131,7 +131,6 @@ void sortStringsFromFile(const char* in_filename, const char* out_filename)
         }
     }
 
-    int empty_lines = 0;
     wchar_t BUFF[LINE_MAX_BUFFER_LEN] = { 0 };
     for (int i = 0; i < num_of_lines; i++)
     {
@@ -145,18 +144,7 @@ void sortStringsFromFile(const char* in_filename, const char* out_filename)
 
         
         Assert_c(ptr != NULL);
-        if (ptr == NULL)
-        {
-            fclose(file_in);
-            fclose(file_out);
-            for (int j = 0; j < num_of_lines; j++)
-                if(j != i)
-                    free(arr[j]);
-            free(arr);
-            return;
-        }
-
-        arr[i] = ptr;
+        arr[i] = ptr == NULL ? arr[i] : ptr;
 
         wcsncpy(arr[i], BUFF, len_line+1);
     }
