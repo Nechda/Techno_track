@@ -3,11 +3,27 @@
 #include <string.h>
 #include <stdio.h>
 
-int compare_wstr(const void* a, const void* b)
+
+int compare_wstr(const void* ptr1, const void* ptr2)
 {
-    C_string first = *((C_string*)a);
-    C_string second = *((C_string*)b);
-    return wcscmp(first, second);
+    Assert_c(ptr1 != NULL);
+    Assert_c(ptr2 != NULL);
+
+    if (ptr1 == NULL || ptr2 == NULL)
+        return CMP_ERROR_NULLPTR;
+
+    C_string s1 = *((C_string*)ptr1);
+    C_string s2 = *((C_string*)ptr2);
+    
+    while (*s1 && (*s1 == *s2))
+    {
+        s1++;
+        s2++;
+    }
+    
+    int difference = (unsigned int)(*s1) - (unsigned int)(*s2);
+
+    return difference > 0 ? 1 : difference< 0 ? -1 : 0;
 }
 
 int getNumberLines(const char* filename)
@@ -58,14 +74,12 @@ void sortStringsFromFile(const char* in_filename, const char* out_filename)
     Assert_c(num_of_lines >= 0);
     if (num_of_lines < 0)
     {
-        if (file_in)
-            fclose(file_in);
-        if (file_out)
-            fclose(file_out);
+        fclose(file_in);
+        fclose(file_out);
         return;
     }
 
-    C_string* arr = (C_string*)malloc(sizeof(C_string)*num_of_lines);
+    C_string* arr = (C_string*)calloc(num_of_lines, sizeof(C_string));
     Assert_c(arr != NULL);
     if (arr == NULL)
     {
@@ -74,56 +88,46 @@ void sortStringsFromFile(const char* in_filename, const char* out_filename)
         return;
     }
 
-    for (int i = 0; i < num_of_lines; i++)
-    {
-        arr[i] = (C_string)malloc(sizeof(wchar_t)*LINE_MAX_BUFFER_LEN);
-        Assert_c(arr[i] != NULL);
-        if (arr[i] == NULL)
-        {
-            fclose(file_in);
-            fclose(file_out);
-            for (int j = 0; j < i; j++)
-                free(arr[j]);
-            free(arr);
-            return;
-        }
-    }
 
-    wchar_t BUFF[LINE_MAX_BUFFER_LEN] = { 0 };
-    for (int i = 0; i < num_of_lines; i++)
+    wchar_t BUFF[LINE_MAX_BUFFER_LEN] = L"";
+    int number_empty_strings = 0;
+
+    for (int i = 0; i < num_of_lines-number_empty_strings; i++)
     {
 
         fgetws(BUFF, LINE_MAX_BUFFER_LEN, file_in);
-        /// А нужна ли вообще эта проверка?
-        /*
-        Assert_c(!ferror(file_in));
-        if(ferror(file_in))
-        {
-        for (int i = 0; i < num_of_lines; i++)
-        free(arr[i]);
-        free(arr);
 
-        fclose(file_in);
-        fclose(file_out);
-        return;
-        }
-        */
-
-
-        wchar_t* ptr = wcschr(BUFF, L'\n');
-        if (ptr)
-            *ptr = 0;
+        arr[i] = wcschr(BUFF, L'\n');
+        if (arr[i])
+            *arr[i] = 0;
         unsigned int len_line = wcslen(BUFF);
-        ptr = (C_string)realloc(arr[i], (len_line + 1) * sizeof(wchar_t));
+        if (len_line == 0)
+        {
+            number_empty_strings++;
+            i--;
+            continue;
+        }
 
-
-        Assert_c(ptr != NULL);
-        arr[i] = ptr == NULL ? arr[i] : ptr;
+        arr[i] = (C_string)calloc((len_line + 1), sizeof(wchar_t));
+        Assert_c(arr[i] != NULL);
+        if (arr[i] == NULL)
+        {
+            for (int j = 0; j < i; j++)
+                free(arr[i]);
+            free(arr);
+        }
 
         wcsncpy(arr[i], BUFF, len_line + 1);
     }
 
-    qsort(arr, num_of_lines, sizeof(C_string), compare_wstr);
+    num_of_lines -= number_empty_strings;
+    if (num_of_lines > 0)
+    {
+        C_string* ptr = (C_string*)realloc(arr, num_of_lines * sizeof(C_string));
+        arr = ptr == NULL ? arr : ptr;
+        qsort(arr, num_of_lines, sizeof(C_string), compare_wstr);
+    }
+    
 
     for (int i = 0; i < num_of_lines; i++)
         fprintf(file_out, "%d: %ls\n", i + 1, arr[i]);

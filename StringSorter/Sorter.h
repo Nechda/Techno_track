@@ -14,6 +14,9 @@ const int LINE_MAX_BUFFER_LEN = 100; ///< Максимальная длина б
 
 typedef wchar_t* C_string; ///< Строка из расширенных символов
 
+
+const int CMP_ERROR_NULLPTR = -2;///< Возвращается, если в функцию compare_wstr(...) передели нулевой указатель
+
 /**
 \brief Функция сравнения двух строк
 \param [in]   a    Первая строка
