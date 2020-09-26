@@ -115,6 +115,9 @@ void sortStringsFromFile(const char* in_filename, const char* out_filename)
             for (int j = 0; j < i; j++)
                 free(arr[i]);
             free(arr);
+            fclose(file_in);
+            fclose(file_out);
+            return;
         }
 
         wcsncpy(arr[i], BUFF, len_line + 1);
