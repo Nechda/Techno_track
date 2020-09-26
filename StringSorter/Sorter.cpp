@@ -123,19 +123,27 @@ void sortStringsFromFile(const char* in_filename, const char* out_filename)
         wcsncpy(arr[i], BUFF, len_line + 1);
     }
 
-    num_of_lines -= number_empty_strings;
-    if (num_of_lines > 0)
+    int num_of_valid_lines = num_of_lines - number_empty_strings;
+    int array_size = num_of_lines;
+
+    if (num_of_valid_lines > 0)
     {
-        C_string* ptr = (C_string*)realloc(arr, num_of_lines * sizeof(C_string));
+        C_string* ptr = (C_string*)realloc(arr, num_of_valid_lines * sizeof(C_string));
+
         arr = ptr == NULL ? arr : ptr;
-        qsort(arr, num_of_lines, sizeof(C_string), compare_wstr);
+        array_size = ptr == NULL ? num_of_lines : num_of_valid_lines;
+
+        qsort(arr, num_of_valid_lines, sizeof(C_string), compare_wstr);
+        
+        for (int i = 0; i < num_of_valid_lines; i++)
+            fprintf(file_out, "%d: %ls\n", i + 1, arr[i]);
+
+
+
     }
-    
 
-    for (int i = 0; i < num_of_lines; i++)
-        fprintf(file_out, "%d: %ls\n", i + 1, arr[i]);
 
-    for (int i = 0; i < num_of_lines; i++)
+    for (int i = 0; i < array_size; i++)
         free(arr[i]);
     free(arr);
 
