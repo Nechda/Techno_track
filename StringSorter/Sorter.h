@@ -19,14 +19,14 @@ const int CMP_ERROR_NULLPTR = -2;///< Возвращается, если в фу
 
 /**
 \brief Функция сравнения двух строк
-\param [in]   a    Первая строка
-\param [in]   b    Вторая строка
+\param [in]   ptr1    Первая строка
+\param [in]   ptr2    Вторая строка
 \retrun Возвращает положительное число, если первая строка идет позже (в смысле лексиграфического порядка) чем вторая строка.
 Соответсвенно возвращает отрицательное, если вторая строка идет позже первой, и ноль в случае совпадания строк.
 
 \note Это просто обертка функции wcscmp(const wchar_t* first,const wchar_t* second)
 */
-int compare_wstr(const void* a, const void* b);
+int compare_wstr(const void* pr1, const void* pr2);
 
 const int GL_ERROR_NULLPTR = -1; ///< Возвращается, если в функцию getLines(...) передели нулевой указатель
 const int GL_ERROR_ACCESS_FAIL = -2; ///< Возвращается, если при открытии файла в функции getLines(...) возникала ошибка
