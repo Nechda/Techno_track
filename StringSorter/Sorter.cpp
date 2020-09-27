@@ -4,28 +4,42 @@
 #include <stdio.h>
 
 
+
+/**
+\brief Функция сравнения двух строк
+\param [in]   ptr1    Первая строка
+\param [in]   ptr2    Вторая строка
+\retrun Возвращает положительное число, если первая строка идет позже (в смысле лексиграфического порядка) чем вторая строка.
+Соответсвенно возвращает отрицательное, если вторая строка идет позже первой, и ноль в случае совпадания строк.
+
+\note Это просто обертка функции wcscmp(const wchar_t* first,const wchar_t* second)
+*/
 int compare_wstr(const void* ptr1, const void* ptr2)
 {
     Assert_c(ptr1 != NULL);
     Assert_c(ptr2 != NULL);
 
     if (ptr1 == NULL || ptr2 == NULL)
-        return CMP_ERROR_NULLPTR;
+    {
+        errno = CMP_ERROR_NULLPTR;
+        return 0;
+    }
 
     C_string s1 = *((C_string*)ptr1);
     C_string s2 = *((C_string*)ptr2);
-    
     while (*s1 && (*s1 == *s2))
-    {
-        s1++;
-        s2++;
-    }
+        s1++, s2++;
     
-    int difference = (unsigned int)(*s1) - (unsigned int)(*s2);
-
-    return difference > 0 ? 1 : difference< 0 ? -1 : 0;
+    errno = 0;
+    return (unsigned int)(*s1) - (unsigned int)(*s2);
 }
 
+
+/**
+\brief Функция подсчета непустых строк в файле
+\param [in]   filename    Имя файла, в котором требуется подсчитать количество строк
+\return Количество строк в файле или код ошибки.
+*/
 int getNumberLines(const char* filename)
 {
     Assert_c(filename != NULL);
@@ -39,16 +53,27 @@ int getNumberLines(const char* filename)
 
 
     int lines = 1;
-    wchar_t w = 0;
-    while ((w = fgetwc(file)) != WEOF)
-        if (w == L'\n')
+    wchar_t w[2] = {0,0};
+    bool pingpong = 0;
+    while ((w[pingpong] = fgetwc(file)) != WEOF)
+    {
+        if (w[pingpong] == L'\n' & w[pingpong^1] != L'\n')
             lines++;
+        pingpong ^= 1;
+    }
 
     fclose(file);
     return lines;
 }
 
-
+/**
+\brief Функция сортировки строк
+\details Данная функция сортирует непустые строки в лексиграфическом порядке. На вход подаются две строки, содержащие имена файлов. Из одного файла
+будут считываться данные, во второй записываться результат.
+\param [in]    in_filename    Имя файла, из которго будут считываться строки
+\param [in]    out_filename   Имя файла, в который будет записываться результат сортировки
+\return Функция ничего не возвращает.
+*/
 void sortStringsFromFile(const char* in_filename, const char* out_filename)
 {
     Assert_c(in_filename != NULL);
@@ -71,8 +96,8 @@ void sortStringsFromFile(const char* in_filename, const char* out_filename)
     }
 
     int num_of_lines = getNumberLines(in_filename);
-    Assert_c(num_of_lines >= 0);
-    if (num_of_lines < 0)
+    Assert_c(num_of_lines > 0);
+    if (num_of_lines <= 0)
     {
         fclose(file_in);
         fclose(file_out);
@@ -90,9 +115,7 @@ void sortStringsFromFile(const char* in_filename, const char* out_filename)
 
 
     wchar_t BUFF[LINE_MAX_BUFFER_LEN] = L"";
-    int number_empty_strings = 0;
-
-    for (int i = 0; i < num_of_lines-number_empty_strings; i++)
+    for (int i = 0; i < num_of_lines; i++)
     {
 
         fgetws(BUFF, LINE_MAX_BUFFER_LEN, file_in);
@@ -103,7 +126,6 @@ void sortStringsFromFile(const char* in_filename, const char* out_filename)
         unsigned int len_line = wcslen(BUFF);
         if (len_line == 0)
         {
-            number_empty_strings++;
             i--;
             continue;
         }
@@ -123,27 +145,13 @@ void sortStringsFromFile(const char* in_filename, const char* out_filename)
         wcsncpy(arr[i], BUFF, len_line + 1);
     }
 
-    int num_of_valid_lines = num_of_lines - number_empty_strings;
-    int array_size = num_of_lines;
-
-    if (num_of_valid_lines > 0)
-    {
-        C_string* ptr = (C_string*)realloc(arr, num_of_valid_lines * sizeof(C_string));
-
-        arr = ptr == NULL ? arr : ptr;
-        array_size = ptr == NULL ? num_of_lines : num_of_valid_lines;
-
-        qsort(arr, num_of_valid_lines, sizeof(C_string), compare_wstr);
+    qsort(arr, num_of_lines, sizeof(C_string), compare_wstr);
         
-        for (int i = 0; i < num_of_valid_lines; i++)
-            fprintf(file_out, "%d: %ls\n", i + 1, arr[i]);
+    for (int i = 0; i < num_of_lines; i++)
+        fprintf(file_out, "%d: %ls\n", i + 1, arr[i]);
 
 
-
-    }
-
-
-    for (int i = 0; i < array_size; i++)
+    for (int i = 0; i < num_of_lines; i++)
         free(arr[i]);
     free(arr);
 
