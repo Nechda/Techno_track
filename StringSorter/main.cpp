@@ -11,8 +11,8 @@ int main()
     testing_compare_wstr();
     testing_getNumberLines();
 #endif
-
-    sortStringsFromFile("origin.txt", "remake.txt");
+    sort_FromFile("origin.txt", "remake1.txt",Direct);
+    sort_FromFile("origin.txt", "remake2.txt",Inverse);
     std::system("pause");
     return 0;
 }
