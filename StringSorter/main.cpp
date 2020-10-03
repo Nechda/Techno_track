@@ -5,15 +5,21 @@
 #include "Tester.h"
 
 
+
+
 int main()
 {
-#ifndef NDEBUG
+    /*
+#ifdef NDEBUG
     testing_compare_wstr();
     testing_getNumberLines();
 #endif
-    sort_FromFile("origin.txt", "remake1.txt",Direct);
-    sort_FromFile("origin.txt", "remake2.txt",Inverse);
-    poemGenerator("remake2.txt", "poem.txt");
+*/
+
+    sortFromFile("origin.txt", "remake1.txt", Direct);
+    sortFromFile("origin.txt", "remake2.txt", Inverse);
+    poermGenerator("origin.txt", "AbAbCCddEffEgg", "poem.txt", "AbAbCCddEffEgg",10);
+
     std::system("pause");
     return 0;
 }

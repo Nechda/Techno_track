@@ -23,6 +23,6 @@ const int SS_INVALID_DATA = -3; ///< Возвращается, если пере
 
 
 int getNumberLines(const char* filename);
-int compare_wstr(const void* ptr1, const void* ptr2, int inc = 1);
-void sort_FromFile(const char* in_filename, const char* out_filename, Direction dir = Direct);
-void poemGenerator(const char* in_filename, const char* out_filename);
+int cmpWstr(const void* ptr1, const void* ptr2, int inc = 1);
+void sortFromFile(const char* in_filename, const char* out_filename, Direction dir = Direct);
+void poermGenerator(const char* in_filename, const char* in_syllable, const char* out_filename, const char* out_syllable, const int number_Stanaza = 1);
