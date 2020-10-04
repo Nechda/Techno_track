@@ -217,7 +217,7 @@ static int generateDividedString(const char* filename, C_string* outArray, int* 
 
     while ((w[pingpong] = fgetwc(file)) != WEOF)
     {
-        bool isValidSymbol = (bool)wcschr(L",.;?! ", w[pingpong]) | (L'А' <= w[pingpong] && L'Я' >= w[pingpong] ) || (L'а' <= w[pingpong] && L'я' >= w[pingpong]);
+        bool isValidSymbol = (bool)wcschr(L",.;?!- ", w[pingpong]) | (L'А' <= w[pingpong] && L'Я' >= w[pingpong] ) || (L'а' <= w[pingpong] && L'я' >= w[pingpong]);
         if (w[pingpong] != L'\n' & isValidSymbol)
         {
             *data = w[pingpong];
@@ -465,6 +465,8 @@ void sortFromFile(const char* inFilename, const char* outFilename,Direction dir)
 
 
 
+
+
 /**
 \brief  Функция сравнения элементов таблицы, с учетом типа литературного слога
 \param  [in]  ptr1   Указатель на первый элемент таблицы
@@ -567,6 +569,62 @@ static inline void findRanges(Link** ptrTable, const int arrSize,RangedPtr* rang
 
 }
 
+
+/**
+\brief  Функция проверяет, является ли символ гласной буквой
+\param  [in]  chr  Проверяемый символ
+\return Возвращает true, если буква гласная.
+\note   Функция не чувствует регистра.
+*/
+static inline bool isVowel(wchar_t chr)
+{
+    C_string vowelStr = L"уеыаоэяиюё";
+    return (bool)wcschr(vowelStr, tolower(chr));
+}
+
+/**
+\brief  Функция подсчитывает количество гласных в строке
+\param  [in]  str   Входящая строк
+\return Количество гласных букв
+*/
+static int getNumberVowel(C_string str)
+{
+    Assert_c(str != NULL);
+    if (!str)
+        return 0;
+    int result = 0;
+    while (*str)
+    {
+        if (isVowel(*str))
+            result++;
+        str++;
+    }
+    return result;
+}
+
+
+/**
+\brief Функция реализует поиск рифмующегося слова, основываясь на предыдущем
+\param [in]      ptrTable  Указатель на таблицу
+\param [in,out]  range     Циклический указатель, в который будет записан реузльтат поиска
+
+*/
+static int getNextRytm(const Link** ptrTable, RangedPtr* range)
+{
+    const Link* table = *ptrTable;
+#define penultimate(ptr) *(ptr-2)
+    int attempt = PG_NUMBER_ATTEMPT;
+    bool isVowelFlag = isVowel(penultimate(table[range->ptr].end));
+    int nVowelFlag = table[range->ptr].nVowel;
+    do
+    {
+        getPtr(range);
+        attempt--;
+    } while (isVowelFlag != isVowel(penultimate(table[range->ptr].end)) && abs(nVowelFlag - table[range->ptr].nVowel) != 1  && attempt);
+
+    return range->ptr;
+#undef penultimate
+}
 
 /**
 \brief  Функция генерирует некоторое количество строф, основываясь на форматирующей строке.
@@ -682,19 +740,21 @@ static void stanzaGenerator(Link** ptrTable, const int arrSize, const char* inSy
 
         for (int j = 0; j < nEdings; j++)
         {
+            int attept = PG_NUMBER_ATTEMPT;
             do
             {
                 syllableInterval[j].start = randInt(ryhmInterval[j].start, ryhmInterval[j].end);
                 syllableInterval[j].end = syllableInterval[j].start;
                 findRanges(&table, arrSize, &syllableInterval[j]);
-            } while (syllableInterval[j].start == syllableInterval[j].end);
+                attept--;
+            } while (syllableInterval[j].start == syllableInterval[j].end && attept);
             syllableInterval[j].ptr = randInt(syllableInterval[j].start, syllableInterval[j].end);   
         }
 
 
         for (int i = 0; i < outSyllableLength; i++)
         {
-            int index = getPtr(&syllableInterval[outSyllable[i] - 'a'], randInt(1,4));
+            int index = getNextRytm(&table, &syllableInterval[outSyllable[i] - 'a']);
             fprintf(poemFile, "%ls\n", table[index].originalStart);
         }
         fprintf(poemFile, "\n\n\n");
@@ -788,14 +848,20 @@ void poermGenerator(const char* inFilename,const char* inSyllableStr, const char
         int inSyllableLength = strlen(inSyllableStr);
         for (int i = 0; i < numDividers; i++)
         {
+            
+
             if (std::iswalpha(table[i].start[0]) && std::iswlower(table[i].start[1]))
             {
                 table[i].rythmType = tolower(inSyllableStr[index]) - 'a' + 1;
                 index++;
                 index %= inSyllableLength;
+                table[i].nVowel = getNumberVowel(table[i].start);
             }
             else
+            {
                 table[i].rythmType = 0;
+                table[i].nVowel = 0;
+            }
 
 
         }

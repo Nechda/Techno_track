@@ -21,6 +21,7 @@ const int SS_ERROR_NULLPTR = -1; ///< Возвращается, если по х
 const int SS_ERROR_ACCESS_FAIL = -2; ///< Возвращается, если при ошибке доступа к файлу
 const int SS_INVALID_DATA = -3; ///< Возвращается, если переданные параметры не входят в область доустимых
 
+const int PG_NUMBER_ATTEMPT = 50;///< Ограничение на максимальное количество попыток поиска
 
 int getNumberLines(const char* filename);
 int cmpWstr(const void* ptr1, const void* ptr2, int inc = 1);
