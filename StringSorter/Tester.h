@@ -2,4 +2,4 @@
 
 
 void testing_compare_wstr();
-void testing_getNumberLines();
+void testing_converter();

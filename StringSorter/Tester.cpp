@@ -1,6 +1,10 @@
 #include "Tester.h"
 #include "Sorter.h"
+#include "Converter.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <io.h>
 
 void testing_compare_wstr()
 {
@@ -28,7 +32,7 @@ void testing_compare_wstr()
     for (int i = 0; i < sizeof(arr) / sizeof(Data); i++)
     {
         printf("Start test %d\n", i + 1);
-        answ = compare_wstr(&arr[i].first, &arr[i].second);
+        answ = cmpWstr(&arr[i].first, &arr[i].second);
         answ = answ > 0 ? L'>' : answ < 0 ? L'<' : L'=';
         if ((wchar_t)answ == arr[i].result)
             printf("Success!\n");
@@ -38,33 +42,44 @@ void testing_compare_wstr()
 
 }
 
-void testing_getNumberLines()
-{
-    const char* temp_file_name = "count_line_test.txt";
-    FILE* file = fopen(temp_file_name, "w");
-    Assert_c(file != NULL);
-    if (file == NULL)
-        return;
-    int number_of_lines = 0;
-    for (int i = 0; i < 50; i++)
-    {
-        printf("Add to count_line_test.txt new line\n");
-        fprintf(file, "%d\n", i + 1);
-        fflush(file);
-        printf("Total lines: %d\n", i + 2);
 
-        printf("Try to count lines by getNumberLines(...)\n");
-        number_of_lines = getNumberLines("count_line_test.txt");
-        printf("Number of counted lines: %d\n", number_of_lines);
-        if (number_of_lines == i + 2)
-            printf("Success!\n");
-        else
-            printf("\n\n______________Wrong answer!______________\n\n");
+void testing_converter()
+{
+    const char* filename = "test.txt";
+
+    int fileSize = 0;
+    {
+        struct stat st;
+        stat(filename, &st);
+        fileSize = st.st_size;
     }
-    fclose(file);
-    if (!remove(temp_file_name))
-        printf("Temp file is deleted successfully!\n");
-    else
-        printf("We can't delete temp file!\n");
+
+    int filedesc = open(filename, O_RDONLY);
+    if (filedesc == -1)
+        return;
+
+    char* data = (char*)calloc(fileSize + 1, sizeof(char));
+    Assert_c(data != NULL);
+    if (!data)
+        return;
+    data[fileSize] = 0;
+
+    read(filedesc, data, fileSize);
+
+    int countLetters = utf8StrLen(data);
+    printf("Toltal letters: %d\n", countLetters);
+
+    wchar_t* wdata = (wchar_t*)calloc(countLetters + 1, sizeof(wchar_t));
+    wdata[countLetters] = 0;
+    Assert_c(wdata != NULL);
+    if (!wdata)
+        return;
+    utf8ToWchar(wdata, data);
+    printf("Converted string:%ls\n", wdata);
+
+
+    free(data);
+    free(wdata);
+    close(filedesc);
 
 }

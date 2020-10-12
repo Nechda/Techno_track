@@ -2,7 +2,6 @@
 #include <wchar.h>
 #include <assert.h>
 
-#define NDEBUG
 
 #ifdef NDEBUG
 #define Assert_c(expr) if(!(expr))printf("Expression %ls is false.\n In file: %ls\n line: %d\n",_CRT_WIDE(#expr), _CRT_WIDE(__FILE__), (unsigned)(__LINE__)); ///< Реализация assert для релиза
@@ -23,7 +22,6 @@ const int SS_INVALID_DATA = -3; ///< Возвращается, если пере
 
 const int PG_NUMBER_ATTEMPT = 50;///< Ограничение на максимальное количество попыток поиска
 
-int getNumberLines(const char* filename);
 int cmpWstr(const void* ptr1, const void* ptr2, int inc = 1);
 void sortFromFile(const char* in_filename, const char* out_filename, Direction dir = Direct);
 void poermGenerator(const char* in_filename, const char* in_syllable, const char* out_filename, const char* out_syllable, const int number_Stanaza = 1);
