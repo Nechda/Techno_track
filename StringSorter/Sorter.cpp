@@ -1,4 +1,5 @@
 #include "Sorter.h"
+#include "Converter.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -10,7 +11,6 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <io.h>
-#include "Converter.h"
 
 
 
@@ -173,7 +173,16 @@ static int generateDividedString(const char* filename, C_string* outArray, int* 
     data[0] = 0;
     data++;
     data[countLetters] = 0;
-    utf8ToWchar(data, buffer);
+    int errorCode = utf8ToWchar(data, buffer);
+    Assert_c(!errorCode);
+    if (!errorCode)
+    {
+        errno = errorCode;
+        free(data - 1);
+        free(buffer - 1);
+        close(filedesc);
+        return SS_ERROR_CONVERT_TO_UTF8;
+    }
 
     free(buffer-1);
     close(filedesc);
