@@ -1,0 +1,640 @@
+[17.10.2020 12:59:16.625] [Dump]: 
+Dump has called from
+file:e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\tester.cpp
+function:void __cdecl test_pushData(void)
+line: 104
+Stack[0x8FF878] (variable name: stack) {
+   canary{
+       leftSide [0x8FF878] = 0x99996666AAAA5555
+       rightSide[0x8FF8A0] = 0x99996666AAAA5555
+   }
+   structHash   [0x8FF880] = 0x97ADBF05A6CB3415
+   dataHash     [0x8FF888] = 0x187EA98B8CF59A7D
+   elementSize  [0x8FF890] = 4
+   size         [0x8FF894] = 10
+   capacity     [0x8FF898] = 26
+   data         [0x8FF89C] = 0xCC13C8
+   {
+       canary{
+           leftSide[0xCC13C0] = 0x99996666AAAA5555
+           leftSide[0xCC1430] = 0x99996666AAAA5555
+       }
+        *data[0] = 0x17E00
+        *data[1] = 0x675E00
+        *data[2] = 0x73700
+        *data[3] = 0x1C7800
+        *data[4] = 0xAD6A00
+        *data[5] = 0x7E6D00
+        *data[6] = 0xAB2100
+        *data[7] = 0xB42A00
+        *data[8] = 0x9A4C00
+        *data[9] = 0xD56600
+         data[10] = 0x0000
+         data[11] = 0x0000
+         data[12] = 0x0000
+         data[13] = 0x0000
+         data[14] = 0x0000
+         data[15] = 0x0000
+         data[16] = 0x0000
+         data[17] = 0x0000
+         data[18] = 0x0000
+         data[19] = 0x0000
+         data[20] = 0xCDCDCDCD
+         data[21] = 0xCDCDCDCD
+         data[22] = 0xCDCDCDCD
+         data[23] = 0xCDCDCDCD
+         data[24] = 0xCDCDCDCD
+         data[25] = 0xCDCDCDCD
+   }
+}
+[17.10.2020 12:59:16.630] [Assert]: Expression !"Somebody has changed our stack structure!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 167
+[17.10.2020 12:59:16.631] [Assert]: Expression !"Somebody has changed our stack structure!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 167
+[17.10.2020 12:59:16.632] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 154
+[17.10.2020 12:59:16.632] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 154
+[17.10.2020 12:59:16.633] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 154
+[17.10.2020 12:59:16.633] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 154
+[17.10.2020 12:59:16.634] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 154
+[17.10.2020 12:59:16.634] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 154
+[17.10.2020 12:59:16.635] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 154
+[17.10.2020 12:59:16.635] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 154
+[17.10.2020 12:59:16.636] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 154
+[17.10.2020 12:59:16.636] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 154
+[17.10.2020 12:59:16.637] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 154
+[17.10.2020 12:59:16.637] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 154
+[17.10.2020 12:59:16.638] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 154
+[17.10.2020 12:59:16.638] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 154
+[17.10.2020 12:59:16.639] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 154
+[17.10.2020 12:59:16.639] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 154
+[17.10.2020 12:59:16.640] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 154
+[17.10.2020 12:59:16.640] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 154
+[17.10.2020 12:59:16.641] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 154
+[17.10.2020 12:59:16.641] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 154
+[17.10.2020 12:59:16.642] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 154
+[17.10.2020 12:59:16.642] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 154
+[17.10.2020 12:59:16.643] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 154
+[17.10.2020 12:59:16.644] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 154
+[17.10.2020 12:59:16.644] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.645] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.645] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.646] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.647] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.647] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.648] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.648] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.649] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.649] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.650] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.651] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.651] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.652] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.652] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.653] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.654] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.654] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.655] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.656] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.656] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.657] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.658] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.658] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.659] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.660] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.660] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.661] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.661] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.662] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.663] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.663] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.664] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.666] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.667] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.669] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.670] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.671] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.672] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.673] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.673] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.674] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.675] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.675] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.676] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.677] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.678] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.678] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.679] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.679] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.680] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.680] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.681] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.682] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.682] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.683] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.683] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.684] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.684] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.685] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.687] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.687] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.688] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.689] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.689] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.690] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.691] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.691] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.692] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.692] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.693] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.694] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.694] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.695] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.696] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.697] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.697] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.698] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.699] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.699] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.700] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.700] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.701] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.701] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.703] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.704] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.705] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.705] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.706] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.707] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.707] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.708] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.709] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.709] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.710] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.710] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.711] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.712] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.712] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.713] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.713] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.714] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.715] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.715] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.716] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.716] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.717] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.718] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.718] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.719] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.720] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.720] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.721] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.721] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.722] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.723] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.724] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.725] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.725] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.726] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.727] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.727] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.728] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.728] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.729] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.729] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.730] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.730] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.731] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.732] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.732] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.733] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.734] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.734] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.735] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.736] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.736] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.737] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.738] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.738] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.739] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.739] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.740] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.741] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.742] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.742] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.743] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.744] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.745] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.745] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.746] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.747] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.747] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.748] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.748] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.749] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.750] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.750] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.751] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.752] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.752] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.753] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.754] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.754] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.755] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.755] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.756] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.757] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.757] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.758] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174
+[17.10.2020 12:59:16.759] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
+In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
+line: 174

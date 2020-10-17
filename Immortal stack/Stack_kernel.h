@@ -2,14 +2,17 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
+#include "Logger.h"
 
-//#define NDEBUG
+#define NDEBUG
 
 #ifdef NDEBUG
-#define Assert_c(expr) if(!(expr))printf("Expression %ls is false.\n In file: %ls\n line: %d\n",_CRT_WIDE(#expr), _CRT_WIDE(__FILE__), (unsigned)(__LINE__)); ///< Реализация assert для релиза
+#define Assert_c(expr) if(!(expr)) loggerAssert(#expr,__FILE__,__LINE__); ///< Реализация assert для релиза переключить режим можно директивой #define NDEBUG
 #else
-#define Assert_c(expr) (void* )0; ///< Реализация assert для отладки переключить режим можно директивой #define NDEBUG
+#define Assert_c(expr) if(!(expr))printf("Expression %ls is false.\n In file: %ls\n line: %d\n",_CRT_WIDE(#expr), _CRT_WIDE(__FILE__), (unsigned)(__LINE__)); ///< Реализация assert для отладки
 #endif
+
+
 
 /**
 \brief Для краткости дальнейших описаний вводим короткие имена стандартных типов
@@ -68,12 +71,12 @@ struct _BaseStack
 \brief   Функции для работы с абстрактным стеком.
 @{
 */
-int stackInit_(void* stk, const ui32 capacity, const ui32 elementSize);
+int _stackInit(void* stk, const ui32 capacity, const ui32 elementSize);
 int stackValidity(const void* stk);
-int stackPush_(void* stk, void* value);
-int stackPop_(void* stk, void* dest);
-void stackDump_(void* stk, const char* file, const char* func, const ui32 line, const char* variableName);
-void stackDest_(void* stk);
+int _stackPush(void* stk, void* value);
+int _stackPop(void* stk, void* dest);
+void _stackDump(void* stk, const char* file, const char* func, const ui32 line, const char* variableName);
+void _stackDest(void* stk);
 /**
 }@
 \note Подробное описание каждой функции дано в файле Stack.cpp

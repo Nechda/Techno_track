@@ -1,5 +1,6 @@
 #include "Stack_kernel.h"
 #include <string.h>
+#include <ctime>
 
 /**
 \brief Таблица перестановки 256 энементов для алгоритма хеширования Пирсона
@@ -106,7 +107,7 @@ static inline void recalcHashes(void* stk)
 \param   [in]   elementsSize   Размер одного элемента стека(в байтах)
 \return  Возвращается 0 если все ok, в противном случае код ошибки.
 */
-int stackInit_(void* stk,const ui32 capacity,const ui32 elementSize)
+int _stackInit(void* stk,const ui32 capacity,const ui32 elementSize)
 {
     Assert_c(stk);
     if (!stk)
@@ -202,7 +203,7 @@ int stackValidity(const void* stk)
 \return  Возвращается 0 если все ok, в противном случае код ошибки.
 */
 
-int stackPush_(void* stk,void* value)
+int _stackPush(void* stk,void* value)
 {
     int errorCode = 0;
     errorCode = stackValidity(stk);
@@ -234,7 +235,7 @@ int stackPush_(void* stk,void* value)
 \return  Возвращается 0 если все ok, в противном случае код ошибки.
 \note    Если в стеке нет элементов, то функция возвращает код ошибки STK_ERROR_STK_IS_EMPTY
 */
-int stackPop_(void* stk,void* dest)
+int _stackPop(void* stk,void* dest)
 {
     int errorCode = 0;
     errorCode = stackValidity(stk);
@@ -255,7 +256,15 @@ int stackPop_(void* stk,void* dest)
     memcpy(dest, addr, stack->elementSize);
     memset(addr, 0, stack->elementSize);
 
+    if (stack->capacity - stack->size > 2 * STK_BUFFER_ADDITION)
+        errorCode = stackResize(stack, stack->capacity - STK_BUFFER_ADDITION);
+
     recalcHashes(stk);
+
+    if (errorCode)
+        return errorCode;
+
+
     errorCode = stackValidity(stk);
     if (errorCode)
         return errorCode;
@@ -268,7 +277,7 @@ int stackPop_(void* stk,void* dest)
 \brief   Функция, уничтожающая стек
 \param   [in]   stk   Указатель на структуру стека
 */
-void stackDest_(void* stk)
+void _stackDest(void* stk)
 {
     Assert_c(stk);
     if (!stk)
@@ -292,7 +301,7 @@ void stackDest_(void* stk)
 \param   [in]   line           Номер строки, из которой был вызван дамп (в макросе подставляется __LINE__)
 \param   [in]   variableName   Имя переменной, которая передается в дамп
 */
-void stackDump_(void* stk, const char* file, const char* func, const ui32 line,const char* variableName)
+void _stackDump(void* stk, const char* file, const char* func, const ui32 line,const char* variableName)
 {
     if (!stk)
     {
@@ -300,41 +309,52 @@ void stackDump_(void* stk, const char* file, const char* func, const ui32 line,c
         return;
     }
 
+    FILE* outStream = 0;
+    #ifdef NDEBUG
+    outStream = getLoggerStream();
+    #else
+    outStream = stdout;
+    #endif
+
     _BaseStack* stack = (_BaseStack*)stk;
     ui32 elementSize = stack->elementSize;
     ui32 capacity = stack->capacity;
     ui32 size = stack->size;
     char* ptrData = (char*)stack->data;
-    printf("Dump has called from\nfile:%s\nfunction:%s\nline: %d\n", file, func, line);
-    printf("Stack[0x%X] (variable name: %s) {\n", (char*)stk,variableName);
-    printf("   canary{\n");
-    printf("       leftSide [0x%X] = 0x%llX\n", &stack->leftSide, stack->leftSide);
-    printf("       rightSide[0x%X] = 0x%llX\n", &stack->rightSide, stack->rightSide);
-    printf("   }\n");
-    printf("   structHash   [0x%X] = 0x%llX\n", &stack->structHash, stack->structHash);
-    printf("   dataHash     [0x%X] = 0x%llX\n", &stack->dataHash, stack->dataHash);
-    printf("   elementSize  [0x%X] = %d\n", &stack->elementSize, stack->elementSize);
-    printf("   size         [0x%X] = %d\n", &stack->size, stack->size);
-    printf("   capacity     [0x%X] = %d\n", &stack->capacity, stack->capacity);
-    printf("   data         [0x%X] = 0x%X\n", &stack->data, stack->data);
-    printf("   {\n");
-    printf("       canary{\n");
-    printf("          leftSide[0x%X] = 0x%llX\n", ptrData - sizeof(CanaryType),   *((CanaryType*)(ptrData - sizeof(CanaryType))) );
-    printf("          leftSide[0x%X] = 0x%llX\n", ptrData + capacity*elementSize, *((CanaryType*)(ptrData + capacity*elementSize)));
-    printf("       }\n");
+    
+    if (outStream != stdout)
+        logger("Dump", "");
+
+    fprintf(outStream,"Dump has called from\nfile:%s\nfunction:%s\nline: %d\n", file, func, line);
+    fprintf(outStream,"Stack[0x%X] (variable name: %s) {\n", (char*)stk,variableName);
+    fprintf(outStream,"   canary{\n");
+    fprintf(outStream,"       leftSide [0x%X] = 0x%llX\n", &stack->leftSide, stack->leftSide);
+    fprintf(outStream,"       rightSide[0x%X] = 0x%llX\n", &stack->rightSide, stack->rightSide);
+    fprintf(outStream,"   }\n");
+    fprintf(outStream,"   structHash   [0x%X] = 0x%llX\n", &stack->structHash, stack->structHash);
+    fprintf(outStream,"   dataHash     [0x%X] = 0x%llX\n", &stack->dataHash, stack->dataHash);
+    fprintf(outStream,"   elementSize  [0x%X] = %d\n", &stack->elementSize, stack->elementSize);
+    fprintf(outStream,"   size         [0x%X] = %d\n", &stack->size, stack->size);
+    fprintf(outStream,"   capacity     [0x%X] = %d\n", &stack->capacity, stack->capacity);
+    fprintf(outStream,"   data         [0x%X] = 0x%X\n", &stack->data, stack->data);
+    fprintf(outStream,"   {\n");
+    fprintf(outStream,"       canary{\n");
+    fprintf(outStream,"           leftSide[0x%X] = 0x%llX\n", ptrData - sizeof(CanaryType),   *((CanaryType*)(ptrData - sizeof(CanaryType))) );
+    fprintf(outStream,"           leftSide[0x%X] = 0x%llX\n", ptrData + capacity*elementSize, *((CanaryType*)(ptrData + capacity*elementSize)));
+    fprintf(outStream,"       }\n");
     for (int i = 0; i < capacity; i++)
     {
-        printf("        ");
+        fprintf(outStream,"        ");
         if (i < size)
-            printf("*");
+            fprintf(outStream,"*");
         else
-            printf(" ");
-        printf("data[%d] = 0x",i);
+            fprintf(outStream," ");
+        fprintf(outStream,"data[%d] = 0x",i);
         for (int j = 0; j < elementSize; j++)
-            printf("%X", *((char*)stack->data + i*elementSize + j) & 0xFF);
-        printf("\n");
+            fprintf(outStream,"%X", *((char*)stack->data + i*elementSize + j) & 0xFF);
+        fprintf(outStream,"\n");
     }
-    printf("   }\n");
-    printf("}\n");
+    fprintf(outStream,"   }\n");
+    fprintf(outStream,"}\n");
 
 }

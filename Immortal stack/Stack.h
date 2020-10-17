@@ -77,27 +77,27 @@ struct CONCAT(Stack_, TYPE_)
 */
 inline int stackInit(CONCAT(Stack_, TYPE_)* stk, ui32 capacity)
 {
-    return stackInit_(stk, capacity, sizeof(TYPE_));
+    return _stackInit(stk, capacity, sizeof(TYPE_));
 }
 
 inline int stackPush(CONCAT(Stack_, TYPE_)* stk, TYPE_ value)
 {
     TYPE_ val = value;
-    return stackPush_(stk, &val);
+    return _stackPush(stk, &val);
 }
 
 inline int stackPop(CONCAT(Stack_, TYPE_)* stk, TYPE_* dest)
 {
-    return stackPop_(stk, dest);
+    return _stackPop(stk, dest);
 }
 
 inline void stackDest(CONCAT(Stack_, TYPE_)* stk)
 {
-    stackDest_(stk);
+    _stackDest(stk);
 }
 
 #define stackDump(stk) \
-stackDump_( &stk ,__FILE__,__FUNCSIG__,__LINE__,#stk)
+_stackDump( &stk ,__FILE__,__FUNCSIG__,__LINE__,#stk)
 
 /**
 }@

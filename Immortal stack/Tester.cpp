@@ -28,6 +28,7 @@ static void generateStack(Stack(int)* stack) ///< функция, генерир
         arr[i] = rand() % 100000;
         stackPush(stack, arr[i]);
     }
+    free(arr);
 }
 
 static void shuffleArray(int* arr, int size) ///< функция, перемешивающая массив
@@ -100,6 +101,8 @@ void test_pushData() ///< Тестируем стандартные функци
             printf("pop stack give us: %d, but should %d\n", ans, arr[i]);
         }
     }
+    stackDump(stack);
+    free(arr);
     stackDest(&stack);
 }
 
@@ -309,7 +312,7 @@ void test_changeData_randomEditElemtnts() ///< Тестируем валидат
         indexOfEditedElemet[i] = i;
     shuffleArray(indexOfEditedElemet, STACK_LENGTH);
     for (int i = 0; i < STACK_LENGTH; i++)
-        editedData[i] = rand()% 100000 - 100000/2;
+        editedData[i] = rand() % (100000/2) - 100000;
 
 
     for (int i = 0; i < countEditElement; i++)
