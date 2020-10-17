@@ -75,7 +75,7 @@ FILE* getLoggerStream()
 \brief Функция, направляющая сообщение Assert_c в лог
 \note  Смотри макрос Assert_c(exp)
 */
-void loggerAssert(const char* expr, const char* file, unsigned line)
+void loggerAssert(const char* expr, const char* file,const char* funciton, unsigned line)
 {
     static char buffer[32] = {};
     int millisec;
@@ -93,7 +93,7 @@ void loggerAssert(const char* expr, const char* file, unsigned line)
 
     tm_info = localtime(&tv.tv_sec);
     strftime(buffer, 32, "%d.%m.%Y %H:%M:%S", tm_info);
-    fprintf(fptr,"[%s.%03d] [%s]: Expression %s is false.\nIn file: %s\nline: %d\n",buffer,millisec,"Assert", expr, file, line);
+    fprintf(fptr,"[%s.%03d] [%s]: Expression %s is false.\nIn file: %s\nfunction: %s\nline: %d\n",buffer,millisec,"Assert", expr, file, funciton, line);
 }
 
 /**

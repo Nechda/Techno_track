@@ -134,6 +134,8 @@ void test_changeStructure_editHash() ///< Тестируем валидатор,
         NULL
     );
 
+    _stackPush(&stack, NULL);
+
     stackDest(&stack);
 }
 
@@ -324,6 +326,7 @@ void test_changeData_randomEditElemtnts() ///< Тестируем валидат
         "Change random elements to random value in array ...",
         "We changed data, but validator doesn't catch this error!"
     );
+
 
     stackDest(&stack);
         

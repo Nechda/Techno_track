@@ -209,6 +209,11 @@ int _stackPush(void* stk,void* value)
     errorCode = stackValidity(stk);
     if (errorCode)
         return errorCode;
+    if (!value)
+    {
+        Assert_c(!"Haha nice try, but there is checking the null ptr!\n");
+        return STK_ERROR_NULL_PTR;
+    }
 
     _BaseStack* stack = (_BaseStack*)stk;
     if (stack->size == stack->capacity)
