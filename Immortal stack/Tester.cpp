@@ -53,10 +53,10 @@ static void shuffleArray(int* arr, int size) ///< функция, перемеш
 \param   [in]   strTestInfo               Иформация о том, что именно проверялось в тесте
 \param   [in]   strTestErrorExplanation   Сообщение, которое выводится, в случае, когда тест провален
 */
-static inline void stackValidityCheck(Stack(int)* stack, const int error, const char* strTestInfo, const char* strTestErrorExplanation)
+static inline void stackValidityCheck(Stack(int)* stack, const StackError error, const char* strTestInfo, const char* strTestErrorExplanation)
 {
     numberOfTest++;
-    int errorCode = _stackValidity(stack);
+    StackError errorCode = _stackValidity(stack);
 
     if (errorCode != error && error)
     {
@@ -133,7 +133,7 @@ void test_changeStructure_editHash() ///< Тестируем валидатор,
     
     stackValidityCheck(
         &stack,
-        0,
+        STK_OK,
         NULL,
         NULL
     );
@@ -165,7 +165,7 @@ void test_changeStructure_editCapacity() ///< Тестируем валидат�
     }
     stackValidityCheck(
         &stack,
-        0,
+        STK_OK,
         NULL,
         NULL
     );
@@ -193,7 +193,7 @@ void test_changeStructure_leftSideAttack() ///< Тестируем валида�
     }
     stackValidityCheck(
         stack,
-        0,
+        STK_OK,
         NULL,
         NULL
     );
@@ -222,7 +222,7 @@ void test_changeStructure_rightSideAttack() ///< Тестируем валида
     }
     stackValidityCheck(
         stack,
-        0,
+        STK_OK,
         NULL,
         NULL
     );
@@ -257,7 +257,7 @@ void test_changeData_editBits() ///< Тестируем валидатор, ко
 
     stackValidityCheck(
         &stack,
-        0,
+        STK_OK,
         NULL,
         NULL
     );
@@ -294,7 +294,7 @@ void test_changeData_swapElements() ///< Тестируем валидатор, 
 
     stackValidityCheck(
         &stack,
-        0,
+        STK_OK,
         NULL,
         NULL
     );
@@ -356,7 +356,7 @@ void test_changeData_leftSideAttack() ///< Тестируем валидатор
     }
     stackValidityCheck(
         stack,
-        0,
+        STK_OK,
         NULL,
         NULL
     );
@@ -385,7 +385,7 @@ void test_changeData_rightSideAttack() ///< Тестируем валидато�
     }
     stackValidityCheck(
         stack,
-        0,
+        STK_OK,
         NULL,
         NULL
     );

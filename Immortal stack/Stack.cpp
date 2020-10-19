@@ -56,7 +56,7 @@ static Hash getHash(const ui8* data, ui32 len)
 \param   [in]   newSize   Новый размер выделенной памяти
 \return  Возвращается 0 если все ok, в противном случае код ошибки.
 */
-static int stackResize(void* stk, ui32 newSize = 1)
+static StackError stackResize(void* stk, ui32 newSize = 1)
 {
     Assert_c(stk);
     if (!stk)
@@ -88,7 +88,7 @@ static int stackResize(void* stk, ui32 newSize = 1)
         *((CanaryType*)ptr) = STK_CANARY_VALUE;
     #endif
     stack->capacity = newSize;
-    return 0;
+    return STK_OK;
 }
 
 #ifdef STK_HASH_PROTECTION
@@ -116,12 +116,12 @@ static inline void recalcHashes(void* stk)
 \param   [in]   elementsSize   Размер одного элемента стека(в байтах)
 \return  Возвращается 0 если все ok, в противном случае код ошибки.
 */
-int _stackInit(void* stk, const ui32 capacity, const ui32 elementSize)
+StackError _stackInit(void* stk, const ui32 capacity, const ui32 elementSize)
 {
     Assert_c(stk);
     if (!stk)
         return STK_ERROR_NULL_PTR;
-    int errorCode = 0;
+    StackError errorCode = STK_OK;
 
     _BaseStack* stack = (_BaseStack*)stk;
     stack->elementSize = elementSize;
@@ -141,7 +141,7 @@ int _stackInit(void* stk, const ui32 capacity, const ui32 elementSize)
 \param   [in]   stk   Указатель на структуру стека
 \return  Возвращается 0 если все ok, в противном случае код ошибки.
 */
-int _stackValidity(const void* stk, const dbgCallInfo dbgInfo)
+StackError _stackValidity(const void* stk, const dbgCallInfo dbgInfo)
 {
     Assert_c(stk);
     if (!stk)
@@ -215,7 +215,7 @@ int _stackValidity(const void* stk, const dbgCallInfo dbgInfo)
         ptr--;
     #endif
 
-    return 0;
+    return STK_OK;
 }
 
 /**
@@ -225,9 +225,9 @@ int _stackValidity(const void* stk, const dbgCallInfo dbgInfo)
 \return  Возвращается 0 если все ok, в противном случае код ошибки.
 */
 
-int _stackPush(void* stk, void* value, const dbgCallInfo dbgInfo)
+StackError _stackPush(void* stk, void* value, const dbgCallInfo dbgInfo)
 {
-    int errorCode = 0;
+    StackError errorCode = STK_OK;
     errorCode = _stackValidity(stk);
     if (errorCode)
         return errorCode;
@@ -251,7 +251,7 @@ int _stackPush(void* stk, void* value, const dbgCallInfo dbgInfo)
     if (errorCode)
         return errorCode;
 
-    return 0;
+    return STK_OK;
 }
 
 
@@ -262,9 +262,9 @@ int _stackPush(void* stk, void* value, const dbgCallInfo dbgInfo)
 \return  Возвращается 0 если все ok, в противном случае код ошибки.
 \note    Если в стеке нет элементов, то функция возвращает код ошибки STK_ERROR_STK_IS_EMPTY
 */
-int _stackPop(void* stk, void* dest, const dbgCallInfo dbgInfo)
+StackError _stackPop(void* stk, void* dest, const dbgCallInfo dbgInfo)
 {
-    int errorCode = 0;
+    StackError errorCode = STK_OK;
     errorCode = _stackValidity(stk);
     if (errorCode)
         return errorCode;
@@ -296,7 +296,7 @@ int _stackPop(void* stk, void* dest, const dbgCallInfo dbgInfo)
     if (errorCode)
         return errorCode;
 
-    return 0;
+    return STK_OK;
 }
 
 

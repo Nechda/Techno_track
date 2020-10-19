@@ -1,33 +1,33 @@
-[20.10.2020 01:10:06.414] [Dump]: 
+[20.10.2020 01:48:39.396] [Dump]: 
 Dump has called from
 file:e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\tester.cpp
 function:void __cdecl test_pushData(void)
 line: 102
-Stack[0x12FF7D8] (variable name: stack) {
-   elementSize  [0x12FF7D8] = 4
-   size         [0x12FF7DC] = 19
-   capacity     [0x12FF7E0] = 26
-   data         [0x12FF7E4] = 0x16451A0
+Stack[0x115FAF8] (variable name: stack) {
+   elementSize  [0x115FAF8] = 4
+   size         [0x115FAFC] = 19
+   capacity     [0x115FB00] = 26
+   data         [0x115FB04] = 0x1310450
    {
-        *data[0] = 0xA04900
-        *data[1] = 0x2B2100
-        *data[2] = 0xF36300
-        *data[3] = 0x555F00
-        *data[4] = 0x31200
-        *data[5] = 0x97A00
-        *data[6] = 0xE95200
-        *data[7] = 0xFC2100
-        *data[8] = 0xDE1600
-        *data[9] = 0x5A400
-        *data[10] = 0x2D4000
-        *data[11] = 0xCB500
-        *data[12] = 0xE17700
-        *data[13] = 0x41E00
-        *data[14] = 0xE42400
-        *data[15] = 0xA23400
-        *data[16] = 0xA92700
-        *data[17] = 0x455000
-        *data[18] = 0x95800
+        *data[0] = 0x226700
+        *data[1] = 0xB37A00
+        *data[2] = 0x886100
+        *data[3] = 0x212700
+        *data[4] = 0xFBB00
+        *data[5] = 0xA81000
+        *data[6] = 0x642C00
+        *data[7] = 0x995100
+        *data[8] = 0xAA5700
+        *data[9] = 0x9A700
+        *data[10] = 0xD2700
+        *data[11] = 0xC21300
+        *data[12] = 0x155400
+        *data[13] = 0xE6800
+        *data[14] = 0x8C6200
+        *data[15] = 0xFE2000
+        *data[16] = 0x6B2800
+        *data[17] = 0xC1B00
+        *data[18] = 0xDF7400
          data[19] = 0x0000
          data[20] = 0xCDCDCDCD
          data[21] = 0xCDCDCDCD
@@ -37,35 +37,35 @@ Stack[0x12FF7D8] (variable name: stack) {
          data[25] = 0xCDCDCDCD
    }
 }
-[20.10.2020 01:10:06.419] [Dump]: 
+[20.10.2020 01:48:39.401] [Dump]: 
 Dump has called from
 file:e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\tester.cpp
 function:void __cdecl test_pushData(void)
 line: 102
-Stack[0x12FF7D8] (variable name: stack) {
-   elementSize  [0x12FF7D8] = 4
-   size         [0x12FF7DC] = 18
-   capacity     [0x12FF7E0] = 26
-   data         [0x12FF7E4] = 0x16451A0
+Stack[0x115FAF8] (variable name: stack) {
+   elementSize  [0x115FAF8] = 4
+   size         [0x115FAFC] = 18
+   capacity     [0x115FB00] = 26
+   data         [0x115FB04] = 0x1310450
    {
-        *data[0] = 0xA04900
-        *data[1] = 0x2B2100
-        *data[2] = 0xF36300
-        *data[3] = 0x555F00
-        *data[4] = 0x31200
-        *data[5] = 0x97A00
-        *data[6] = 0xE95200
-        *data[7] = 0xFC2100
-        *data[8] = 0xDE1600
-        *data[9] = 0x5A400
-        *data[10] = 0x2D4000
-        *data[11] = 0xCB500
-        *data[12] = 0xE17700
-        *data[13] = 0x41E00
-        *data[14] = 0xE42400
-        *data[15] = 0xA23400
-        *data[16] = 0xA92700
-        *data[17] = 0x455000
+        *data[0] = 0x226700
+        *data[1] = 0xB37A00
+        *data[2] = 0x886100
+        *data[3] = 0x212700
+        *data[4] = 0xFBB00
+        *data[5] = 0xA81000
+        *data[6] = 0x642C00
+        *data[7] = 0x995100
+        *data[8] = 0xAA5700
+        *data[9] = 0x9A700
+        *data[10] = 0xD2700
+        *data[11] = 0xC21300
+        *data[12] = 0x155400
+        *data[13] = 0xE6800
+        *data[14] = 0x8C6200
+        *data[15] = 0xFE2000
+        *data[16] = 0x6B2800
+        *data[17] = 0xC1B00
          data[18] = 0x0000
          data[19] = 0x0000
          data[20] = 0xCDCDCDCD
@@ -76,34 +76,34 @@ Stack[0x12FF7D8] (variable name: stack) {
          data[25] = 0xCDCDCDCD
    }
 }
-[20.10.2020 01:10:06.422] [Dump]: 
+[20.10.2020 01:48:39.408] [Dump]: 
 Dump has called from
 file:e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\tester.cpp
 function:void __cdecl test_pushData(void)
 line: 102
-Stack[0x12FF7D8] (variable name: stack) {
-   elementSize  [0x12FF7D8] = 4
-   size         [0x12FF7DC] = 17
-   capacity     [0x12FF7E0] = 26
-   data         [0x12FF7E4] = 0x16451A0
+Stack[0x115FAF8] (variable name: stack) {
+   elementSize  [0x115FAF8] = 4
+   size         [0x115FAFC] = 17
+   capacity     [0x115FB00] = 26
+   data         [0x115FB04] = 0x1310450
    {
-        *data[0] = 0xA04900
-        *data[1] = 0x2B2100
-        *data[2] = 0xF36300
-        *data[3] = 0x555F00
-        *data[4] = 0x31200
-        *data[5] = 0x97A00
-        *data[6] = 0xE95200
-        *data[7] = 0xFC2100
-        *data[8] = 0xDE1600
-        *data[9] = 0x5A400
-        *data[10] = 0x2D4000
-        *data[11] = 0xCB500
-        *data[12] = 0xE17700
-        *data[13] = 0x41E00
-        *data[14] = 0xE42400
-        *data[15] = 0xA23400
-        *data[16] = 0xA92700
+        *data[0] = 0x226700
+        *data[1] = 0xB37A00
+        *data[2] = 0x886100
+        *data[3] = 0x212700
+        *data[4] = 0xFBB00
+        *data[5] = 0xA81000
+        *data[6] = 0x642C00
+        *data[7] = 0x995100
+        *data[8] = 0xAA5700
+        *data[9] = 0x9A700
+        *data[10] = 0xD2700
+        *data[11] = 0xC21300
+        *data[12] = 0x155400
+        *data[13] = 0xE6800
+        *data[14] = 0x8C6200
+        *data[15] = 0xFE2000
+        *data[16] = 0x6B2800
          data[17] = 0x0000
          data[18] = 0x0000
          data[19] = 0x0000
@@ -115,33 +115,33 @@ Stack[0x12FF7D8] (variable name: stack) {
          data[25] = 0xCDCDCDCD
    }
 }
-[20.10.2020 01:10:06.433] [Dump]: 
+[20.10.2020 01:48:39.419] [Dump]: 
 Dump has called from
 file:e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\tester.cpp
 function:void __cdecl test_pushData(void)
 line: 102
-Stack[0x12FF7D8] (variable name: stack) {
-   elementSize  [0x12FF7D8] = 4
-   size         [0x12FF7DC] = 16
-   capacity     [0x12FF7E0] = 26
-   data         [0x12FF7E4] = 0x16451A0
+Stack[0x115FAF8] (variable name: stack) {
+   elementSize  [0x115FAF8] = 4
+   size         [0x115FAFC] = 16
+   capacity     [0x115FB00] = 26
+   data         [0x115FB04] = 0x1310450
    {
-        *data[0] = 0xA04900
-        *data[1] = 0x2B2100
-        *data[2] = 0xF36300
-        *data[3] = 0x555F00
-        *data[4] = 0x31200
-        *data[5] = 0x97A00
-        *data[6] = 0xE95200
-        *data[7] = 0xFC2100
-        *data[8] = 0xDE1600
-        *data[9] = 0x5A400
-        *data[10] = 0x2D4000
-        *data[11] = 0xCB500
-        *data[12] = 0xE17700
-        *data[13] = 0x41E00
-        *data[14] = 0xE42400
-        *data[15] = 0xA23400
+        *data[0] = 0x226700
+        *data[1] = 0xB37A00
+        *data[2] = 0x886100
+        *data[3] = 0x212700
+        *data[4] = 0xFBB00
+        *data[5] = 0xA81000
+        *data[6] = 0x642C00
+        *data[7] = 0x995100
+        *data[8] = 0xAA5700
+        *data[9] = 0x9A700
+        *data[10] = 0xD2700
+        *data[11] = 0xC21300
+        *data[12] = 0x155400
+        *data[13] = 0xE6800
+        *data[14] = 0x8C6200
+        *data[15] = 0xFE2000
          data[16] = 0x0000
          data[17] = 0x0000
          data[18] = 0x0000
@@ -154,32 +154,32 @@ Stack[0x12FF7D8] (variable name: stack) {
          data[25] = 0xCDCDCDCD
    }
 }
-[20.10.2020 01:10:06.438] [Dump]: 
+[20.10.2020 01:48:39.427] [Dump]: 
 Dump has called from
 file:e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\tester.cpp
 function:void __cdecl test_pushData(void)
 line: 102
-Stack[0x12FF7D8] (variable name: stack) {
-   elementSize  [0x12FF7D8] = 4
-   size         [0x12FF7DC] = 15
-   capacity     [0x12FF7E0] = 26
-   data         [0x12FF7E4] = 0x16451A0
+Stack[0x115FAF8] (variable name: stack) {
+   elementSize  [0x115FAF8] = 4
+   size         [0x115FAFC] = 15
+   capacity     [0x115FB00] = 26
+   data         [0x115FB04] = 0x1310450
    {
-        *data[0] = 0xA04900
-        *data[1] = 0x2B2100
-        *data[2] = 0xF36300
-        *data[3] = 0x555F00
-        *data[4] = 0x31200
-        *data[5] = 0x97A00
-        *data[6] = 0xE95200
-        *data[7] = 0xFC2100
-        *data[8] = 0xDE1600
-        *data[9] = 0x5A400
-        *data[10] = 0x2D4000
-        *data[11] = 0xCB500
-        *data[12] = 0xE17700
-        *data[13] = 0x41E00
-        *data[14] = 0xE42400
+        *data[0] = 0x226700
+        *data[1] = 0xB37A00
+        *data[2] = 0x886100
+        *data[3] = 0x212700
+        *data[4] = 0xFBB00
+        *data[5] = 0xA81000
+        *data[6] = 0x642C00
+        *data[7] = 0x995100
+        *data[8] = 0xAA5700
+        *data[9] = 0x9A700
+        *data[10] = 0xD2700
+        *data[11] = 0xC21300
+        *data[12] = 0x155400
+        *data[13] = 0xE6800
+        *data[14] = 0x8C6200
          data[15] = 0x0000
          data[16] = 0x0000
          data[17] = 0x0000
@@ -193,31 +193,31 @@ Stack[0x12FF7D8] (variable name: stack) {
          data[25] = 0xCDCDCDCD
    }
 }
-[20.10.2020 01:10:06.445] [Dump]: 
+[20.10.2020 01:48:39.433] [Dump]: 
 Dump has called from
 file:e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\tester.cpp
 function:void __cdecl test_pushData(void)
 line: 102
-Stack[0x12FF7D8] (variable name: stack) {
-   elementSize  [0x12FF7D8] = 4
-   size         [0x12FF7DC] = 14
-   capacity     [0x12FF7E0] = 26
-   data         [0x12FF7E4] = 0x16451A0
+Stack[0x115FAF8] (variable name: stack) {
+   elementSize  [0x115FAF8] = 4
+   size         [0x115FAFC] = 14
+   capacity     [0x115FB00] = 26
+   data         [0x115FB04] = 0x1310450
    {
-        *data[0] = 0xA04900
-        *data[1] = 0x2B2100
-        *data[2] = 0xF36300
-        *data[3] = 0x555F00
-        *data[4] = 0x31200
-        *data[5] = 0x97A00
-        *data[6] = 0xE95200
-        *data[7] = 0xFC2100
-        *data[8] = 0xDE1600
-        *data[9] = 0x5A400
-        *data[10] = 0x2D4000
-        *data[11] = 0xCB500
-        *data[12] = 0xE17700
-        *data[13] = 0x41E00
+        *data[0] = 0x226700
+        *data[1] = 0xB37A00
+        *data[2] = 0x886100
+        *data[3] = 0x212700
+        *data[4] = 0xFBB00
+        *data[5] = 0xA81000
+        *data[6] = 0x642C00
+        *data[7] = 0x995100
+        *data[8] = 0xAA5700
+        *data[9] = 0x9A700
+        *data[10] = 0xD2700
+        *data[11] = 0xC21300
+        *data[12] = 0x155400
+        *data[13] = 0xE6800
          data[14] = 0x0000
          data[15] = 0x0000
          data[16] = 0x0000
@@ -232,30 +232,30 @@ Stack[0x12FF7D8] (variable name: stack) {
          data[25] = 0xCDCDCDCD
    }
 }
-[20.10.2020 01:10:06.455] [Dump]: 
+[20.10.2020 01:48:39.443] [Dump]: 
 Dump has called from
 file:e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\tester.cpp
 function:void __cdecl test_pushData(void)
 line: 102
-Stack[0x12FF7D8] (variable name: stack) {
-   elementSize  [0x12FF7D8] = 4
-   size         [0x12FF7DC] = 13
-   capacity     [0x12FF7E0] = 26
-   data         [0x12FF7E4] = 0x16451A0
+Stack[0x115FAF8] (variable name: stack) {
+   elementSize  [0x115FAF8] = 4
+   size         [0x115FAFC] = 13
+   capacity     [0x115FB00] = 26
+   data         [0x115FB04] = 0x1310450
    {
-        *data[0] = 0xA04900
-        *data[1] = 0x2B2100
-        *data[2] = 0xF36300
-        *data[3] = 0x555F00
-        *data[4] = 0x31200
-        *data[5] = 0x97A00
-        *data[6] = 0xE95200
-        *data[7] = 0xFC2100
-        *data[8] = 0xDE1600
-        *data[9] = 0x5A400
-        *data[10] = 0x2D4000
-        *data[11] = 0xCB500
-        *data[12] = 0xE17700
+        *data[0] = 0x226700
+        *data[1] = 0xB37A00
+        *data[2] = 0x886100
+        *data[3] = 0x212700
+        *data[4] = 0xFBB00
+        *data[5] = 0xA81000
+        *data[6] = 0x642C00
+        *data[7] = 0x995100
+        *data[8] = 0xAA5700
+        *data[9] = 0x9A700
+        *data[10] = 0xD2700
+        *data[11] = 0xC21300
+        *data[12] = 0x155400
          data[13] = 0x0000
          data[14] = 0x0000
          data[15] = 0x0000
@@ -271,29 +271,29 @@ Stack[0x12FF7D8] (variable name: stack) {
          data[25] = 0xCDCDCDCD
    }
 }
-[20.10.2020 01:10:06.460] [Dump]: 
+[20.10.2020 01:48:39.449] [Dump]: 
 Dump has called from
 file:e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\tester.cpp
 function:void __cdecl test_pushData(void)
 line: 102
-Stack[0x12FF7D8] (variable name: stack) {
-   elementSize  [0x12FF7D8] = 4
-   size         [0x12FF7DC] = 12
-   capacity     [0x12FF7E0] = 26
-   data         [0x12FF7E4] = 0x16451A0
+Stack[0x115FAF8] (variable name: stack) {
+   elementSize  [0x115FAF8] = 4
+   size         [0x115FAFC] = 12
+   capacity     [0x115FB00] = 26
+   data         [0x115FB04] = 0x1310450
    {
-        *data[0] = 0xA04900
-        *data[1] = 0x2B2100
-        *data[2] = 0xF36300
-        *data[3] = 0x555F00
-        *data[4] = 0x31200
-        *data[5] = 0x97A00
-        *data[6] = 0xE95200
-        *data[7] = 0xFC2100
-        *data[8] = 0xDE1600
-        *data[9] = 0x5A400
-        *data[10] = 0x2D4000
-        *data[11] = 0xCB500
+        *data[0] = 0x226700
+        *data[1] = 0xB37A00
+        *data[2] = 0x886100
+        *data[3] = 0x212700
+        *data[4] = 0xFBB00
+        *data[5] = 0xA81000
+        *data[6] = 0x642C00
+        *data[7] = 0x995100
+        *data[8] = 0xAA5700
+        *data[9] = 0x9A700
+        *data[10] = 0xD2700
+        *data[11] = 0xC21300
          data[12] = 0x0000
          data[13] = 0x0000
          data[14] = 0x0000
@@ -310,28 +310,28 @@ Stack[0x12FF7D8] (variable name: stack) {
          data[25] = 0xCDCDCDCD
    }
 }
-[20.10.2020 01:10:06.464] [Dump]: 
+[20.10.2020 01:48:39.453] [Dump]: 
 Dump has called from
 file:e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\tester.cpp
 function:void __cdecl test_pushData(void)
 line: 102
-Stack[0x12FF7D8] (variable name: stack) {
-   elementSize  [0x12FF7D8] = 4
-   size         [0x12FF7DC] = 11
-   capacity     [0x12FF7E0] = 26
-   data         [0x12FF7E4] = 0x16451A0
+Stack[0x115FAF8] (variable name: stack) {
+   elementSize  [0x115FAF8] = 4
+   size         [0x115FAFC] = 11
+   capacity     [0x115FB00] = 26
+   data         [0x115FB04] = 0x1310450
    {
-        *data[0] = 0xA04900
-        *data[1] = 0x2B2100
-        *data[2] = 0xF36300
-        *data[3] = 0x555F00
-        *data[4] = 0x31200
-        *data[5] = 0x97A00
-        *data[6] = 0xE95200
-        *data[7] = 0xFC2100
-        *data[8] = 0xDE1600
-        *data[9] = 0x5A400
-        *data[10] = 0x2D4000
+        *data[0] = 0x226700
+        *data[1] = 0xB37A00
+        *data[2] = 0x886100
+        *data[3] = 0x212700
+        *data[4] = 0xFBB00
+        *data[5] = 0xA81000
+        *data[6] = 0x642C00
+        *data[7] = 0x995100
+        *data[8] = 0xAA5700
+        *data[9] = 0x9A700
+        *data[10] = 0xD2700
          data[11] = 0x0000
          data[12] = 0x0000
          data[13] = 0x0000
@@ -349,27 +349,27 @@ Stack[0x12FF7D8] (variable name: stack) {
          data[25] = 0xCDCDCDCD
    }
 }
-[20.10.2020 01:10:06.469] [Dump]: 
+[20.10.2020 01:48:39.457] [Dump]: 
 Dump has called from
 file:e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\tester.cpp
 function:void __cdecl test_pushData(void)
 line: 102
-Stack[0x12FF7D8] (variable name: stack) {
-   elementSize  [0x12FF7D8] = 4
-   size         [0x12FF7DC] = 10
-   capacity     [0x12FF7E0] = 26
-   data         [0x12FF7E4] = 0x16451A0
+Stack[0x115FAF8] (variable name: stack) {
+   elementSize  [0x115FAF8] = 4
+   size         [0x115FAFC] = 10
+   capacity     [0x115FB00] = 26
+   data         [0x115FB04] = 0x1310450
    {
-        *data[0] = 0xA04900
-        *data[1] = 0x2B2100
-        *data[2] = 0xF36300
-        *data[3] = 0x555F00
-        *data[4] = 0x31200
-        *data[5] = 0x97A00
-        *data[6] = 0xE95200
-        *data[7] = 0xFC2100
-        *data[8] = 0xDE1600
-        *data[9] = 0x5A400
+        *data[0] = 0x226700
+        *data[1] = 0xB37A00
+        *data[2] = 0x886100
+        *data[3] = 0x212700
+        *data[4] = 0xFBB00
+        *data[5] = 0xA81000
+        *data[6] = 0x642C00
+        *data[7] = 0x995100
+        *data[8] = 0xAA5700
+        *data[9] = 0x9A700
          data[10] = 0x0000
          data[11] = 0x0000
          data[12] = 0x0000
@@ -388,27 +388,27 @@ Stack[0x12FF7D8] (variable name: stack) {
          data[25] = 0xCDCDCDCD
    }
 }
-[20.10.2020 01:10:06.472] [Dump]: 
+[20.10.2020 01:48:39.460] [Dump]: 
 Dump has called from
 file:e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\tester.cpp
 function:void __cdecl test_pushData(void)
 line: 106
-Stack[0x12FF7D8] (variable name: stack) {
-   elementSize  [0x12FF7D8] = 4
-   size         [0x12FF7DC] = 10
-   capacity     [0x12FF7E0] = 26
-   data         [0x12FF7E4] = 0x16451A0
+Stack[0x115FAF8] (variable name: stack) {
+   elementSize  [0x115FAF8] = 4
+   size         [0x115FAFC] = 10
+   capacity     [0x115FB00] = 26
+   data         [0x115FB04] = 0x1310450
    {
-        *data[0] = 0xA04900
-        *data[1] = 0x2B2100
-        *data[2] = 0xF36300
-        *data[3] = 0x555F00
-        *data[4] = 0x31200
-        *data[5] = 0x97A00
-        *data[6] = 0xE95200
-        *data[7] = 0xFC2100
-        *data[8] = 0xDE1600
-        *data[9] = 0x5A400
+        *data[0] = 0x226700
+        *data[1] = 0xB37A00
+        *data[2] = 0x886100
+        *data[3] = 0x212700
+        *data[4] = 0xFBB00
+        *data[5] = 0xA81000
+        *data[6] = 0x642C00
+        *data[7] = 0x995100
+        *data[8] = 0xAA5700
+        *data[9] = 0x9A700
          data[10] = 0x0000
          data[11] = 0x0000
          data[12] = 0x0000

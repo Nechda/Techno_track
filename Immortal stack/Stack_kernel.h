@@ -4,7 +4,6 @@
 #include <assert.h>
 #include "Logger.h"
 
-
 #define NDEBUG
 
 #ifdef NDEBUG
@@ -68,14 +67,17 @@ const ui64 STK_BUFFER_ADDITION = 8;                                             
 \brief Константы ошибок
 @{
 */
-const int STK_ERROR_NULL_PTR            = -1; ///< Ошибка возникает, если в функцию передали нулевой указатель
-const int STK_ERROR_OUT_OF_MEMORY       = -2; ///< Ошибка возникает, если не удалось выделить память calloc или возникла ошибка при вызове realloc
-const int STK_ERROR_INVALID_PTR         = -3; ///< Ошибка возникает, если указатель на считываемые данные или data в структуре является NULL
-const int STK_ERROR_OUT_OF_RANGE        = -4; ///< Ошибка возникает, если размер стека больше, чем выделенная память
-const int STK_ERROR_ATTACK              = -5; ///< Ошибка возникает, если структура стека или данные были испорчены, посредством изменения канареечных переменных
-const int STK_ERROR_STK_IS_EMPTY        = -6; ///< Ошибка возникает, если из пустого стека пытаются вытащить данные
-const int STK_ERROR_CHANGED_DATA        = -7; ///< Ошибка возникает, если данные были испочены, проверяется посредством подсчета хеша по массиву данных
-const int STK_ERROR_CHANGED_STRUCTURE   = -8; ///< Ошибка возникает, если структура стека была испорчена, проверяется посредством подсчета хеша по структуре стека
+enum StackError { 
+    STK_OK                          =  0,   ///< Ошибок не возникло
+    STK_ERROR_NULL_PTR              = -1,   ///< Ошибка возникает, если в функцию передали нулевой указатель
+    STK_ERROR_OUT_OF_MEMORY         = -2,   ///< Ошибка возникает, если не удалось выделить память calloc или возникла ошибка при вызове realloc
+    STK_ERROR_INVALID_PTR           = -3,   ///< Ошибка возникает, если указатель на считываемые данные или data в структуре является NULL
+    STK_ERROR_OUT_OF_RANGE          = -4,   ///< Ошибка возникает, если размер стека больше, чем выделенная память
+    STK_ERROR_ATTACK                = -5,   ///< Ошибка возникает, если структура стека или данные были испорчены, посредством изменения канареечных переменных
+    STK_ERROR_STK_IS_EMPTY          = -6,   ///< Ошибка возникает, если из пустого стека пытаются вытащить данные
+    STK_ERROR_CHANGED_DATA          = -7,   ///< Ошибка возникает, если данные были испочены, проверяется посредством подсчета хеша по массиву данных
+    STK_ERROR_CHANGED_STRUCTURE     = -8    ///< Ошибка возникает, если структура стека была испорчена, проверяется посредством подсчета хеша по структуре стека
+};
 /**}@*/
 
 
@@ -101,10 +103,10 @@ struct _BaseStack
 \brief   Функции для работы с абстрактным стеком.
 @{
 */
-int _stackInit(void* stk, const ui32 capacity, const ui32 elementSize);
-int _stackValidity(const void* stk, const dbgCallInfo dbgInfo = {});
-int _stackPush(void* stk, void* value, const dbgCallInfo dbgInfo = {});
-int _stackPop(void* stk, void* dest, const dbgCallInfo dbgInfo = {});
+StackError _stackInit(void* stk, const ui32 capacity, const ui32 elementSize);
+StackError _stackValidity(const void* stk, const dbgCallInfo dbgInfo = {});
+StackError _stackPush(void* stk, void* value, const dbgCallInfo dbgInfo = {});
+StackError _stackPop(void* stk, void* dest, const dbgCallInfo dbgInfo = {});
 void _stackDump(const void* stk, const dbgCallInfo dbgInfo);
 void _stackDest(void* stk);
 /**
