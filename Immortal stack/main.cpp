@@ -3,7 +3,6 @@
 #include "Logger.h"
 #include "Tester.h"
 
-
 int main()
 {
     loggerInit("Stack.log","w");

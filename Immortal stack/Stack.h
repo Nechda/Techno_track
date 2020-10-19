@@ -1,6 +1,5 @@
 #pragma once
-#include"Stack_kernel.h"
-
+#include "Stack_kernel.h"
 
 /**
 \file Stack.h
@@ -17,7 +16,7 @@
 \code
     #include <stdio.h>
     #include <stdlib.h>
-
+    #include "Stack_kernel.h"
     #define TYPE_ double
     #include "Stack.h"
     #undef TYPE_
@@ -59,14 +58,14 @@
 */
 struct CONCAT(Stack_, TYPE_)                          
 {                                                   
-    const CanaryType leftSide = STK_CANARY_VALUE;
-    Hash structHash;
-    Hash dataHash;                                
+    ON_STK_CANARY_PROTECTION(const CanaryType leftSide = STK_CANARY_VALUE);
+    ON_STK_HASH_PROTECTION (Hash structHash);
+    ON_STK_HASH_PROTECTION (Hash dataHash);
     ui32 elementSize;                              
     ui32 size;                                      
     ui32 capacity;
     TYPE_* data;
-    const CanaryType rightSide = STK_CANARY_VALUE;
+    ON_STK_CANARY_PROTECTION(const CanaryType rightSide = STK_CANARY_VALUE);
 };
 
 
@@ -80,24 +79,29 @@ inline int stackInit(CONCAT(Stack_, TYPE_)* stk, ui32 capacity)
     return _stackInit(stk, capacity, sizeof(TYPE_));
 }
 
-inline int stackPush(CONCAT(Stack_, TYPE_)* stk, TYPE_ value)
-{
-    TYPE_ val = value;
-    return _stackPush(stk, &val);
-}
+#ifndef NDEBUG
+    inline int stackPush(CONCAT(Stack_, TYPE_)* stk, TYPE_* value)
+    {
+        return _stackPush(stk, value);
+    }
 
-inline int stackPop(CONCAT(Stack_, TYPE_)* stk, TYPE_* dest)
-{
-    return _stackPop(stk, dest);
-}
-
+    inline int stackPop(CONCAT(Stack_, TYPE_)* stk, TYPE_* dest)
+    {
+        return _stackPop(stk, dest);
+    }
+#else
+    #define stackPush(stk, value)\
+        _stackPush((stk),(value), {__FILE__, __FUNCSIG__, __LINE__, #stk})
+    #define stackPop(stk, value)\
+        _stackPop((stk),(value), {__FILE__, __FUNCSIG__, __LINE__, #stk})
+#endif
 inline void stackDest(CONCAT(Stack_, TYPE_)* stk)
 {
     _stackDest(stk);
 }
 
 #define stackDump(stk) \
-_stackDump( &stk ,__FILE__,__FUNCSIG__,__LINE__,#stk)
+_stackDump(&stk , {__FILE__, __FUNCSIG__, __LINE__, #stk})
 
 /**
 }@

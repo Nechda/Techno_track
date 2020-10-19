@@ -3,9 +3,11 @@
 #include <stdio.h>
 #include <string.h>
 
+
 #define TYPE_ int
 #include "Stack.h"
 #undef TYPE_
+
 
 const int STACK_LENGTH = 10; ///< размер стека во всех тестах
 static int numberOfTest = 0; ///< номер теста, который в данный момент исполняется
@@ -26,7 +28,7 @@ static void generateStack(Stack(int)* stack) ///< функция, генерир
     for (int i = 0; i < STACK_LENGTH; i++)
     {
         arr[i] = rand() % 100000;
-        stackPush(stack, arr[i]);
+        stackPush(stack, &arr[i]);
     }
     free(arr);
 }
@@ -54,7 +56,7 @@ static void shuffleArray(int* arr, int size) ///< функция, перемеш
 static inline void stackValidityCheck(Stack(int)* stack, const int error, const char* strTestInfo, const char* strTestErrorExplanation)
 {
     numberOfTest++;
-    int errorCode = stackValidity(stack);
+    int errorCode = _stackValidity(stack);
 
     if (errorCode != error && error)
     {
@@ -86,13 +88,13 @@ void test_pushData() ///< Тестируем стандартные функци
     for (int i = 0; i < N; i++)
     {
         arr[i] = rand() % 100000;
-        stackPush(&stack, arr[i]);
+        stackPush(&stack, &arr[i]);
     }
     for (int i = N - 1; i >= 0; i--)
     {
         int ans = 0;
         stackPop(&stack, &ans);
-        if (ans != arr[i])
+        if (ans != arr[i]+1) ///< намеренная ошибка приводит к тому, что дампы выводятся в логи
         {
             printf("Test failed!\n");
             for (int j = 0; j <= i; j++)
@@ -105,6 +107,8 @@ void test_pushData() ///< Тестируем стандартные функци
     free(arr);
     stackDest(&stack);
 }
+
+#ifndef NDEBUG
 
 void test_changeStructure_editHash() ///< Тестируем валидатор, который должен отловить изменение поля структуры
 {
@@ -275,7 +279,7 @@ void test_changeData_swapElements() ///< Тестируем валидатор, 
         {
             int* data = stack.data;
             swap(&data[i], &data[j]);
-            errorCode = stackValidity(&stack);
+            errorCode = _stackValidity(&stack);
 
             stackValidityCheck(
                 &stack,
@@ -390,15 +394,18 @@ void test_changeData_rightSideAttack() ///< Тестируем валидато�
     free(stack);
 }
 
+
+#endif
 void stackTester() ///< Тестирующая функция стека, содержит в себе 8 различных тестов
 {
     test_pushData();
-    test_changeStructure_editHash();
-    test_changeStructure_editCapacity();
-    test_changeStructure_leftSideAttack();
-    test_changeStructure_rightSideAttack();
-    test_changeData_editBits();
-    test_changeData_swapElements();
-    test_changeData_randomEditElemtnts();
+    #ifndef NDEBUG
+        test_changeStructure_editHash();
+        test_changeStructure_editCapacity();
+        test_changeStructure_leftSideAttack();
+        test_changeStructure_rightSideAttack();
+        test_changeData_editBits();
+        test_changeData_swapElements();
+        test_changeData_randomEditElemtnts();
+    #endif
 }
-

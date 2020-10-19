@@ -1,34 +1,375 @@
-[17.10.2020 17:18:06.253] [Dump]: 
+[20.10.2020 01:10:06.414] [Dump]: 
 Dump has called from
 file:e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\tester.cpp
 function:void __cdecl test_pushData(void)
-line: 104
-Stack[0xAFFD18] (variable name: stack) {
-   canary{
-       leftSide [0xAFFD18] = 0x99996666AAAA5555
-       rightSide[0xAFFD40] = 0x99996666AAAA5555
-   }
-   structHash   [0xAFFD20] = 0x1E380E2BDECE4DB7
-   dataHash     [0xAFFD28] = 0x1CAEC3762615CD47
-   elementSize  [0xAFFD30] = 4
-   size         [0xAFFD34] = 10
-   capacity     [0xAFFD38] = 26
-   data         [0xAFFD3C] = 0xFECB58
+line: 102
+Stack[0x12FF7D8] (variable name: stack) {
+   elementSize  [0x12FF7D8] = 4
+   size         [0x12FF7DC] = 19
+   capacity     [0x12FF7E0] = 26
+   data         [0x12FF7E4] = 0x16451A0
    {
-       canary{
-           leftSide[0xFECB50] = 0x99996666AAAA5555
-           leftSide[0xFECBC0] = 0x99996666AAAA5555
-       }
-        *data[0] = 0x1B4400
-        *data[1] = 0x666800
-        *data[2] = 0x3E7800
-        *data[3] = 0x7A3A00
-        *data[4] = 0xAA2600
-        *data[5] = 0xE17000
-        *data[6] = 0x972F00
-        *data[7] = 0x517E00
-        *data[8] = 0xBF800
-        *data[9] = 0x11000
+        *data[0] = 0xA04900
+        *data[1] = 0x2B2100
+        *data[2] = 0xF36300
+        *data[3] = 0x555F00
+        *data[4] = 0x31200
+        *data[5] = 0x97A00
+        *data[6] = 0xE95200
+        *data[7] = 0xFC2100
+        *data[8] = 0xDE1600
+        *data[9] = 0x5A400
+        *data[10] = 0x2D4000
+        *data[11] = 0xCB500
+        *data[12] = 0xE17700
+        *data[13] = 0x41E00
+        *data[14] = 0xE42400
+        *data[15] = 0xA23400
+        *data[16] = 0xA92700
+        *data[17] = 0x455000
+        *data[18] = 0x95800
+         data[19] = 0x0000
+         data[20] = 0xCDCDCDCD
+         data[21] = 0xCDCDCDCD
+         data[22] = 0xCDCDCDCD
+         data[23] = 0xCDCDCDCD
+         data[24] = 0xCDCDCDCD
+         data[25] = 0xCDCDCDCD
+   }
+}
+[20.10.2020 01:10:06.419] [Dump]: 
+Dump has called from
+file:e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\tester.cpp
+function:void __cdecl test_pushData(void)
+line: 102
+Stack[0x12FF7D8] (variable name: stack) {
+   elementSize  [0x12FF7D8] = 4
+   size         [0x12FF7DC] = 18
+   capacity     [0x12FF7E0] = 26
+   data         [0x12FF7E4] = 0x16451A0
+   {
+        *data[0] = 0xA04900
+        *data[1] = 0x2B2100
+        *data[2] = 0xF36300
+        *data[3] = 0x555F00
+        *data[4] = 0x31200
+        *data[5] = 0x97A00
+        *data[6] = 0xE95200
+        *data[7] = 0xFC2100
+        *data[8] = 0xDE1600
+        *data[9] = 0x5A400
+        *data[10] = 0x2D4000
+        *data[11] = 0xCB500
+        *data[12] = 0xE17700
+        *data[13] = 0x41E00
+        *data[14] = 0xE42400
+        *data[15] = 0xA23400
+        *data[16] = 0xA92700
+        *data[17] = 0x455000
+         data[18] = 0x0000
+         data[19] = 0x0000
+         data[20] = 0xCDCDCDCD
+         data[21] = 0xCDCDCDCD
+         data[22] = 0xCDCDCDCD
+         data[23] = 0xCDCDCDCD
+         data[24] = 0xCDCDCDCD
+         data[25] = 0xCDCDCDCD
+   }
+}
+[20.10.2020 01:10:06.422] [Dump]: 
+Dump has called from
+file:e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\tester.cpp
+function:void __cdecl test_pushData(void)
+line: 102
+Stack[0x12FF7D8] (variable name: stack) {
+   elementSize  [0x12FF7D8] = 4
+   size         [0x12FF7DC] = 17
+   capacity     [0x12FF7E0] = 26
+   data         [0x12FF7E4] = 0x16451A0
+   {
+        *data[0] = 0xA04900
+        *data[1] = 0x2B2100
+        *data[2] = 0xF36300
+        *data[3] = 0x555F00
+        *data[4] = 0x31200
+        *data[5] = 0x97A00
+        *data[6] = 0xE95200
+        *data[7] = 0xFC2100
+        *data[8] = 0xDE1600
+        *data[9] = 0x5A400
+        *data[10] = 0x2D4000
+        *data[11] = 0xCB500
+        *data[12] = 0xE17700
+        *data[13] = 0x41E00
+        *data[14] = 0xE42400
+        *data[15] = 0xA23400
+        *data[16] = 0xA92700
+         data[17] = 0x0000
+         data[18] = 0x0000
+         data[19] = 0x0000
+         data[20] = 0xCDCDCDCD
+         data[21] = 0xCDCDCDCD
+         data[22] = 0xCDCDCDCD
+         data[23] = 0xCDCDCDCD
+         data[24] = 0xCDCDCDCD
+         data[25] = 0xCDCDCDCD
+   }
+}
+[20.10.2020 01:10:06.433] [Dump]: 
+Dump has called from
+file:e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\tester.cpp
+function:void __cdecl test_pushData(void)
+line: 102
+Stack[0x12FF7D8] (variable name: stack) {
+   elementSize  [0x12FF7D8] = 4
+   size         [0x12FF7DC] = 16
+   capacity     [0x12FF7E0] = 26
+   data         [0x12FF7E4] = 0x16451A0
+   {
+        *data[0] = 0xA04900
+        *data[1] = 0x2B2100
+        *data[2] = 0xF36300
+        *data[3] = 0x555F00
+        *data[4] = 0x31200
+        *data[5] = 0x97A00
+        *data[6] = 0xE95200
+        *data[7] = 0xFC2100
+        *data[8] = 0xDE1600
+        *data[9] = 0x5A400
+        *data[10] = 0x2D4000
+        *data[11] = 0xCB500
+        *data[12] = 0xE17700
+        *data[13] = 0x41E00
+        *data[14] = 0xE42400
+        *data[15] = 0xA23400
+         data[16] = 0x0000
+         data[17] = 0x0000
+         data[18] = 0x0000
+         data[19] = 0x0000
+         data[20] = 0xCDCDCDCD
+         data[21] = 0xCDCDCDCD
+         data[22] = 0xCDCDCDCD
+         data[23] = 0xCDCDCDCD
+         data[24] = 0xCDCDCDCD
+         data[25] = 0xCDCDCDCD
+   }
+}
+[20.10.2020 01:10:06.438] [Dump]: 
+Dump has called from
+file:e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\tester.cpp
+function:void __cdecl test_pushData(void)
+line: 102
+Stack[0x12FF7D8] (variable name: stack) {
+   elementSize  [0x12FF7D8] = 4
+   size         [0x12FF7DC] = 15
+   capacity     [0x12FF7E0] = 26
+   data         [0x12FF7E4] = 0x16451A0
+   {
+        *data[0] = 0xA04900
+        *data[1] = 0x2B2100
+        *data[2] = 0xF36300
+        *data[3] = 0x555F00
+        *data[4] = 0x31200
+        *data[5] = 0x97A00
+        *data[6] = 0xE95200
+        *data[7] = 0xFC2100
+        *data[8] = 0xDE1600
+        *data[9] = 0x5A400
+        *data[10] = 0x2D4000
+        *data[11] = 0xCB500
+        *data[12] = 0xE17700
+        *data[13] = 0x41E00
+        *data[14] = 0xE42400
+         data[15] = 0x0000
+         data[16] = 0x0000
+         data[17] = 0x0000
+         data[18] = 0x0000
+         data[19] = 0x0000
+         data[20] = 0xCDCDCDCD
+         data[21] = 0xCDCDCDCD
+         data[22] = 0xCDCDCDCD
+         data[23] = 0xCDCDCDCD
+         data[24] = 0xCDCDCDCD
+         data[25] = 0xCDCDCDCD
+   }
+}
+[20.10.2020 01:10:06.445] [Dump]: 
+Dump has called from
+file:e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\tester.cpp
+function:void __cdecl test_pushData(void)
+line: 102
+Stack[0x12FF7D8] (variable name: stack) {
+   elementSize  [0x12FF7D8] = 4
+   size         [0x12FF7DC] = 14
+   capacity     [0x12FF7E0] = 26
+   data         [0x12FF7E4] = 0x16451A0
+   {
+        *data[0] = 0xA04900
+        *data[1] = 0x2B2100
+        *data[2] = 0xF36300
+        *data[3] = 0x555F00
+        *data[4] = 0x31200
+        *data[5] = 0x97A00
+        *data[6] = 0xE95200
+        *data[7] = 0xFC2100
+        *data[8] = 0xDE1600
+        *data[9] = 0x5A400
+        *data[10] = 0x2D4000
+        *data[11] = 0xCB500
+        *data[12] = 0xE17700
+        *data[13] = 0x41E00
+         data[14] = 0x0000
+         data[15] = 0x0000
+         data[16] = 0x0000
+         data[17] = 0x0000
+         data[18] = 0x0000
+         data[19] = 0x0000
+         data[20] = 0xCDCDCDCD
+         data[21] = 0xCDCDCDCD
+         data[22] = 0xCDCDCDCD
+         data[23] = 0xCDCDCDCD
+         data[24] = 0xCDCDCDCD
+         data[25] = 0xCDCDCDCD
+   }
+}
+[20.10.2020 01:10:06.455] [Dump]: 
+Dump has called from
+file:e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\tester.cpp
+function:void __cdecl test_pushData(void)
+line: 102
+Stack[0x12FF7D8] (variable name: stack) {
+   elementSize  [0x12FF7D8] = 4
+   size         [0x12FF7DC] = 13
+   capacity     [0x12FF7E0] = 26
+   data         [0x12FF7E4] = 0x16451A0
+   {
+        *data[0] = 0xA04900
+        *data[1] = 0x2B2100
+        *data[2] = 0xF36300
+        *data[3] = 0x555F00
+        *data[4] = 0x31200
+        *data[5] = 0x97A00
+        *data[6] = 0xE95200
+        *data[7] = 0xFC2100
+        *data[8] = 0xDE1600
+        *data[9] = 0x5A400
+        *data[10] = 0x2D4000
+        *data[11] = 0xCB500
+        *data[12] = 0xE17700
+         data[13] = 0x0000
+         data[14] = 0x0000
+         data[15] = 0x0000
+         data[16] = 0x0000
+         data[17] = 0x0000
+         data[18] = 0x0000
+         data[19] = 0x0000
+         data[20] = 0xCDCDCDCD
+         data[21] = 0xCDCDCDCD
+         data[22] = 0xCDCDCDCD
+         data[23] = 0xCDCDCDCD
+         data[24] = 0xCDCDCDCD
+         data[25] = 0xCDCDCDCD
+   }
+}
+[20.10.2020 01:10:06.460] [Dump]: 
+Dump has called from
+file:e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\tester.cpp
+function:void __cdecl test_pushData(void)
+line: 102
+Stack[0x12FF7D8] (variable name: stack) {
+   elementSize  [0x12FF7D8] = 4
+   size         [0x12FF7DC] = 12
+   capacity     [0x12FF7E0] = 26
+   data         [0x12FF7E4] = 0x16451A0
+   {
+        *data[0] = 0xA04900
+        *data[1] = 0x2B2100
+        *data[2] = 0xF36300
+        *data[3] = 0x555F00
+        *data[4] = 0x31200
+        *data[5] = 0x97A00
+        *data[6] = 0xE95200
+        *data[7] = 0xFC2100
+        *data[8] = 0xDE1600
+        *data[9] = 0x5A400
+        *data[10] = 0x2D4000
+        *data[11] = 0xCB500
+         data[12] = 0x0000
+         data[13] = 0x0000
+         data[14] = 0x0000
+         data[15] = 0x0000
+         data[16] = 0x0000
+         data[17] = 0x0000
+         data[18] = 0x0000
+         data[19] = 0x0000
+         data[20] = 0xCDCDCDCD
+         data[21] = 0xCDCDCDCD
+         data[22] = 0xCDCDCDCD
+         data[23] = 0xCDCDCDCD
+         data[24] = 0xCDCDCDCD
+         data[25] = 0xCDCDCDCD
+   }
+}
+[20.10.2020 01:10:06.464] [Dump]: 
+Dump has called from
+file:e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\tester.cpp
+function:void __cdecl test_pushData(void)
+line: 102
+Stack[0x12FF7D8] (variable name: stack) {
+   elementSize  [0x12FF7D8] = 4
+   size         [0x12FF7DC] = 11
+   capacity     [0x12FF7E0] = 26
+   data         [0x12FF7E4] = 0x16451A0
+   {
+        *data[0] = 0xA04900
+        *data[1] = 0x2B2100
+        *data[2] = 0xF36300
+        *data[3] = 0x555F00
+        *data[4] = 0x31200
+        *data[5] = 0x97A00
+        *data[6] = 0xE95200
+        *data[7] = 0xFC2100
+        *data[8] = 0xDE1600
+        *data[9] = 0x5A400
+        *data[10] = 0x2D4000
+         data[11] = 0x0000
+         data[12] = 0x0000
+         data[13] = 0x0000
+         data[14] = 0x0000
+         data[15] = 0x0000
+         data[16] = 0x0000
+         data[17] = 0x0000
+         data[18] = 0x0000
+         data[19] = 0x0000
+         data[20] = 0xCDCDCDCD
+         data[21] = 0xCDCDCDCD
+         data[22] = 0xCDCDCDCD
+         data[23] = 0xCDCDCDCD
+         data[24] = 0xCDCDCDCD
+         data[25] = 0xCDCDCDCD
+   }
+}
+[20.10.2020 01:10:06.469] [Dump]: 
+Dump has called from
+file:e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\tester.cpp
+function:void __cdecl test_pushData(void)
+line: 102
+Stack[0x12FF7D8] (variable name: stack) {
+   elementSize  [0x12FF7D8] = 4
+   size         [0x12FF7DC] = 10
+   capacity     [0x12FF7E0] = 26
+   data         [0x12FF7E4] = 0x16451A0
+   {
+        *data[0] = 0xA04900
+        *data[1] = 0x2B2100
+        *data[2] = 0xF36300
+        *data[3] = 0x555F00
+        *data[4] = 0x31200
+        *data[5] = 0x97A00
+        *data[6] = 0xE95200
+        *data[7] = 0xFC2100
+        *data[8] = 0xDE1600
+        *data[9] = 0x5A400
          data[10] = 0x0000
          data[11] = 0x0000
          data[12] = 0x0000
@@ -47,795 +388,42 @@ Stack[0xAFFD18] (variable name: stack) {
          data[25] = 0xCDCDCDCD
    }
 }
-[17.10.2020 17:18:06.258] [Assert]: Expression !"Somebody has changed our stack structure!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 167
-[17.10.2020 17:18:06.259] [Assert]: Expression !"Haha nice try, but there is checking the null ptr!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl _stackPush(void *,void *)
-line: 214
-[17.10.2020 17:18:06.260] [Assert]: Expression !"Somebody has changed our stack structure!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 167
-[17.10.2020 17:18:06.260] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 154
-[17.10.2020 17:18:06.261] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 154
-[17.10.2020 17:18:06.262] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 154
-[17.10.2020 17:18:06.262] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 154
-[17.10.2020 17:18:06.263] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 154
-[17.10.2020 17:18:06.263] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 154
-[17.10.2020 17:18:06.264] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 154
-[17.10.2020 17:18:06.265] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 154
-[17.10.2020 17:18:06.265] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 154
-[17.10.2020 17:18:06.266] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 154
-[17.10.2020 17:18:06.267] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 154
-[17.10.2020 17:18:06.268] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 154
-[17.10.2020 17:18:06.268] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 154
-[17.10.2020 17:18:06.269] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 154
-[17.10.2020 17:18:06.269] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 154
-[17.10.2020 17:18:06.270] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 154
-[17.10.2020 17:18:06.271] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 154
-[17.10.2020 17:18:06.271] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 154
-[17.10.2020 17:18:06.272] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 154
-[17.10.2020 17:18:06.273] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 154
-[17.10.2020 17:18:06.273] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 154
-[17.10.2020 17:18:06.274] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 154
-[17.10.2020 17:18:06.274] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 154
-[17.10.2020 17:18:06.275] [Assert]: Expression !"Somebody attack us from left side!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 154
-[17.10.2020 17:18:06.276] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.277] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.277] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.278] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.279] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.280] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.280] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.281] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.282] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.282] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.283] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.284] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.285] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.285] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.286] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.287] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.288] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.288] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.289] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.290] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.291] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.291] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.292] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.293] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.293] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.295] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.296] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.296] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.297] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.298] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.299] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.301] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.303] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.305] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.306] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.307] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.308] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.309] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.310] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.311] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.311] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.312] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.313] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.314] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.315] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.316] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.317] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.318] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.318] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.319] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.320] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.321] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.322] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.323] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.324] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.325] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.325] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.326] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.327] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.328] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.328] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.329] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.330] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.331] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.332] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.333] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.334] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.335] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.336] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.337] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.338] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.339] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.340] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.341] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.342] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.343] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.344] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.345] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.346] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.347] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.348] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.349] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.350] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.351] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.353] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.354] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.354] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.355] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.356] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.357] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.358] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.359] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.360] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.361] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.362] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.363] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.364] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.365] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.366] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.366] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.367] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.368] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.369] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.370] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.371] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.372] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.373] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.374] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.375] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.375] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.376] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.377] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.378] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.378] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.379] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.380] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.380] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.381] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.382] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.382] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.383] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.384] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.385] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.385] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.386] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.387] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.387] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.388] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.389] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.389] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.390] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.391] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.392] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.392] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.393] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.394] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.394] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.395] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.396] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.396] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.398] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.398] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.399] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.400] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.403] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.403] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.404] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.405] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.406] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.407] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.408] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.408] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.409] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.410] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.410] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.411] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.412] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.413] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.414] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.414] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.416] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.416] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.417] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.418] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.421] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.421] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.422] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.423] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.424] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.424] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
-[17.10.2020 17:18:06.426] [Assert]: Expression !"Somebody has changed our data in stack!\n" is false.
-In file: e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\stack.cpp
-function: int __cdecl stackValidity(const void *)
-line: 174
+[20.10.2020 01:10:06.472] [Dump]: 
+Dump has called from
+file:e:\users\dmitry\documents\visual studio 2017\projects\stack\stack\tester.cpp
+function:void __cdecl test_pushData(void)
+line: 106
+Stack[0x12FF7D8] (variable name: stack) {
+   elementSize  [0x12FF7D8] = 4
+   size         [0x12FF7DC] = 10
+   capacity     [0x12FF7E0] = 26
+   data         [0x12FF7E4] = 0x16451A0
+   {
+        *data[0] = 0xA04900
+        *data[1] = 0x2B2100
+        *data[2] = 0xF36300
+        *data[3] = 0x555F00
+        *data[4] = 0x31200
+        *data[5] = 0x97A00
+        *data[6] = 0xE95200
+        *data[7] = 0xFC2100
+        *data[8] = 0xDE1600
+        *data[9] = 0x5A400
+         data[10] = 0x0000
+         data[11] = 0x0000
+         data[12] = 0x0000
+         data[13] = 0x0000
+         data[14] = 0x0000
+         data[15] = 0x0000
+         data[16] = 0x0000
+         data[17] = 0x0000
+         data[18] = 0x0000
+         data[19] = 0x0000
+         data[20] = 0xCDCDCDCD
+         data[21] = 0xCDCDCDCD
+         data[22] = 0xCDCDCDCD
+         data[23] = 0xCDCDCDCD
+         data[24] = 0xCDCDCDCD
+         data[25] = 0xCDCDCDCD
+   }
+}

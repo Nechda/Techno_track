@@ -4,15 +4,32 @@
 #include <assert.h>
 #include "Logger.h"
 
+
 #define NDEBUG
 
 #ifdef NDEBUG
-#define Assert_c(expr) if(!(expr)) loggerAssert(#expr,__FILE__,__FUNCSIG__,__LINE__); ///< Реализация assert для релиза переключить режим можно директивой #define NDEBUG
+    #define Assert_c(expr) if(!(expr)) loggerAssert(#expr,__FILE__,__FUNCSIG__,__LINE__);  ///< Реализация assert для релиза переключить режим можно директивой #define NDEBUG
 #else
-#define Assert_c(expr) if(!(expr))printf("Expression %ls is false.\n In file: %ls\n line: %d\n",_CRT_WIDE(#expr), _CRT_WIDE(__FILE__), (unsigned)(__LINE__)); ///< Реализация assert для отладки
+    #define Assert_c(expr) if(!(expr))printf("Expression %ls is false.\n In file: %ls\n line: %d\n",_CRT_WIDE(#expr), _CRT_WIDE(__FILE__), (unsigned)(__LINE__)); ///< Реализация assert для отладки
+    #define STK_CANARY_PROTECTION           ///<включаем защиту канарейками
+    #define STK_HASH_PROTECTION             ///<включаем защиту хешами
 #endif
 
 
+/**
+\brief Несколько ветвлений в условной компиляции, позволит просто реализовать 2 режима работы стека
+*/
+#ifdef STK_CANARY_PROTECTION
+    #define ON_STK_CANARY_PROTECTION(code) code
+#else
+    #define ON_STK_CANARY_PROTECTION(code)
+#endif
+
+#ifdef STK_HASH_PROTECTION
+    #define ON_STK_HASH_PROTECTION(code) code
+#else
+    #define ON_STK_HASH_PROTECTION(code)
+#endif
 
 /**
 \brief Для краткости дальнейших описаний вводим короткие имена стандартных типов
@@ -21,16 +38,29 @@
 typedef unsigned char ui8;
 typedef unsigned int ui32;
 typedef unsigned long long ui64;
-typedef ui64 CanaryType;
-typedef ui64 Hash;
+ON_STK_CANARY_PROTECTION(typedef ui64 CanaryType);
+ON_STK_HASH_PROTECTION(typedef ui64 Hash);
 /**}@*/
+
+
+/**
+\brief Структура для хранения отладочной информации
+*/
+struct dbgCallInfo
+{
+    const char* file;
+    const char* func;
+    long        line;
+    const char* varName;
+};
 
 /**
 \brief Константы, регулирующие поведение стека
 @{
 */
-const CanaryType STK_CANARY_VALUE = 0x99996666AAAA5555; ///< Magic number, который записывается в переменные-канарейки, для отслеживания атак на структуру слева и справа.
-const ui64 STK_BUFFER_ADDITION = 8;                     ///< Константа, на которую увеличиывается буфер capacity, после того, как место заканчивается
+ON_STK_CANARY_PROTECTION(const CanaryType STK_CANARY_VALUE = 0x99996666AAAA5555);  ///< Magic number, который записывается в переменные-канарейки, для отслеживания атак на структуру слева и справа.
+const ui8 STK_CANARY_SIZE = ON_STK_CANARY_PROTECTION(sizeof(CanaryType)) + 0;      ///< Размер канареечной переменной
+const ui64 STK_BUFFER_ADDITION = 8;                                                ///< Константа, на которую увеличиывается буфер capacity, после того, как место заканчивается
 /**}@*/
 
 
@@ -56,14 +86,14 @@ const int STK_ERROR_CHANGED_STRUCTURE   = -8; ///< Ошибка возникае
 */
 struct _BaseStack
 {
-    const CanaryType leftSide = STK_CANARY_VALUE;
-    Hash structHash;
-    Hash dataHash;
+    ON_STK_CANARY_PROTECTION(const CanaryType leftSide = STK_CANARY_VALUE);
+    ON_STK_HASH_PROTECTION (Hash structHash);
+    ON_STK_HASH_PROTECTION (Hash dataHash  );
     ui32 elementSize;
     ui32 size;
     ui32 capacity;
     void* data;
-    const CanaryType rightSide = STK_CANARY_VALUE;
+    ON_STK_CANARY_PROTECTION(const CanaryType rightSide = STK_CANARY_VALUE);
 };
 
 
@@ -72,10 +102,10 @@ struct _BaseStack
 @{
 */
 int _stackInit(void* stk, const ui32 capacity, const ui32 elementSize);
-int stackValidity(const void* stk);
-int _stackPush(void* stk, void* value);
-int _stackPop(void* stk, void* dest);
-void _stackDump(void* stk, const char* file, const char* func, const ui32 line, const char* variableName);
+int _stackValidity(const void* stk, const dbgCallInfo dbgInfo = {});
+int _stackPush(void* stk, void* value, const dbgCallInfo dbgInfo = {});
+int _stackPop(void* stk, void* dest, const dbgCallInfo dbgInfo = {});
+void _stackDump(const void* stk, const dbgCallInfo dbgInfo);
 void _stackDest(void* stk);
 /**
 }@

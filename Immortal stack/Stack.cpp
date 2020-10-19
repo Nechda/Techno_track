@@ -2,6 +2,7 @@
 #include <string.h>
 #include <ctime>
 
+
 /**
 \brief Таблица перестановки 256 энементов для алгоритма хеширования Пирсона
 */
@@ -24,6 +25,8 @@ static const ui8 T[256] = {
     105, 46, 190, 214, 194, 250, 199, 91, 202, 162, 142, 182, 183, 99, 144, 115
 };
 
+
+#ifdef STK_HASH_PROTECTION
 /**
 \brief   Генерация 64 битного хеша по алгоритму Пирсона
 \param   [in]   data   Указатель на массив, по которому строится хеш
@@ -44,6 +47,8 @@ static Hash getHash(const ui8* data, ui32 len)
     }
     return hash;
 }
+#endif
+
 
 /**
 \brief   Функция изменения размера стека
@@ -51,7 +56,7 @@ static Hash getHash(const ui8* data, ui32 len)
 \param   [in]   newSize   Новый размер выделенной памяти
 \return  Возвращается 0 если все ok, в противном случае код ошибки.
 */
-static int stackResize(void* stk,ui32 newSize = 1)
+static int stackResize(void* stk, ui32 newSize = 1)
 {
     Assert_c(stk);
     if (!stk)
@@ -61,30 +66,32 @@ static int stackResize(void* stk,ui32 newSize = 1)
     char* ptr = (char*)stack->data;
     if (ptr == NULL)
     {
-        ptr = (char*)calloc(newSize*stack->elementSize + 2 * sizeof(CanaryType),sizeof(ui8));
+        ptr = (char*)calloc(newSize*stack->elementSize + 2 * STK_CANARY_SIZE,sizeof(ui8));
         Assert_c(ptr);
         if (!ptr)
             return STK_ERROR_OUT_OF_MEMORY;
     }
     else
     {
-        ptr -= sizeof(CanaryType);
-        ptr = (char*)realloc(ptr, newSize*stack->elementSize + 2 * sizeof(CanaryType));
+        ptr -= STK_CANARY_SIZE;
+        ptr = (char*)realloc(ptr, newSize*stack->elementSize + 2 * STK_CANARY_SIZE);
         Assert_c(ptr);
         if (!ptr)
             return STK_ERROR_OUT_OF_MEMORY;
     }
 
-    stack->data = ptr + sizeof(CanaryType);
+    stack->data = ptr + STK_CANARY_SIZE;
 
-    *((CanaryType*)ptr) = STK_CANARY_VALUE;
-    ptr += sizeof(CanaryType) + newSize*stack->elementSize;
-    *((CanaryType*)ptr) = STK_CANARY_VALUE;
-
+    #ifdef STK_CANARY_PROTECTION
+        *((CanaryType*)ptr) = STK_CANARY_VALUE;
+        ptr += STK_CANARY_SIZE + newSize*stack->elementSize;
+        *((CanaryType*)ptr) = STK_CANARY_VALUE;
+    #endif
     stack->capacity = newSize;
     return 0;
 }
 
+#ifdef STK_HASH_PROTECTION
 /**
 \brief   Функция вычисления хешей стека
 \param   [in]   stk   Указатель на стуктуру стека
@@ -96,9 +103,11 @@ static inline void recalcHashes(void* stk)
         return;
 
     _BaseStack* stack = (_BaseStack*)stk;
-    stack->dataHash = getHash((ui8*)stack->data - sizeof(CanaryType), stack->capacity*stack->elementSize + sizeof(CanaryType));
-    stack->structHash = getHash((ui8*)&stack->dataHash, (ui8*)&stack->rightSide - (ui8*)&stack->dataHash + sizeof(CanaryType));
+    stack->dataHash = getHash((ui8*)stack->data - STK_CANARY_SIZE, stack->capacity*stack->elementSize + STK_CANARY_SIZE);
+    stack->structHash = getHash((ui8*)&stack->dataHash, (ui8*)&stack->rightSide - (ui8*)&stack->dataHash + STK_CANARY_SIZE);
 }
+#endif
+
 
 /**
 \brief   Функция, инициализирующая стек начальными данными
@@ -107,7 +116,7 @@ static inline void recalcHashes(void* stk)
 \param   [in]   elementsSize   Размер одного элемента стека(в байтах)
 \return  Возвращается 0 если все ok, в противном случае код ошибки.
 */
-int _stackInit(void* stk,const ui32 capacity,const ui32 elementSize)
+int _stackInit(void* stk, const ui32 capacity, const ui32 elementSize)
 {
     Assert_c(stk);
     if (!stk)
@@ -123,7 +132,7 @@ int _stackInit(void* stk,const ui32 capacity,const ui32 elementSize)
     Assert_c(!errorCode);
     if (errorCode)
         return errorCode;
-    recalcHashes(stack);
+    ON_STK_HASH_PROTECTION(recalcHashes(stack));
 }
 
 
@@ -132,7 +141,7 @@ int _stackInit(void* stk,const ui32 capacity,const ui32 elementSize)
 \param   [in]   stk   Указатель на структуру стека
 \return  Возвращается 0 если все ok, в противном случае код ошибки.
 */
-int stackValidity(const void* stk)
+int _stackValidity(const void* stk, const dbgCallInfo dbgInfo)
 {
     Assert_c(stk);
     if (!stk)
@@ -145,53 +154,66 @@ int stackValidity(const void* stk)
 
     if (stack->capacity < stack->size)
     {
+        _stackDump(stk, dbgInfo);
         Assert_c(!"Capacity less than size!\n");
         return STK_ERROR_OUT_OF_RANGE;
     }
 
-    if (stack->leftSide != STK_CANARY_VALUE)
-    {
-        Assert_c(!"Somebody attack us from left side!\n");
-        return STK_ERROR_ATTACK;
-    }
-    if (stack->rightSide != STK_CANARY_VALUE)
-    {
-        Assert_c(!"Somebody attack us from right side!\n");
-        return STK_ERROR_ATTACK;
-    }
 
-    
-    Hash structHash = getHash((ui8*)&stack->dataHash, (ui8*)&stack->rightSide - (ui8*)&stack->dataHash + sizeof(CanaryType));
-    if (structHash != stack->structHash)
-    {
-        Assert_c(!"Somebody has changed our stack structure!\n");
-        return STK_ERROR_CHANGED_STRUCTURE;
-    }
+    #ifdef STK_CANARY_PROTECTION
+        if (stack->leftSide != STK_CANARY_VALUE)
+        {
+            _stackDump(stk, dbgInfo);
+            Assert_c(!"Somebody attack us from left side!\n");
+            return STK_ERROR_ATTACK;
+        }
+        if (stack->rightSide != STK_CANARY_VALUE)
+        {
+            _stackDump(stk, dbgInfo);
+            Assert_c(!"Somebody attack us from right side!\n");
+            return STK_ERROR_ATTACK;
+        }
+    #endif
 
-    Hash dataHash = getHash((ui8*)stack->data - sizeof(CanaryType), stack->capacity*stack->elementSize + sizeof(CanaryType));
-    if (dataHash != stack->dataHash)
-    {
-        Assert_c(!"Somebody has changed our data in stack!\n");
-        return STK_ERROR_CHANGED_DATA;
-    }
+    #ifdef STK_HASH_PROTECTION
+        Hash structHash = getHash((ui8*)&stack->dataHash, (ui8*)&stack->rightSide - (ui8*)&stack->dataHash + STK_CANARY_SIZE);
+        if (structHash != stack->structHash)
+        {
+            _stackDump(stk, dbgInfo);
+            Assert_c(!"Somebody has changed our stack structure!\n");
+            return STK_ERROR_CHANGED_STRUCTURE;
+        }
 
-    CanaryType* ptr = (CanaryType*)stack->data;
-    ptr--;
-    if (*ptr != STK_CANARY_VALUE)
-    {
-        Assert_c(!"Somebody attack us from left side!\n");
-        return STK_ERROR_ATTACK;
-    }
+        Hash dataHash = getHash((ui8*)stack->data - STK_CANARY_SIZE, stack->capacity*stack->elementSize + STK_CANARY_SIZE);
+        if (dataHash != stack->dataHash)
+        {
+            _stackDump(stk, dbgInfo);
+            Assert_c(!"Somebody has changed our data in stack!\n");
+            return STK_ERROR_CHANGED_DATA;
+        }
+    #endif
 
-    ptr = (CanaryType*)((ui8*)stack->data + stack->capacity*stack->elementSize);
-    if ( *ptr != STK_CANARY_VALUE)
-    {
-        Assert_c(!"Somebody attack us from right side!\n");
-        return STK_ERROR_ATTACK;
-    }
+    #ifdef STK_CANARY_PROTECTION
+        CanaryType* ptr = (CanaryType*)stack->data;
+        ptr--;
+        if (*ptr != STK_CANARY_VALUE)
+        {
+            _stackDump(stk, dbgInfo);
+            Assert_c(!"Somebody attack us from left side!\n");
+            return STK_ERROR_ATTACK;
+        }
 
-    ptr = (CanaryType*)stack->data;
-    ptr--;
+        ptr = (CanaryType*)((ui8*)stack->data + stack->capacity*stack->elementSize);
+        if ( *ptr != STK_CANARY_VALUE)
+        {
+            _stackDump(stk, dbgInfo);
+            Assert_c(!"Somebody attack us from right side!\n");
+            return STK_ERROR_ATTACK;
+        }
+
+        ptr = (CanaryType*)stack->data;
+        ptr--;
+    #endif
 
     return 0;
 }
@@ -203,10 +225,10 @@ int stackValidity(const void* stk)
 \return  Возвращается 0 если все ok, в противном случае код ошибки.
 */
 
-int _stackPush(void* stk,void* value)
+int _stackPush(void* stk, void* value, const dbgCallInfo dbgInfo)
 {
     int errorCode = 0;
-    errorCode = stackValidity(stk);
+    errorCode = _stackValidity(stk);
     if (errorCode)
         return errorCode;
     if (!value)
@@ -224,8 +246,8 @@ int _stackPush(void* stk,void* value)
     memcpy(addr, value, stack->elementSize);
     stack->size++;
 
-    recalcHashes(stk);
-    errorCode = stackValidity(stk);
+    ON_STK_HASH_PROTECTION(recalcHashes(stk));
+    errorCode = _stackValidity(stk);
     if (errorCode)
         return errorCode;
 
@@ -240,10 +262,10 @@ int _stackPush(void* stk,void* value)
 \return  Возвращается 0 если все ok, в противном случае код ошибки.
 \note    Если в стеке нет элементов, то функция возвращает код ошибки STK_ERROR_STK_IS_EMPTY
 */
-int _stackPop(void* stk,void* dest)
+int _stackPop(void* stk, void* dest, const dbgCallInfo dbgInfo)
 {
     int errorCode = 0;
-    errorCode = stackValidity(stk);
+    errorCode = _stackValidity(stk);
     if (errorCode)
         return errorCode;
 
@@ -264,13 +286,13 @@ int _stackPop(void* stk,void* dest)
     if (stack->capacity - stack->size > 2 * STK_BUFFER_ADDITION)
         errorCode = stackResize(stack, stack->capacity - STK_BUFFER_ADDITION);
 
-    recalcHashes(stk);
+    ON_STK_HASH_PROTECTION(recalcHashes(stk));
 
     if (errorCode)
         return errorCode;
 
 
-    errorCode = stackValidity(stk);
+    errorCode = _stackValidity(stk);
     if (errorCode)
         return errorCode;
 
@@ -290,8 +312,8 @@ void _stackDest(void* stk)
     
     _BaseStack* stack = (_BaseStack*)stk;
     ui8* ptr = (ui8*)stack->data;
-    ptr -= sizeof(CanaryType);
-    memset(ptr, 0, 2 * sizeof(CanaryType) + stack->capacity*stack->elementSize);
+    ptr -= STK_CANARY_SIZE;
+    memset(ptr, 0, 2 * STK_CANARY_SIZE + stack->capacity*stack->elementSize);
     free(ptr);
 }
 
@@ -306,7 +328,7 @@ void _stackDest(void* stk)
 \param   [in]   line           Номер строки, из которой был вызван дамп (в макросе подставляется __LINE__)
 \param   [in]   variableName   Имя переменной, которая передается в дамп
 */
-void _stackDump(void* stk, const char* file, const char* func, const ui32 line,const char* variableName)
+void _stackDump(const void* stk, const dbgCallInfo dbgInfo)
 {
     if (!stk)
     {
@@ -330,23 +352,29 @@ void _stackDump(void* stk, const char* file, const char* func, const ui32 line,c
     if (outStream != stdout)
         logger("Dump", "");
 
-    fprintf(outStream,"Dump has called from\nfile:%s\nfunction:%s\nline: %d\n", file, func, line);
-    fprintf(outStream,"Stack[0x%X] (variable name: %s) {\n", (char*)stk,variableName);
-    fprintf(outStream,"   canary{\n");
-    fprintf(outStream,"       leftSide [0x%X] = 0x%llX\n", &stack->leftSide, stack->leftSide);
-    fprintf(outStream,"       rightSide[0x%X] = 0x%llX\n", &stack->rightSide, stack->rightSide);
-    fprintf(outStream,"   }\n");
-    fprintf(outStream,"   structHash   [0x%X] = 0x%llX\n", &stack->structHash, stack->structHash);
-    fprintf(outStream,"   dataHash     [0x%X] = 0x%llX\n", &stack->dataHash, stack->dataHash);
+    fprintf(outStream,"Dump has called from\nfile:%s\nfunction:%s\nline: %d\n", dbgInfo.file, dbgInfo.func, dbgInfo.line);
+    fprintf(outStream,"Stack[0x%X] (variable name: %s) {\n", (char*)stk, dbgInfo.varName);
+    #ifdef STK_CANARY_PROTECTION
+        fprintf(outStream,"   canary{\n");
+        fprintf(outStream,"       leftSide [0x%X] = 0x%llX\n", &stack->leftSide, stack->leftSide);
+        fprintf(outStream,"       rightSide[0x%X] = 0x%llX\n", &stack->rightSide, stack->rightSide);
+        fprintf(outStream,"   }\n");
+    #endif
+    #ifdef STK_HASH_PROTECTION
+        fprintf(outStream,"   structHash   [0x%X] = 0x%llX\n", &stack->structHash, stack->structHash);
+        fprintf(outStream,"   dataHash     [0x%X] = 0x%llX\n", &stack->dataHash, stack->dataHash);
+    #endif
     fprintf(outStream,"   elementSize  [0x%X] = %d\n", &stack->elementSize, stack->elementSize);
     fprintf(outStream,"   size         [0x%X] = %d\n", &stack->size, stack->size);
     fprintf(outStream,"   capacity     [0x%X] = %d\n", &stack->capacity, stack->capacity);
     fprintf(outStream,"   data         [0x%X] = 0x%X\n", &stack->data, stack->data);
     fprintf(outStream,"   {\n");
-    fprintf(outStream,"       canary{\n");
-    fprintf(outStream,"           leftSide[0x%X] = 0x%llX\n", ptrData - sizeof(CanaryType),   *((CanaryType*)(ptrData - sizeof(CanaryType))) );
-    fprintf(outStream,"           leftSide[0x%X] = 0x%llX\n", ptrData + capacity*elementSize, *((CanaryType*)(ptrData + capacity*elementSize)));
-    fprintf(outStream,"       }\n");
+    #ifdef STK_CANARY_PROTECTION
+        fprintf(outStream,"       canary{\n");
+        fprintf(outStream,"           leftSide[0x%X] = 0x%llX\n", ptrData - sizeof(CanaryType),   *((CanaryType*)(ptrData - sizeof(CanaryType))) );
+        fprintf(outStream,"           leftSide[0x%X] = 0x%llX\n", ptrData + capacity*elementSize, *((CanaryType*)(ptrData + capacity*elementSize)));
+        fprintf(outStream,"       }\n");
+    #endif
     for (int i = 0; i < capacity; i++)
     {
         fprintf(outStream,"        ");
