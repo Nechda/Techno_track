@@ -1,0 +1,14 @@
+main:
+	mov eax, 3
+	mov ebx, 5
+	call multiply
+	mov edx, 0
+	mov esi, [eax]
+	mov edi, [str_ptr]
+hlt
+multiply:
+	mov edx, 1
+	mul edx, eax
+	mul edx, ebx
+ret
+str_ptr:
