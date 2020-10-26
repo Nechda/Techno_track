@@ -51,6 +51,12 @@ struct
     char* logFilename = "log.log";
 }inputParams;
 
+
+const ui8 PROGRAM_CODE_CPU = 1;
+const ui8 PROGRAM_CODE_COMPILATOR = 2;
+const ui8 PROGRAM_CODE_DISASSEMBLER = 3;
+
+
 int main(int argc, char** argv)
 {
     bool noLogFileFlag = 0;
@@ -117,13 +123,40 @@ int main(int argc, char** argv)
     }
 
 
-    if (!inputParams.outputFilename)
+    ui8 programIndex = 0;
+    if (!strcmp("cpu", inputParams.programName))
+        programIndex = PROGRAM_CODE_CPU;
+    if (!strcmp("compilator", inputParams.programName))
+        programIndex = PROGRAM_CODE_COMPILATOR;
+    if (!strcmp("disassembler", inputParams.programName))
+        programIndex = PROGRAM_CODE_DISASSEMBLER;
+
+    if (!programIndex)
     {
-        printf("Warning: No output file specified. By default result will write into a.bin.\n");
-        inputParams.outputFilename = "a.bin";
+        printf("Error: Invalid name program!\n");
+        return -1;
     }
 
-    FILE* outStream = fopen(inputParams.outputFilename, "wb");
+    if (programIndex == PROGRAM_CODE_CPU)
+    {
+        cupInit();
+        cpuRunProgram(codeStr, inputFileSize);
+        free(codeStr);
+        printf("CPU finished with the code: %d (%s)\n", errorCode, getStringByErrorCode((CPUerror)errorCode));
+        if (!noLogFileFlag)
+            printf("More infromation see in log file: %s\n", inputParams.logFilename);
+        return errorCode;
+    }
+
+
+    if (!inputParams.outputFilename)
+    {
+        printf("Warning: No output file specified. By default result will write into a.out\n");
+        inputParams.outputFilename = "a.out";
+    }
+
+
+    FILE* outStream = fopen(inputParams.outputFilename, programIndex == PROGRAM_CODE_COMPILATOR ? "wb" : "w");
     if (!outStream)
     {
         printf("Error: We can't open file %s for writing result.\n", inputParams.outputFilename);
@@ -136,19 +169,8 @@ int main(int argc, char** argv)
     }
 
 
-    if (!strcmp("cpu", inputParams.programName))
-    {
-        cupInit();
-        cpuRunProgram(codeStr, inputFileSize);
-        free(codeStr);
-        printf("CPU finished with the code: %d (%s)\n", errorCode, getStringByErrorCode((CPUerror)errorCode));
-        if (!noLogFileFlag)
-            printf("More infromation see in log file: %s\n", inputParams.logFilename);
-        return errorCode;
-    }
 
-
-    if(!strcmp("compilator", inputParams.programName))
+    if(programIndex == PROGRAM_CODE_COMPILATOR)
     {
         errorCode = compile(codeStr, outStream);
         fclose(outStream);
@@ -159,7 +181,7 @@ int main(int argc, char** argv)
         return errorCode;
     }
     
-    if(!strcmp("disassembler", inputParams.programName))
+    if(programIndex == PROGRAM_CODE_DISASSEMBLER)
     {
         errorCode = disasm(codeStr, inputFileSize, outStream);
         free(codeStr);
