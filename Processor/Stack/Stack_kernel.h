@@ -4,14 +4,13 @@
 #include <assert.h>
 #include "../Logger.h"
 
-#define NDEBUG
+//#define NDEBUG
 
-#ifdef NDEBUG
-    #define Assert_c(expr) if(!(expr)) loggerAssert(#expr,__FILE__,__FUNCSIG__,__LINE__);  ///< Реализация assert для релиза переключить режим можно директивой #define NDEBUG
-#else
-    #define Assert_c(expr) if(!(expr))printf("Expression %ls is false.\n In file: %ls\n line: %d\n",_CRT_WIDE(#expr), _CRT_WIDE(__FILE__), (unsigned)(__LINE__)); ///< Реализация assert для отладки
-    #define STK_CANARY_PROTECTION           ///<включаем защиту канарейками
-    #define STK_HASH_PROTECTION             ///<включаем защиту хешами
+#define Assert_c(expr) if(!(expr)) loggerAssert(#expr,__FILE__,__FUNCSIG__,__LINE__);
+
+#ifndef NDEBUG
+    //#define STK_CANARY_PROTECTION           ///<включаем защиту канарейками
+    //#define STK_HASH_PROTECTION             ///<включаем защиту хешами
 #endif
 
 

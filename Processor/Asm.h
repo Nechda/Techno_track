@@ -3,13 +3,8 @@
 #include "Logger.h"
 
 
-#define NDEBUG
+#define Assert_c(expr) if(!(expr)) loggerAssert(#expr,__FILE__,__FUNCSIG__,__LINE__);  ///< Ð ÐµÐ°Ð»Ð¸Ð·Ð°Ñ†Ð¸Ñ assert Ð´Ð»Ñ Ñ€ÐµÐ»Ð¸Ð·Ð° Ð¿ÐµÑ€ÐµÐºÐ»ÑŽÑ‡Ð¸Ñ‚ÑŒ Ñ€ÐµÐ¶Ð¸Ð¼ Ð¼Ð¾Ð¶Ð½Ð¾ Ð´Ð¸Ñ€ÐµÐºÑ‚Ð¸Ð²Ð¾Ð¹ #define NDEBUG
 
-#ifdef NDEBUG
-    #define Assert_c(expr) if(!(expr)) loggerAssert(#expr,__FILE__,__FUNCSIG__,__LINE__);  ///< Ðåàëèçàöèÿ assert äëÿ ðåëèçà ïåðåêëþ÷èòü ðåæèì ìîæíî äèðåêòèâîé #define NDEBUG
-#else
-    #define Assert_c(expr) if(!(expr))printf("Expression %ls is false.\n In file: %ls\n line: %d\n",_CRT_WIDE(#expr), _CRT_WIDE(__FILE__), (unsigned)(__LINE__)); ///< Ðåàëèçàöèÿ assert äëÿ îòëàäêè
-#endif
 
 typedef unsigned char ui8;
 typedef unsigned short ui16;
@@ -35,7 +30,8 @@ enum AsmError
     ASM_ERROR_INVALID_SYNTAX = -6,
     ASM_ERROR_INVALID_MACHINE_CODE = -7,
     ASM_ERROR_INVALID_OPERANDS_NUMBER = -8,
-    ASM_ERROR_INVALID_OPERAND_SYNTAX = -9
+    ASM_ERROR_INVALID_OPERAND_SYNTAX = -9,
+    ASM_ERROR_INVALID_OPERAND_TYPE_FOR_COMMAND = -10
 };
 
 
@@ -55,13 +51,14 @@ enum OperandType
 };
 
 
-ui8 getNumberOperands(Mcode marchCode);
-void setOperandType(Mcode* marchCode, ui8 opIndex, OperandType type);
-OperandType getOperandType(Mcode marchCode, ui8 opIndex);
-Mcode getPureMachCode(Mcode machCode);
+inline ui8 getNumberOperands(Mcode marchCode);
+inline void setOperandType(Mcode* marchCode, ui8 opIndex, OperandType type);
+inline OperandType getOperandType(Mcode marchCode, ui8 opIndex);
+inline Mcode getPureMachCode(Mcode machCode);
 
+C_string getStringByErrorCode(AsmError errorCode);
 
 AsmError compile(const char* code, FILE* outStream = stdout);
 
-void disasmCommand(Command cmd);
+void disasmCommand(Command cmd, FILE* outStream = stdout);
 AsmError disasm(const char* code,int size, FILE* outStream = stdout);

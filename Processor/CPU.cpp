@@ -1,9 +1,12 @@
-﻿#include "Asm.h"
-#include "CPU.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include <chrono>
+
+
+#include "Asm.h"
+#include "CPU.h"
 
 #include "Stack/Stack_kernel.h"
 #define TYPE_ ui8
@@ -11,16 +14,16 @@
 #undef TYPE_
 
 const ui32 CPU_RAM_SIZE = 128;
-
 const Mcode ASM_HLT = 9 << 6 | 0 << 4 | 0 << 2 | 0x0;
-
 const ui8 FLAG_CF = 0;
 const ui8 FLAG_ZF = 6;
 const ui8 FLAG_SF = 7;
 
+
 struct
 {
     bool isValid = 0;
+    int  interruptCode = 0;
     struct
     {
         ui32 eax;
@@ -46,6 +49,32 @@ ui32* getRegisterPtr(ui8 number)
     if (number > sizeof(CPU.Register)/sizeof(ui32))
         return NULL;
     return (ui32*)&CPU.Register + (number - 1);
+}
+
+
+C_string getStringByErrorCode(CPUerror errorCode)
+{
+    switch (errorCode)
+    {
+    case CPU_OK:
+        return "Ok";
+        break;
+    case CPU_ERROR_INVALID_STRUCUTE:
+        return "CPU structure has been broken";
+        break;
+    case CPU_ERROR_INVALID_COMMAND:
+        return "CPU find command that he doesn't know";
+        break;
+    case CPU_ERROR_EXCEPTION:
+        return "An exceptional situation has occurred";
+        break;
+    case CPU_ERROR_EPI_OUT_OF_RANE:
+        return "EPI register is too large for CPU's RAM";
+        break;
+    default:
+        "Undefined error code";
+        break;
+    }
 }
 
 void cupInit()
@@ -87,7 +116,6 @@ static inline void getOperandsPointer(Command cmd, ui32** dst, ui32** src)
 {
     ui32** ptrOperands[2] = { dst, src };
     OperandType opType;
-    ui32* ptr = NULL;
     for (ui8 i = 0; i < cmd.nOperands; i++)
     {
         opType = getOperandType(cmd.machineCode, i);
@@ -110,9 +138,6 @@ static inline void getOperandsPointer(Command cmd, ui32** dst, ui32** src)
                 break;
         }
     }
-       // *dst = getOperandType(cmd.machineCode, 0) == OPERAND_REGISTER ? getRegisterPtr(cmd.operand[0]) : &cmd.operand[0];
-   // if(cmd.nOperands > 1)
-   //     *src = getOperandType(cmd.machineCode, 1) == OPERAND_REGISTER ? getRegisterPtr(cmd.operand[1]) : &cmd.operand[1];
 }
 
 void run_MOV(Command cmd)
@@ -150,7 +175,7 @@ void run_DIV(Command cmd)
 
     if (*src == 0)
     {
-        // нужно бросать исключение
+        CPU.interruptCode = 1;
     }
     else
     {
@@ -270,24 +295,11 @@ void run_RET(Command cmd)
 
 void (*runFunction[])(Command)=
 {
-    run_MOV,
-    run_ADD,
-    run_SUB,
-    run_DIV,
-    run_MUL,
-    run_POP,
-    run_PUSH,
-    run_JMP,
-    NULL,
-    run_CMP,
-    run_JE,
-    run_JNE,
-    run_JA,
-    run_JAE,
-    run_JB,
-    run_JBE,
-    run_CALL,
-    run_RET
+    run_MOV,  run_ADD, run_SUB,  run_DIV,
+    run_MUL,  run_POP, run_PUSH, run_JMP,
+    NULL,     run_CMP, run_JE,   run_JNE,
+    run_JA,   run_JAE, run_JB,   run_JBE,
+    run_CALL, run_RET
 };
 
 const ui32 FUNCTION_TABLE_SIZE = sizeof(runFunction) / sizeof(runFunction[0]);
@@ -326,10 +338,11 @@ void cpuDump(FILE* outStream)
 
 }
 
-static void cpuRun()
+static CPUerror cpuRun()
 {
     ui8* ptr = &CPU.RAM[CPU.Register.eip];
     Command cmd;
+
     while (*((Mcode*)ptr) != ASM_HLT)
     {
         ptr = &CPU.RAM[CPU.Register.eip];
@@ -355,37 +368,59 @@ static void cpuRun()
             }
         }
 
-        ui32 calledFunction = (getPureMachCode(cmd.machineCode) >> 6) - 1;
-        if (calledFunction >= FUNCTION_TABLE_SIZE)
+        ui32 indexCalledFunc = (getPureMachCode(cmd.machineCode) >> 6) - 1;
+        if (indexCalledFunc >= FUNCTION_TABLE_SIZE)
         {
             logger("CPU error", "Invalid machine code of command.");
             cpuDump(getLoggerStream());
             stackDump(CPU.stack, getLoggerStream());
-            return;
+            return CPU_ERROR_INVALID_COMMAND;
         }
-        runFunction[calledFunction](cmd);
+        runFunction[indexCalledFunc](cmd);
         ptr = &CPU.RAM[CPU.Register.eip];
 
+        if (CPU.interruptCode)
+        {
+            logger("CPU error", "Catch exception after execution command:");
+            disasmCommand(cmd, getLoggerStream());
+            cpuDump(getLoggerStream());
+            stackDump(CPU.stack, getLoggerStream());
+            return CPU_ERROR_EXCEPTION;
+        }
+        if (CPU.Register.eip >= CPU_RAM_SIZE)
+        {
+            logger("CPU error", "Register epi quite big for RAM.");
+            cpuDump(getLoggerStream());
+            stackDump(CPU.stack, getLoggerStream());
+            return CPU_ERROR_EPI_OUT_OF_RANE;
+        }
         CPU.stack.data = &CPU.RAM[CPU.Register.ess];
         CPU.stack.size = CPU.Register.esp;
 
-        disasmCommand(cmd);
-        cpuDump();
-        system("pause");
-        //system("cls");
+        #ifndef NDEBUG
+            disasmCommand(cmd);
+            cpuDump();
+            system("pause");
+        #endif
 
     }
+
+    fprintf(getLoggerStream(), "Program successful complete! Damped CPU:\n");
+    cpuDump(getLoggerStream());
+    stackDump(CPU.stack, getLoggerStream());
+
+    return CPU_OK;
 }
 
-void cpuRunProgram(const char* programCode,int size,ui32 ptrStart)
+CPUerror cpuRunProgram(const char* programCode,int size,ui32 ptrStart)
 {
     if (!CPU.isValid)
     {
         logger("CPU error", "You try to evaluate program on broken CPU.");
-        return;
+        return CPU_ERROR_INVALID_STRUCUTE;
     }
     memcpy(&CPU.RAM[ptrStart], programCode, size);
-    CPU.RAM[ptrStart+size] = ASM_HLT; ///защита от дурака
+    *((Mcode*)&CPU.RAM[ptrStart+size]) = ASM_HLT; ///защита от дурака
     CPU.Register.eip = ptrStart;
     CPU.Register.ecs = ptrStart;
     CPU.Register.eds = ptrStart;
@@ -394,6 +429,8 @@ void cpuRunProgram(const char* programCode,int size,ui32 ptrStart)
 
     CPU.stack.data = &CPU.RAM[CPU.Register.ess];
     CPU.stack.size = CPU.Register.esp;
-    cpuRun();
-    printf("Program successful complete!\n");
+    CPUerror errorCode = cpuRun();
+    if (errorCode == CPU_OK)
+        printf("Program successful complete!\n");
+    return errorCode;
 }

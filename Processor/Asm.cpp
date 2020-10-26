@@ -9,41 +9,56 @@
 struct Lexema
 {
     char* command;
-    Mcode  machineCode;
+    Mcode machineCode;
+    char* validFirstOperand;
+    char* validSecondOperand;
 };
 
 
 /*
-byte stucture of command
-            10                     2                       2                 2
- command general code | type of second operand | type of first operand  | nOperands
+Machine code stucture:
+      bytes:            10                     2                       2                 2
+description: command general code | type of second operand | type of first operand  | nOperands
+
+Type of operands:
+    0b00 --- operand is register
+    0b01 --- operand is number
+    0b10 --- operand is memory, based by number
+    0b11 --- operand is memory, based by register
+
+
+Types of validOperand strings:
+    R --- operand is Register
+    N --- operand is Number
+    M --- operand is Memory, based by number
+    B --- operand is memory, Based by register
+Example:
+    mov command has validOperand strings: "RMB" for first operand and  "RNMB" for second operand.
+    It means that mov can't put data into number.
 */
 
-/*
-    todo:
-        ƒобавить возможность командам обращатьс€ к RAM через [...]
-*/
+
 
 
 const Lexema Table[] = {
-    {"mov",     1 << 6 | 0 << 4 | 0 << 2 | 0x2 },  ///< done
-    {"add",     2 << 6 | 0 << 4 | 0 << 2 | 0x2 },  ///< done
-    {"sub",     3 << 6 | 0 << 4 | 0 << 2 | 0x2 },  ///< done
-    {"div",     4 << 6 | 0 << 4 | 0 << 2 | 0x2 },  ///< done
-    {"mul",     5 << 6 | 0 << 4 | 0 << 2 | 0x2 },  ///< done
-    {"pop",     6 << 6 | 0 << 4 | 0 << 2 | 0x1 },  ///< done
-    {"push",    7 << 6 | 0 << 4 | 0 << 2 | 0x1 },  ///< done
-    {"jmp",     8 << 6 | 0 << 4 | 0 << 2 | 0x1 },  ///< done
-    {"hlt",     9 << 6 | 0 << 4 | 0 << 2 | 0x0 },  ///< done
-    {"cmp",    10 << 6 | 0 << 4 | 0 << 2 | 0x2 },  ///< process (implemented CF,ZF,SF )
-    {"je",     11 << 6 | 0 << 4 | 0 << 2 | 0x1 },  ///< done
-    {"jne",    12 << 6 | 0 << 4 | 0 << 2 | 0x1 },  ///< done
-    {"ja",     13 << 6 | 0 << 4 | 0 << 2 | 0x1 },  ///< done
-    {"jae",    14 << 6 | 0 << 4 | 0 << 2 | 0x1 },  ///< done
-    {"jb",     15 << 6 | 0 << 4 | 0 << 2 | 0x1 },  ///< done
-    {"jbe",    16 << 6 | 0 << 4 | 0 << 2 | 0x1 },  ///< done
-    {"call",   17 << 6 | 0 << 4 | 0 << 2 | 0x1 },  ///< done
-    {"ret",    18 << 6 | 0 << 4 | 0 << 0 | 0x0 }   ///< done
+    {"mov",     1 << 6 | 0 << 4 | 0 << 2 | 0x2 , "RMB" , "RNMB"},  ///< done
+    {"add",     2 << 6 | 0 << 4 | 0 << 2 | 0x2 , "RMB" , "RNMB"},  ///< done
+    {"sub",     3 << 6 | 0 << 4 | 0 << 2 | 0x2 , "RMB" , "RNMB"},  ///< done
+    {"div",     4 << 6 | 0 << 4 | 0 << 2 | 0x2 , "RMB" , "RNMB"},  ///< done
+    {"mul",     5 << 6 | 0 << 4 | 0 << 2 | 0x2 , "RMB" , "RNMB"},  ///< done
+    {"pop",     6 << 6 | 0 << 4 | 0 << 2 | 0x1 , "RMB" , ""    },  ///< done
+    {"push",    7 << 6 | 0 << 4 | 0 << 2 | 0x1 , "RNMB", ""    },  ///< done
+    {"jmp",     8 << 6 | 0 << 4 | 0 << 2 | 0x1 , "N"   , ""    },  ///< done
+    {"hlt",     9 << 6 | 0 << 4 | 0 << 2 | 0x0 , ""    , ""    },  ///< done
+    {"cmp",    10 << 6 | 0 << 4 | 0 << 2 | 0x2 , "RNMB", "RNMB"},  ///< process (implemented CF,ZF,SF )
+    {"je",     11 << 6 | 0 << 4 | 0 << 2 | 0x1 , "N"   , ""    },  ///< done
+    {"jne",    12 << 6 | 0 << 4 | 0 << 2 | 0x1 , "N"   , ""    },  ///< done
+    {"ja",     13 << 6 | 0 << 4 | 0 << 2 | 0x1 , "N"   , ""    },  ///< done
+    {"jae",    14 << 6 | 0 << 4 | 0 << 2 | 0x1 , "N"   , ""    },  ///< done
+    {"jb",     15 << 6 | 0 << 4 | 0 << 2 | 0x1 , "N"   , ""    },  ///< done
+    {"jbe",    16 << 6 | 0 << 4 | 0 << 2 | 0x1 , "N"   , ""    },  ///< done
+    {"call",   17 << 6 | 0 << 4 | 0 << 2 | 0x1 , "N"   , ""    },  ///< done
+    {"ret",    18 << 6 | 0 << 4 | 0 << 0 | 0x0 , ""    , ""    }   ///< done
 };
 
 const Lexema Registers[] =
@@ -90,6 +105,201 @@ Mcode getPureMachCode(Mcode machCode)
 {
     return machCode & (~0b111100);
 }
+
+C_string getStringByErrorCode(AsmError errorCode)
+{
+    switch (errorCode)
+    {
+        case ASM_OK:
+            return "Ok";
+            break;
+        case ASM_ERROR_INVALID_INPUT_DATA:
+            return "Due to compilating occur error ralated with invalid input data";
+            break;
+        case ASM_ERROR_OUT_OF_MEMORY:
+            return "Due to compilating occur error realted with calloc or realloc function";
+            break;
+        case ASM_ERROR_GEN_LABLE_TABLE:
+            return "The compiler could not generate the label table";
+            break;
+        case ASM_ERROR_GEN_MACHINE_CODE:
+            return "We could not generate the machine code";
+            break;
+        case ASM_ERROR_CANT_WRITE_INTO_FILE:
+            return "There is error with access to file";
+            break;
+        case ASM_ERROR_INVALID_SYNTAX:
+            return "Syntax error";
+            break;
+        case ASM_ERROR_INVALID_MACHINE_CODE:
+            return "Generate invalid machine code";
+            break;
+        case ASM_ERROR_INVALID_OPERANDS_NUMBER:
+            return "Invalid number of operands";
+            break;
+        case ASM_ERROR_INVALID_OPERAND_SYNTAX:
+            return "Invalid operand syntax";
+            break;
+        case ASM_ERROR_INVALID_OPERAND_TYPE_FOR_COMMAND:
+            return "Invalid type of operands";
+            break;
+        default:
+            return "Undefined error code";
+            break;
+    }
+}
+
+
+struct
+{
+
+    static C_string getCommandName(Command cmd)
+    {
+        cmd.machineCode = getPureMachCode(cmd.machineCode);
+        for (int i = 0; i < COMMAND_TABLE_SIZE; i++)
+            if (Table[i].machineCode == cmd.machineCode)
+                return Table[i].command;
+        return NULL;
+    }
+
+    static C_string getRegisterName(ui8 machineCode)
+    {
+        for (int i = 0; i < REGISTER_TABLE_SIZE; i++)
+            if (Registers[i].machineCode == machineCode)
+                return Registers[i].command;
+        return NULL;
+    }
+
+    static C_string getStrByNumber(ui32 num)
+    {
+        static char buff[32] = {};
+        sprintf(buff, "0x%X", num);
+        return buff;
+    }
+
+    static void disasmCommand(Command cmd, FILE* outStream = stdout)
+    {
+        C_string commandName = NULL;
+        C_string operandStr[2] = { NULL, NULL };
+
+        commandName = getCommandName(cmd);
+        if (!commandName)
+        {
+            logger("Disassembler error", "The 0x%X code doesn't match any commands", cmd.machineCode & 0xFFFF);
+            return;
+        }
+
+        bool isInvalidOperands = 0;
+        for (int i = 0; i < cmd.nOperands; i++)
+        {
+            OperandType opType = getOperandType(cmd.machineCode, i);
+            if (opType == OPERAND_NUMBER || opType == OPERAND_MEMORY)
+                operandStr[i] = getStrByNumber(cmd.operand[i]);
+            if (opType == OPERAND_REGISTER || opType == OPERAND_MEM_BY_REG)
+                operandStr[i] = getRegisterName(cmd.operand[i]);
+            isInvalidOperands |= !operandStr[i];
+        }
+
+        if (isInvalidOperands)
+        {
+            logger("Disassembler error", "Invalid code for operands!");
+            return;
+        }
+
+        fprintf(outStream, "%s ", commandName);
+        for (int i = 0; i < cmd.nOperands; i++)
+        {
+            OperandType opType = getOperandType(cmd.machineCode, i);
+            if (opType == OPERAND_REGISTER || opType == OPERAND_NUMBER)
+                fprintf(outStream, "%s", operandStr[i]);
+            if (opType == OPERAND_MEMORY || opType == OPERAND_MEM_BY_REG)
+                fprintf(outStream, "[%s]", operandStr[i]);
+            if (cmd.nOperands == 2 && i == 0)
+                fprintf(outStream, ", ");
+        }
+        fprintf(outStream, "\n");
+    }
+
+    static AsmError getCode(ui8* bytes, ui32 nBytes, FILE* outStream = stdout)
+    {
+        Assert_c(bytes);
+        Assert_c(outStream);
+        if (!bytes || !outStream)
+            return ASM_ERROR_INVALID_INPUT_DATA;
+        if (ferror(outStream))
+            return ASM_ERROR_CANT_WRITE_INTO_FILE;
+
+        ui8* endPtr = bytes + nBytes;
+        ui8* strPtr = bytes;
+        Command cmd;
+        C_string commandName = NULL;
+        C_string operandStr[2] = { NULL, NULL };
+
+        fprintf(outStream, "Offset: Lexema:\n");
+        while (bytes < endPtr)
+        {
+            cmd.machineCode = *((Mcode*)bytes);
+            fprintf(outStream, "0x%04X: ", bytes - strPtr);
+            bytes += sizeof(Mcode);
+            commandName = getCommandName(cmd);
+            if (!commandName)
+            {
+                logger("Disassembler error", "The 0x%X code doesn't match any commands", cmd.machineCode & 0xFFFF);
+                return ASM_ERROR_INVALID_MACHINE_CODE;
+            }
+
+
+            cmd.nOperands = getNumberOperands(cmd.machineCode);
+            if (cmd.nOperands > 2)
+            {
+                logger("Disassembler error", "Invalid number of operands: %d, should be less than 3", cmd.nOperands);
+                return ASM_ERROR_INVALID_OPERANDS_NUMBER;
+            }
+
+            bool isInvalidOperands = 0;
+            for (int i = 0; i < cmd.nOperands; i++)
+            {
+                OperandType opType = getOperandType(cmd.machineCode, i);
+                if (opType == OPERAND_NUMBER || opType == OPERAND_MEMORY)
+                {
+                    cmd.operand[i] = *((ui32*)bytes);
+                    bytes += sizeof(ui32);
+                    operandStr[i] = getStrByNumber(cmd.operand[i]);
+
+                }
+                if (opType == OPERAND_REGISTER || opType == OPERAND_MEM_BY_REG)
+                {
+                    cmd.operand[i] = *((ui8*)bytes);
+                    bytes += sizeof(ui8);
+                    operandStr[i] = getRegisterName(cmd.operand[i]);
+                }
+                isInvalidOperands |= !operandStr[i];
+            }
+
+            if (isInvalidOperands)
+            {
+                logger("Disassembler error", "Invalid code for operands!");
+                return ASM_ERROR_INVALID_OPERAND_SYNTAX;
+            }
+
+
+            fprintf(outStream, "%s ", commandName);
+            for (int i = 0; i < cmd.nOperands; i++)
+            {
+                OperandType opType = getOperandType(cmd.machineCode, i);
+                if (opType == OPERAND_REGISTER || opType == OPERAND_NUMBER)
+                    fprintf(outStream, "%s", operandStr[i]);
+                if (opType == OPERAND_MEMORY || opType == OPERAND_MEM_BY_REG)
+                    fprintf(outStream, "[%s]", operandStr[i]);
+                if (cmd.nOperands == 2 && i == 0)
+                    fprintf(outStream, ", ");
+            }
+            fprintf(outStream, "\n");
+        }
+        return ASM_OK;
+    }
+
+}Disassembler;
 
 struct
 {
@@ -181,30 +391,30 @@ struct
             lxt = getLexemaType(buf);
             switch (lxt)
             {
-            case LEX_COMMAND:
-                nBytes+=sizeof(Mcode);
-                break;
-            case LEX_LABEL:
-                lables->pos = nBytes;
-                memcpy(lables->name, buf, 32);
-                *(strchr(lables->name, ':')) = 0;
-                lables++;
-                break;
-            case LEX_NUMBER:
-                nBytes += sizeof(ui32);
-                break;
-            case LEX_REGISTER:
-                nBytes++;
-                break;
-            case LEX_MEMORY:
-                nBytes += sizeof(ui32);
-                break;
-            case LEX_MEM_BY_REG:
-                nBytes += sizeof(ui8);
-                break;
-            default:
-                nBytes += sizeof(ui32);
-                break;
+                case LEX_COMMAND:
+                    nBytes+=sizeof(Mcode);
+                    break;
+                case LEX_LABEL:
+                    lables->pos = nBytes;
+                    memcpy(lables->name, buf, 32);
+                    *(strchr(lables->name, ':')) = 0;
+                    lables++;
+                    break;
+                case LEX_NUMBER:
+                    nBytes += sizeof(ui32);
+                    break;
+                case LEX_REGISTER:
+                    nBytes++;
+                    break;
+                case LEX_MEMORY:
+                    nBytes += sizeof(ui32);
+                    break;
+                case LEX_MEM_BY_REG:
+                    nBytes += sizeof(ui8);
+                    break;
+                default:
+                    nBytes += sizeof(ui32);
+                    break;
             }
         }
         return nBytes;
@@ -303,13 +513,38 @@ struct
 
         resOperand = getLabel(str, lables, nLables);
         if (resOperand != ASM_ERROR_CODE)
-            return lables[resOperand].pos;;
+            return lables[resOperand].pos;
 
-        for (int i = 0; i<sizeof(Registers) / sizeof(Lexema); i++)
+        for (int i = 0; i < REGISTER_TABLE_SIZE; i++)
             if (!strcmp(str, Registers[i].command))
                 return Registers[i].machineCode;
 
         return ASM_ERROR_CODE;
+    }
+
+    static AsmError checkValidityOfOperands(Command cmd)
+    {
+        char* validityStr[2] = {NULL, NULL};
+        Mcode pureMachineCode = getPureMachCode(cmd.machineCode);
+        for (int i = 0; i < COMMAND_TABLE_SIZE; i++)
+            if (Table[i].machineCode == pureMachineCode)
+            {
+                validityStr[0] = Table[i].validFirstOperand;
+                validityStr[1] = Table[i].validSecondOperand;
+            }
+
+        if (validityStr[0] == NULL)
+            return ASM_ERROR_INVALID_MACHINE_CODE;
+
+        const char* opTypeStr = "RNMB";
+        OperandType opType;
+        for (int i = 0; i < cmd.nOperands; i++)
+        {
+            opType = getOperandType(cmd.machineCode, i);
+            if (!strchr(validityStr[i], opTypeStr[(ui8)opType]))
+                return ASM_ERROR_INVALID_OPERAND_TYPE_FOR_COMMAND;
+        }
+        return ASM_OK;
     }
 
     static AsmError genBytes(const char* codeLine,Label* lables, ui32 nLables,ui8* ptrBytes)
@@ -389,6 +624,21 @@ struct
             *((Mcode*)bytes) = cmd.machineCode;
             bytes += sizeof(Mcode);
 
+
+            AsmError errorCode = checkValidityOfOperands(cmd);
+            if (errorCode == ASM_ERROR_INVALID_OPERAND_TYPE_FOR_COMMAND)
+            {
+                logger("Compilator error", "Invalid type of operand for current command.");
+                Disassembler.disasmCommand(cmd, getLoggerStream());
+                return ASM_ERROR_INVALID_OPERAND_TYPE_FOR_COMMAND;
+            }
+            if (errorCode == ASM_ERROR_INVALID_MACHINE_CODE)
+            {
+                logger("Compilator error", "Has been generated invalid machine code: 0x%X",cmd.machineCode);
+                return ASM_ERROR_INVALID_MACHINE_CODE;
+            }
+
+
             for (int i = 0; i < cmd.nOperands; i++)
             {
                 OperandType opType = getOperandType(cmd.machineCode, i);
@@ -403,9 +653,7 @@ struct
                     bytes += sizeof(ui8);
                 }
             }
-
         }
-
         return ASM_OK;
     }
 
@@ -443,13 +691,16 @@ struct
         if (!codeLine || !outStream)
             return ASM_ERROR_INVALID_INPUT_DATA;
 
+        if (ferror(outStream))
+            return ASM_ERROR_CANT_WRITE_INTO_FILE;
+
         Label* lables = (Label*)calloc(nLabels, sizeof(Label));
         Assert_c(lables);
         if (!lables)
             return ASM_ERROR_OUT_OF_MEMORY;
         ui32 nBytes = genLableTable(codeLine, lables);
-        Assert_c(nBytes != -1);
-        if (nBytes == -1)
+        Assert_c(nBytes != ASM_ERROR_CODE);
+        if (nBytes == ASM_ERROR_CODE)
         {
             free(lables);
             return ASM_ERROR_GEN_LABLE_TABLE;
@@ -485,163 +736,14 @@ struct
 
 }Compiler;
 
-struct
-{
-
-    static C_string getCommandName(Command cmd)
-    {
-        cmd.machineCode = getPureMachCode(cmd.machineCode);
-        for (int i = 0; i < COMMAND_TABLE_SIZE; i++)
-            if (Table[i].machineCode == cmd.machineCode)
-                return Table[i].command;
-        return NULL;
-    }
-
-    static C_string getRegisterName(ui8 machineCode)
-    {
-        for (int i = 0; i < REGISTER_TABLE_SIZE; i++)
-            if (Registers[i].machineCode == machineCode)
-                return Registers[i].command;
-        return NULL;
-    }
-
-    static C_string getStrByNumber(ui32 num)
-    {
-        static char buff[32] = {};
-        sprintf(buff, "0x%X", num);
-        return buff;
-    }
-
-    static void disasmCommand(Command cmd,FILE* outStream = stdout)
-    {
-        C_string commandName = NULL;
-        C_string operandStr[2] = { NULL, NULL };
-
-        commandName = getCommandName(cmd);
-        if (!commandName)
-        {
-            logger("Disassembler error", "The 0x%X code doesn't match any commands", cmd.machineCode & 0xFFFF);
-            return;
-        }
-
-        bool isInvalidOperands = 0;
-        for (int i = 0; i < cmd.nOperands; i++)
-        {
-            OperandType opType = getOperandType(cmd.machineCode, i);
-            if (opType == OPERAND_NUMBER || opType == OPERAND_MEMORY)
-                operandStr[i] = getStrByNumber(cmd.operand[i]);
-            if (opType == OPERAND_REGISTER || opType == OPERAND_MEM_BY_REG)
-                operandStr[i] = getRegisterName(cmd.operand[i]);
-        }
-
-        if (isInvalidOperands)
-        {
-            logger("Disassembler error", "Invalid code for operands!");
-            return;
-        }
-
-        fprintf(outStream, "%s ", commandName);
-        for (int i = 0; i < cmd.nOperands; i++)
-        {
-            OperandType opType = getOperandType(cmd.machineCode, i);
-            if (opType == OPERAND_REGISTER || opType == OPERAND_NUMBER)
-                fprintf(outStream, "%s", operandStr[i]);
-            if (opType == OPERAND_MEMORY || opType == OPERAND_MEM_BY_REG)
-                fprintf(outStream, "[%s]", operandStr[i]);
-            if (cmd.nOperands == 2 && i == 0)
-                fprintf(outStream, ", ");
-        }
-        fprintf(outStream, "\n");
-    }
-
-    static AsmError getCode(ui8* bytes, ui32 nBytes, FILE* outStream = stdout)
-    {
-        Assert_c(bytes);
-        Assert_c(outStream);
-        if (!bytes || !outStream)
-            return ASM_ERROR_INVALID_INPUT_DATA;
-        if (ferror(outStream))
-            return ASM_ERROR_CANT_WRITE_INTO_FILE;
-
-        ui8* endPtr = bytes + nBytes;
-        ui8* strPtr = bytes;
-        Command cmd;
-        C_string commandName = NULL;
-        C_string operandStr[2] = {NULL, NULL};
-
-        fprintf(outStream, "Offset: Lexema:\n");
-        while (bytes < endPtr)
-        {
-            cmd.machineCode = *((Mcode*)bytes);
-            fprintf(outStream, "0x%04X: ", bytes - strPtr );
-            bytes += sizeof(Mcode);
-            commandName = getCommandName(cmd);
-            if (!commandName)
-            {
-                logger("Disassembler error", "The 0x%X code doesn't match any commands", cmd.machineCode & 0xFFFF);
-                return ASM_ERROR_INVALID_MACHINE_CODE;
-            }
-
-
-            cmd.nOperands = getNumberOperands(cmd.machineCode);
-            if (cmd.nOperands > 2)
-            {
-                logger("Disassembler error", "Invalid number of operands: %d, should be less than 3", cmd.nOperands);
-                return ASM_ERROR_INVALID_OPERANDS_NUMBER;
-            }
-
-            bool isInvalidOperands = 0;
-            for (int i = 0; i < cmd.nOperands; i++)
-            {
-                OperandType opType = getOperandType(cmd.machineCode, i);
-                if (opType == OPERAND_NUMBER || opType == OPERAND_MEMORY)
-                {
-                    cmd.operand[i] = *((ui32*)bytes);
-                    bytes += sizeof(ui32);
-                    operandStr[i] = getStrByNumber(cmd.operand[i]);
-                    
-                }
-                if (opType == OPERAND_REGISTER || opType == OPERAND_MEM_BY_REG)
-                {
-                    cmd.operand[i] = *((ui8*)bytes);
-                    bytes += sizeof(ui8);
-                    operandStr[i] = getRegisterName(cmd.operand[i]);
-                }
-                isInvalidOperands |= !operandStr[i];
-            }
-
-            if (isInvalidOperands)
-            {
-                logger("Disassembler error", "Invalid code for operands!");
-                return ASM_ERROR_INVALID_OPERAND_SYNTAX;
-            }
-
-
-            fprintf(outStream, "%s ", commandName);
-            for (int i = 0; i < cmd.nOperands; i++)
-            {
-                OperandType opType = getOperandType(cmd.machineCode, i);
-                if (opType == OPERAND_REGISTER || opType == OPERAND_NUMBER)
-                    fprintf(outStream, "%s", operandStr[i]);
-                if (opType == OPERAND_MEMORY || opType == OPERAND_MEM_BY_REG)
-                    fprintf(outStream, "[%s]", operandStr[i]);
-                if (cmd.nOperands == 2 && i == 0)
-                    fprintf(outStream, ", ");
-            }
-            fprintf(outStream, "\n");
-        }
-        return ASM_OK;
-    }
-
-}Disassembler;
-
-
 AsmError compile(const char* code, FILE* outStream)
 {
     Assert_c(code);
     Assert_c(outStream);
     if (!code || !outStream)
         return ASM_ERROR_INVALID_INPUT_DATA;
+    if (ferror(outStream))
+        return ASM_ERROR_CANT_WRITE_INTO_FILE;
 
     C_string codeStr = NULL;
     ui32 nLabels = 0;
@@ -689,10 +791,10 @@ AsmError compile(const char* code, FILE* outStream)
 
 AsmError disasm(const char* code, int size, FILE* outStream)
 {
-    return Disassembler.getCode((ui8*)code, size, outStream);;
+    return Disassembler.getCode((ui8*)code, size, outStream);
 }
 
-void disasmCommand(Command cmd)
+void disasmCommand(Command cmd, FILE* outStream)
 {
-    Disassembler.disasmCommand(cmd);
+    Disassembler.disasmCommand(cmd, outStream);
 }
