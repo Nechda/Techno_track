@@ -9,6 +9,15 @@
 #include "CPU.h"
 #include "Logger.h"
 
+/**
+\brief  Функция полностью сичтывает файл
+\param  [in]      filename  Имя считываемого файла
+\param  [in,out]  outString Указатель на считанную строку
+\param  [in]      readBytesPtr  Указатель на unsigned, в котором будет храниться количество считанных байтов
+\return В случае успеха возвращается 0. Если произошла ошибка, то возвращается константа ASM_ERROR_CODE.
+\note   Если нам не требуется знать количество считанных байт, то в качетсве аргумента readBytesPtr
+        можно передавать NULL или вообще его не указывать при вызове функии.
+*/
 int readFullFile(const char* filename, char** outString,unsigned* readBytesPtr = NULL)
 {
     Assert_c(filename);
@@ -43,6 +52,9 @@ int readFullFile(const char* filename, char** outString,unsigned* readBytesPtr =
     return 0;
 }
 
+/**
+\brief  Структура, описывающая входные данные командной строки
+*/
 struct
 {
     char* programName = NULL;
@@ -52,10 +64,14 @@ struct
 }inputParams;
 
 
+/**
+\defgroup gr1 Константы, номера исполняемой программы
+\breif  Константы, определяющие номер исполняемой программы
+@{*/
 const ui8 PROGRAM_CODE_CPU = 1;
 const ui8 PROGRAM_CODE_COMPILATOR = 2;
 const ui8 PROGRAM_CODE_DISASSEMBLER = 3;
-
+/**}@*/
 
 int main(int argc, char** argv)
 {
@@ -183,7 +199,7 @@ int main(int argc, char** argv)
     
     if(programIndex == PROGRAM_CODE_DISASSEMBLER)
     {
-        errorCode = disasm(codeStr, inputFileSize, outStream);
+        errorCode = disasm((ui8*)codeStr, inputFileSize, outStream);
         free(codeStr);
         printf("Disassembler finished with the code: %d (%s)\n", errorCode, getStringByErrorCode((AsmError)errorCode));
         if (!noLogFileFlag)
@@ -193,7 +209,6 @@ int main(int argc, char** argv)
 
 
     loggerDestr();
-    system("pause");
 
     return 0;
 }

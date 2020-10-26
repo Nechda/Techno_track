@@ -6,6 +6,9 @@
 #include <iostream>
 
 
+/*
+\brief Структура, описывающая минимальную единицу языка
+*/
 struct Lexema
 {
     char* command;
@@ -16,30 +19,33 @@ struct Lexema
 
 
 /*
-Machine code stucture:
+Структура кодирования команд в машинном коде:
       bytes:            10                     2                       2                 2
 description: command general code | type of second operand | type of first operand  | nOperands
 
-Type of operands:
+Кодирование типов операндов в машинном коде:
     0b00 --- operand is register
     0b01 --- operand is number
     0b10 --- operand is memory, based by number
     0b11 --- operand is memory, based by register
 
 
-Types of validOperand strings:
+Типы символов в строках validOperand:
     R --- operand is Register
     N --- operand is Number
     M --- operand is Memory, based by number
     B --- operand is memory, Based by register
-Example:
-    mov command has validOperand strings: "RMB" for first operand and  "RNMB" for second operand.
+Пример:
+    Для команды mov строка validOperand будет равна "RMB" для первого операнда и "RNMB" для второго операнда.
+    Такое кодирование означает, что команда mov не может записать данные в число.
     It means that mov can't put data into number.
 */
 
 
 
-
+/*
+\brief Таблица с описанием всех команд, которые поддерживает компилятор
+*/
 const Lexema Table[] = {
     {"mov",     1 << 6 | 0 << 4 | 0 << 2 | 0x2 , "RMB" , "RNMB"},  ///< done
     {"add",     2 << 6 | 0 << 4 | 0 << 2 | 0x2 , "RMB" , "RNMB"},  ///< done
@@ -61,6 +67,9 @@ const Lexema Table[] = {
     {"ret",    18 << 6 | 0 << 4 | 0 << 0 | 0x0 , ""    , ""    }   ///< done
 };
 
+/*
+\brief Таблица с описанием всех регистов, которые поддерживает компилятор
+*/
 const Lexema Registers[] =
 {
     {"eax",     1},
@@ -79,21 +88,46 @@ const Lexema Registers[] =
 };
 
 
+/*
+\brief Описание констант, задающих размер таблиц
+@{
+*/
 const ui32 COMMAND_TABLE_SIZE = sizeof(Table)/sizeof(Lexema);
 const ui32 REGISTER_TABLE_SIZE = sizeof(Registers) / sizeof(Lexema);
+/*
+@}
+*/
 
-ui8 getNumberOperands(Mcode marchCode)
+/*
+\brief  Функция определяет количество операндов по машинному коду
+\param  [in]  machCode  Машинный код
+\return Количество операндов в данной команде
+*/
+inline ui8 getNumberOperands(Mcode marchCode)
 {
     return marchCode & 0x3;
 }
 
-void setOperandType(Mcode* marchCode, ui8 opIndex, OperandType type)
+/*
+\brief  Функция присваивает машинной команде тип операнда
+\param  [in]  ptrMarchCode  Указатель на машинную команду
+\param  [in]  opIndex       Номер операнда
+\param  [in]  type          Тип операнда
+*/
+inline void setOperandType(Mcode* ptrMarchCode, ui8 opIndex, OperandType type)
 {
-    *marchCode &= ~(0b11 << (2 * opIndex + 2));
-    *marchCode |= ((ui8)type & 0b11) << (2 * opIndex + 2);
+    *ptrMarchCode &= ~(0b11 << (2 * opIndex + 2));
+    *ptrMarchCode |= ((ui8)type & 0b11) << (2 * opIndex + 2);
 }
 
-OperandType getOperandType(Mcode marchCode, ui8 opIndex)
+
+/*
+\brief  Функция определяет тип операнда по машинной команде
+\param  [in]  marchCode  Машинная команда
+\param  [in]  opIndex    Номер операнда
+\return Тип операнда, имеющий индекс opIndex
+*/
+inline OperandType getOperandType(Mcode marchCode, ui8 opIndex)
 {
     ui8 shift = (2 * opIndex + 2);
     marchCode >>= shift;
@@ -101,11 +135,21 @@ OperandType getOperandType(Mcode marchCode, ui8 opIndex)
     return (OperandType)(marchCode);
 }
 
-Mcode getPureMachCode(Mcode machCode)
+/*
+\brief  Функция определяет номер команды по машинному коду, игнорируя первые 6 битов
+\param  [in]  marchCode  Машинная команда
+\return Машинный код, без информации о типах и количестве операндов
+*/
+inline Mcode getPureMachCode(Mcode machCode)
 {
     return machCode & (~0b111100);
 }
 
+/*
+\brief  Функция возвращает поясняющую строку, по коду ошибки компилятора\дизасемблера
+\param  [in]  errorCode  Код ошибки
+\return Возвращается строка, поясняющее код ошибки
+*/
 C_string getStringByErrorCode(AsmError errorCode)
 {
     switch (errorCode)
@@ -143,6 +187,10 @@ C_string getStringByErrorCode(AsmError errorCode)
         case ASM_ERROR_INVALID_OPERAND_TYPE_FOR_COMMAND:
             return "Invalid type of operands";
             break;
+        case ASM_ERROR_CANT_READ_LEXEMA:
+            return "Error occur, when we try to read lexema from code.\n"
+                   "Perhabs this error related with null pointer.";
+            break;
         default:
             return "Undefined error code";
             break;
@@ -152,7 +200,12 @@ C_string getStringByErrorCode(AsmError errorCode)
 
 struct
 {
-
+    /*
+    \brief  Функция возвращает имя команды, основываясь на машинном коде
+    \param  [in]  cmd  Структура команды
+    \return Строка, содержащее имя команды, взятое из таблицы с лексемами
+    \note   В случае ошибки будет возвращаться NULL
+    */
     static C_string getCommandName(Command cmd)
     {
         cmd.machineCode = getPureMachCode(cmd.machineCode);
@@ -162,6 +215,12 @@ struct
         return NULL;
     }
 
+    /*
+    \brief  Функция возвращает имя регистра, основываясь на машинном коде
+    \param  [in]  machineCode  Машинный код
+    \return Строка, содержащее имя регистра, взятое из таблицы с лексемами
+    \note   В случае ошибки будет возвращаться NULL
+    */
     static C_string getRegisterName(ui8 machineCode)
     {
         for (int i = 0; i < REGISTER_TABLE_SIZE; i++)
@@ -170,6 +229,11 @@ struct
         return NULL;
     }
 
+    /*
+    \brief  Функция переводит число шеснадцатиричное представление, возвращая строку с преобразованием
+    \param  [in]  num   Число
+    \return Строка с шеснадцатиричным числом
+    */
     static C_string getStrByNumber(ui32 num)
     {
         static char buff[32] = {};
@@ -177,10 +241,24 @@ struct
         return buff;
     }
 
+    /*
+    \brief  Функция дизасемблирования команды, результат закидывается в outStream
+    \param  [in]  cmd        Команда, которую надо дизасемблировать
+    \param  [in]  outStream  Поток вывода, куда будем записывать результат
+    */
     static void disasmCommand(Command cmd, FILE* outStream = stdout)
     {
         C_string commandName = NULL;
-        C_string operandStr[2] = { NULL, NULL };
+        C_string operandStr[2] = {NULL, NULL};
+        Assert_c(outStream);
+        if (!outStream)
+            return;
+        if (ferror(outStream))
+        {
+            logger("Disassembler error", "In function %s. Stream \'outStream\' has errors.\n", __FUNCSIG__ );
+            return;
+        }
+            
 
         commandName = getCommandName(cmd);
         if (!commandName)
@@ -220,6 +298,14 @@ struct
         fprintf(outStream, "\n");
     }
 
+
+    /*
+    \brief  Функция генерации ассемблерного кода, результат закидывается в outStream
+    \param  [in]  bytes   Указатель на массив байтов с программой
+    \param  [in]  nBytes  Количество байтов в массиве с прогой
+    \param  [in]  outStream  Поток вывода, куда будем записывать результат
+    \return Возвращает код ошибки или ASM_OK
+    */
     static AsmError getCode(ui8* bytes, ui32 nBytes, FILE* outStream = stdout)
     {
         Assert_c(bytes);
@@ -303,6 +389,9 @@ struct
 
 struct
 {
+    /*
+    \brief Описываем типы лексем
+    */
     enum LexemaType
     {
         LEX_ERROR = -1,
@@ -314,12 +403,21 @@ struct
         LEX_MEM_BY_REG = 6
     };
 
+    /*
+    \brief Структура, для работы с метками
+    */
     struct Label
     {
         char name[32];
         ui32 pos;
     };
 
+    /*
+    \brief Функция проверяет, является ли строка ПОЛОЖИТЕЛЬНЫМ числом
+    \param [in]  str  Входящая строка
+    \return true, если строка содержит шестнадцатиричное число или ПОЛОЖИТЕЛЬНОЕ число,
+            в противном случае возвращается false.
+    */
     static inline bool isNumber(const char* str)
     {
         Assert_c(str);
@@ -337,6 +435,11 @@ struct
         return true;
     }
 
+    /*
+    \brief  Функция по строке определяет тип лексемы
+    \param  [in]  str  Входящая строка
+    \return Тип лексемы, записанной в строке
+    */
     static LexemaType getLexemaType(const char* str)
     {
         static char buffer[32] = {};
@@ -374,6 +477,13 @@ struct
         return result;
     }
 
+    /*
+    \brief  Функция генерит таблицу меток
+    \param  [in]  codeLine  Код программы на ассемблере
+    \param  [in]  lables    Указатель на таблицу с метками
+    \return Возвращает предполагаемый размер скомпилированного файла в
+            байтах. В случае ошибки возвращается константа ASM_ERROR_CODE
+    */
     static int genLableTable(const char* codeLine,Label* lables)
     {
         Assert_c(codeLine);
@@ -420,6 +530,13 @@ struct
         return nBytes;
     }
 
+    /*
+    \brief  Функция выполняет поиск метки в таблице по имени
+    \param  [in]  labelName  Имя метки
+    \param  [in]  lables     Таблица с метками
+    \param  [in]  nLables    Количество меток в таблице
+    \return Индекс метки в таблице, в случае ошибки возвращается ASM_ERROR_CODE
+    */
     static int getLabel(char* labelName, Label* lables, ui32 nLables)
     {
         Assert_c(labelName);
@@ -433,6 +550,20 @@ struct
         return ASM_ERROR_CODE;
     }
 
+
+    /*
+    \brief   Функция парсит лексему из строки
+    \details Функция вытаскивает лексему из строки, переводя указатель на новую лексему.
+             Затем происходит опеределение полученной лексемы.
+             В зависимости от типа будет возвращает указатель на буффер, содержащий подробную
+             информацию о лексеме.
+    \param  [in,out]  ptrCodeLine  Указатель на строку с кодом
+    \param  [in,out]  lxt          Указатель на структуру LexemaType
+    \return Указатель на буфер, с подробной информацией о лексеме. В случае ошибки возвращается NULL
+            Например, если лексема является числом, то возвращается указатель на ui32, в котором лежит именно это число.
+            Если лексема была командой или регистром, то возвращается указатель на ui32, в котором лежит машинный код.
+    \note   Важно отметить, что после выполнения данной функции значение указателя (*ptrCodeLine) изменяется!
+    */
     static inline void* readNextLexema(char** ptrCodeLine,LexemaType* lxt)
     {
         Assert_c(ptrCodeLine);
@@ -481,6 +612,16 @@ struct
         return &buffer;
     }
 
+    /*
+    \brief  Функция парсит операнд, если его лексема имела тип LEX_MEMORY или LEX_MEM_BY_REG
+    \param  [in]  str       Указатель на строку с лексемой
+    \param  [in]  lables    Указатель на таблицу с метками
+    \param  [in]  nLables   Количество меток в таблице
+    \return В зависимости от типа лексемы будет возвращается следующие величины:
+            Если тип лексемы LEX_MEMORY, то возвращается число, равное семещению регистра eip
+            Если тип лексемы LEX_MEM_BY_REG, то возвращается код регистра
+            В случае ошибки возвращается константа ASM_ERROR_CODE.
+    */
     static int getMemoryOperand(char* str, Label* lables, ui32 nLables)
     {
         Assert_c(str);
@@ -522,6 +663,13 @@ struct
         return ASM_ERROR_CODE;
     }
 
+
+    /*
+    \brief  Функция проверяет, что сгенерированный машинный код, допускает указанные типы операндов
+    \param  [in]  cmd  Структура с командой
+    \return Код ошибки. Если команда сгенерирована правильно, то 
+            возвращается ASM_OK
+    */
     static AsmError checkValidityOfOperands(Command cmd)
     {
         char* validityStr[2] = {NULL, NULL};
@@ -547,6 +695,14 @@ struct
         return ASM_OK;
     }
 
+    /*
+    \brief  Функция генерит машинный код
+    \param  [in]     codeLine  Строка
+    \param  [in]     lables    Таблица с метками
+    \param  [in]     nLables   Количество меток в таблице
+    \param  [in,out] ptrBytes  Указатель на массив байтов, куда будем записывать результат
+    \return Код ошибки. В случае успеха возвращается ASM_OK.
+    */
     static AsmError genBytes(const char* codeLine,Label* lables, ui32 nLables,ui8* ptrBytes)
     {
         Assert_c(codeLine);
@@ -571,6 +727,11 @@ struct
                 logger("Compilator error", "Lexema: \"%s\" is not command, but should be...",ptr);
                 return ASM_ERROR_INVALID_SYNTAX;
             }
+            if (!ptr)
+            {
+                logger("Compilator error", "We can't read lexema.\n");
+                return ASM_ERROR_CANT_READ_LEXEMA;
+            }
             
             cmd.machineCode = *((Mcode*)ptr);
             currentPosition += sizeof(Mcode);
@@ -578,6 +739,11 @@ struct
             for (int i = 0; i < cmd.nOperands; i++)
             {
                 ptr = (char*)readNextLexema((char**)&codeLine, &lxt);
+                if (!ptr)
+                {
+                    logger("Compilator error", "We can't read lexema.\n");
+                    return ASM_ERROR_CANT_READ_LEXEMA;
+                }
                 if (lxt == LEX_NUMBER)
                 {
                     cmd.operand[i] = *((ui32*)ptr);
@@ -657,6 +823,12 @@ struct
         return ASM_OK;
     }
 
+    /*
+    \brief  Функция записывает сгенерированный машинный код в поток вывода
+    \param  [in]  bytes      Указатель на массив байтов
+    \param  [in]  nBytes     Количество байтов в массиве
+    \param  [in]  outStream  Поток вывода
+    */
     static AsmError throwMachineCodeIntoStream(ui8* bytes, ui32 nBytes, FILE* outStream = stdout)
     {
         Assert_c(bytes);
@@ -665,7 +837,7 @@ struct
             return ASM_ERROR_INVALID_INPUT_DATA;
         if (ferror(outStream))
         {
-            logger("Access error", "There are problems with file stream...");
+            logger("Access error", "In function %s. There are problems with file stream.", __FUNCSIG__ );
             return ASM_ERROR_CANT_WRITE_INTO_FILE;
         }
 
@@ -684,47 +856,107 @@ struct
         return ASM_OK;
     }
 
-    static AsmError getCode(C_string codeLine, ui32 nLabels, FILE* outStream = stdout)
+    /*
+    \brief  Функция инициализирует таблицу меток, затем генерит машинный код;
+            Результат закидывается в outStream
+    \param  [in]  codeLine  Строка с кодом на ассемблере
+    \param  [in]  outStream  Поток вывода
+    \return Код ошибки. В случае успеха возвращается ASM_OK.
+    */
+    static AsmError getCode(const char* code, FILE* outStream = stdout)
     {
-        Assert_c(codeLine);
+        Assert_c(code);
         Assert_c(outStream);
-        if (!codeLine || !outStream)
+        if (!code || !outStream)
             return ASM_ERROR_INVALID_INPUT_DATA;
-
         if (ferror(outStream))
             return ASM_ERROR_CANT_WRITE_INTO_FILE;
 
+
+        //Из строки с исходным кодом программы удаляем все лишние символы,
+        //оставляя только лексемы языка. В качестве разделителя используем пробел.
+        C_string codeLine = NULL;
+        ui32 nLabels = 0;
+        {
+            int strLen = strlen(code);
+            codeLine = (C_string)calloc(strLen + 2, sizeof(ui8));
+            Assert_c(codeLine);
+            if (!codeLine)
+                return ASM_ERROR_OUT_OF_MEMORY;
+            ui8 c[2] = {};
+            bool pingpong = 0;
+            int index = 0;
+            for (int i = 0; i < strLen; i++)
+            {
+                c[pingpong] = code[i];
+                if (c[pingpong] == ':')
+                    nLabels++;
+
+            #define isValidChr(x) (isalpha(x) || isdigit(x) || x==':' || x == '_' || x == '[' || x == ']')
+                if (!isValidChr(c[pingpong]) && !isValidChr(c[pingpong ^ 1]))
+                    continue;
+                if (isValidChr(code[i]))
+                    codeLine[index] = code[i];
+                else
+                    codeLine[index] = ' ';
+                index++;
+            #undef isValidChr(x)
+
+                pingpong ^= 1;
+            }
+            if (codeLine[index - 1] != ' ')
+                codeLine[index++] = ' ';
+            codeLine[index++] = 0;
+            codeLine = (C_string)realloc(codeLine, index * sizeof(ui8));
+            Assert_c(codeLine);
+            if (!codeLine)
+                return ASM_ERROR_OUT_OF_MEMORY;
+        }
+
+
+
+        // Генерируем таблицу меток
         Label* lables = (Label*)calloc(nLabels, sizeof(Label));
         Assert_c(lables);
         if (!lables)
+        {
+            free(codeLine);
             return ASM_ERROR_OUT_OF_MEMORY;
+        }
         ui32 nBytes = genLableTable(codeLine, lables);
         Assert_c(nBytes != ASM_ERROR_CODE);
         if (nBytes == ASM_ERROR_CODE)
         {
+            free(codeLine);
             free(lables);
             return ASM_ERROR_GEN_LABLE_TABLE;
         }
+        //выделяем память для проги
         ui8* bytes = (ui8*)calloc(nBytes + 1, sizeof(ui8));
         Assert_c(bytes);
         if (!bytes)
         {
+            free(codeLine);
             free(lables);
             return ASM_ERROR_OUT_OF_MEMORY;
         }
 
         AsmError errorCode = ASM_OK;
 
+        //производим компиляцию
         errorCode = genBytes(codeLine,lables, nLabels, bytes);
         if (errorCode != ASM_OK)
         {
+            free(codeLine);
             free(lables);
             free(bytes);
             return ASM_ERROR_GEN_MACHINE_CODE;
         }
 
+        //и выводим результат компиляции в поток вывода
         errorCode = throwMachineCodeIntoStream(bytes, nBytes, outStream);
         
+        free(codeLine);
         free(lables);
         free(bytes);
 
@@ -736,64 +968,38 @@ struct
 
 }Compiler;
 
+/*
+\brief  Функция, компилирующая ассемблерный код
+\param  [in]  code       Строка с исходным текстом программы
+\param  [in]  outStream  Поток вывода (может быть файлом)
+\return Код ошибки. В случае успеха возвращается ASM_OK.
+*/
 AsmError compile(const char* code, FILE* outStream)
 {
-    Assert_c(code);
-    Assert_c(outStream);
-    if (!code || !outStream)
-        return ASM_ERROR_INVALID_INPUT_DATA;
-    if (ferror(outStream))
-        return ASM_ERROR_CANT_WRITE_INTO_FILE;
-
-    C_string codeStr = NULL;
-    ui32 nLabels = 0;
-    {
-        int strLen = strlen(code);
-        codeStr = (C_string)calloc(strLen + 2, sizeof(ui8));
-        Assert_c(codeStr);
-        if (!codeStr)
-            return ASM_ERROR_OUT_OF_MEMORY;
-        ui8 c[2] = {};
-        bool pingpong = 0;
-        int index = 0;
-        for (int i = 0; i < strLen; i++)
-        {
-            c[pingpong] = code[i];
-            if (c[pingpong] == ':')
-                nLabels++;
-
-            #define isValidChr(x) (isalpha(x) || isdigit(x) || x==':' || x == '_' || x == '[' || x == ']')
-            if (!isValidChr(c[pingpong]) && !isValidChr(c[pingpong ^ 1]))
-                continue;
-            if (isValidChr(code[i]))
-                codeStr[index] = code[i];
-            else
-                codeStr[index] = ' ';
-            index++;
-            #undef isValidChr(x)
-
-            pingpong ^= 1;
-        }
-        if (codeStr[index - 1] != ' ')
-            codeStr[index++] = ' ';
-        codeStr[index++] = 0;
-        codeStr = (C_string)realloc(codeStr, index * sizeof(ui8));
-        Assert_c(codeStr);
-        if (!codeStr)
-            return ASM_ERROR_OUT_OF_MEMORY;
-    }
-
-    AsmError errorCode = ASM_OK;
-    errorCode = Compiler.getCode(codeStr, nLabels, outStream);
-    free(codeStr);
-    return errorCode;
+    return Compiler.getCode(code, outStream);
 }
 
-AsmError disasm(const char* code, int size, FILE* outStream)
+/*
+\brief  Производящая дизасемблирование бинарника
+\param  [in]  code       Строка байтов, которую будем дизасемблировать
+\param  [in]  size       Количество байтов в массиве
+\param  [in]  outStream  Поток вывода (может быть файлом)
+\return Код ошибки. В случае успеха возвращается ASM_OK.
+*/
+AsmError disasm(const ui8* code, int size, FILE* outStream)
 {
+    Assert_c(size > 0);
+    if (size <= 0)
+        return ASM_ERROR_INVALID_INPUT_DATA;
     return Disassembler.getCode((ui8*)code, size, outStream);
 }
 
+
+/*
+\brief  Функция дизасемблирования команды, результат закидывается в outStream
+\param  [in]  cmd        Команда, которую надо дизасемблировать
+\param  [in]  outStream  Поток вывода, куда будем записывать результат
+*/
 void disasmCommand(Command cmd, FILE* outStream)
 {
     Disassembler.disasmCommand(cmd, outStream);

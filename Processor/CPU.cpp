@@ -13,13 +13,27 @@
 #include "Stack/Stack.h"
 #undef TYPE_
 
-const ui32 CPU_RAM_SIZE = 128;
-const Mcode ASM_HLT = 9 << 6 | 0 << 4 | 0 << 2 | 0x0;
+
+/*
+\brief Константы, определяющие работу процессора
+@{
+*/
+const ui32 CPU_RAM_SIZE = 128; ///< Размер виртуальной RAM в байтах
+const Mcode ASM_HLT = 9 << 6 | 0 << 4 | 0 << 2 | 0x0; ///< Именно эта команда будет завершать работу процессора
+
+/*
+\brief Номера битов в регистре eflag, отвечающие различным флагам
+*/
 const ui8 FLAG_CF = 0;
 const ui8 FLAG_ZF = 6;
 const ui8 FLAG_SF = 7;
+/*
+}@
+*/
 
-
+/*
+\brief Описание структуры процессора
+*/
 struct
 {
     bool isValid = 0;
@@ -44,14 +58,24 @@ struct
     Stack(ui8) stack;
 }CPU;
 
+/*
+\brief  Функция возвращает указатель на поле структуры CPU.Register,
+в качестве аргумента принимается нормер регистра (см таблицу с регистрами).
+\param  [in]  number  Номер регистра, адрес которого кужно получить
+\return Указатель на поле структуры CPU.Register, в случае ошибки возвращается NULL
+*/
 ui32* getRegisterPtr(ui8 number)
 {
-    if (number > sizeof(CPU.Register)/sizeof(ui32))
+    if (number > sizeof(CPU.Register) / sizeof(ui32))
         return NULL;
     return (ui32*)&CPU.Register + (number - 1);
 }
 
-
+/*
+\brief  Функция возвращает поясняющую строку, по коду ошибки процессора
+\param  [in]  errorCode  Код ошибки
+\return Возвращается строка, поясняющее код ошибки
+*/
 C_string getStringByErrorCode(CPUerror errorCode)
 {
     switch (errorCode)
@@ -71,12 +95,19 @@ C_string getStringByErrorCode(CPUerror errorCode)
     case CPU_ERROR_EPI_OUT_OF_RANE:
         return "EPI register is too large for CPU's RAM";
         break;
+    case CPU_INVALID_INPUT_DATA:
+        return "The data passed is not valid";
     default:
-        "Undefined error code";
+        return "Undefined error code";
         break;
     }
 }
 
+/*
+\brief  Функция производит инициализацию структуры CPU
+\note   Если при инициализации структуры возникли ошибки, то полю isValid присваивается значение 0
+Причина возникновения ошибки записывается в лог файл.
+*/
 void cupInit()
 {
     CPU.RAM = (ui8*)calloc(CPU_RAM_SIZE, sizeof(ui8));
@@ -101,7 +132,11 @@ void cupInit()
     CPU.isValid = 1;
 }
 
-static inline bool getBit(ui32 marchCode,ui8 n)
+/*
+\brief  Функции для работы с битами: set\get
+@{
+*/
+static inline bool getBit(ui32 marchCode, ui8 n)
 {
     return marchCode & (1 << n);
 }
@@ -111,7 +146,20 @@ static inline void setBit(ui32* marchCode, ui8 n, bool value)
     *marchCode &= ~(1 << n);
     *marchCode |= (value << n);
 }
+/*
+}@
+*/
 
+
+/*
+\brief  Функция вычисления указателей на память, с которой будет работать команда
+\param  [in]  cmd   команда
+\param  [in,out]  dst  указатель на область памяти, отвечающее первому операнду в команде
+\param  [in,out]  src  указатель на область памяти, отвечающее второму операнду в команде
+\note   В случае ошибки будет брошен Assert_c.
+Пример работы: если команда имела вид mov eax,ebx, то в dst и src будут равны:
+dst = &CPU.Register.eax, src = &CPU.Register.ebx
+*/
 static inline void getOperandsPointer(Command cmd, ui32** dst, ui32** src)
 {
     ui32** ptrOperands[2] = { dst, src };
@@ -121,25 +169,28 @@ static inline void getOperandsPointer(Command cmd, ui32** dst, ui32** src)
         opType = getOperandType(cmd.machineCode, i);
         switch (opType)
         {
-            case OPERAND_REGISTER:
-                *ptrOperands[i] = getRegisterPtr(cmd.operand[i]);
-                break;
-            case OPERAND_NUMBER:
-                *ptrOperands[i] = &cmd.operand[i];
-                break;
-            case OPERAND_MEMORY:
-                *ptrOperands[i] = (ui32*)&CPU.RAM[CPU.Register.eds + cmd.operand[i]];
-                break;
-            case OPERAND_MEM_BY_REG:
-                *ptrOperands[i] = (ui32*)&CPU.RAM[CPU.Register.eds + *getRegisterPtr(cmd.operand[i])];
-                break;
-            default:
-                Assert_c(!"Invalid type of operand.");
-                break;
+        case OPERAND_REGISTER:
+            *ptrOperands[i] = getRegisterPtr(cmd.operand[i]);
+            break;
+        case OPERAND_NUMBER:
+            *ptrOperands[i] = &cmd.operand[i];
+            break;
+        case OPERAND_MEMORY:
+            *ptrOperands[i] = (ui32*)&CPU.RAM[CPU.Register.eds + cmd.operand[i]];
+            break;
+        case OPERAND_MEM_BY_REG:
+            *ptrOperands[i] = (ui32*)&CPU.RAM[CPU.Register.eds + *getRegisterPtr(cmd.operand[i])];
+            break;
+        default:
+            Assert_c(!"Invalid type of operand.");
+            break;
         }
     }
 }
 
+/*
+\brief Набор функций, реализующие действие команд над процессором
+@{*/
 void run_MOV(Command cmd)
 {
     ui32* dst = NULL;
@@ -174,13 +225,9 @@ void run_DIV(Command cmd)
     getOperandsPointer(cmd, &dst, &src);
 
     if (*src == 0)
-    {
-        CPU.interruptCode = 1;
-    }
+        CPU.interruptCode = 1; // при делении на ноль, возникает прерывание
     else
-    {
         *dst /= *src;
-    }
 }
 
 void run_MUL(Command cmd)
@@ -199,7 +246,11 @@ void run_POP(Command cmd)
     getOperandsPointer(cmd, &dst, &src);
     ui8* data = (ui8*)dst;
     for (ui8 i = 0; i < sizeof(ui32); i++)
-        stackPop(&CPU.stack, &data[sizeof(ui32)-1-i]);
+        stackPop(&CPU.stack, &data[sizeof(ui32) - 1 - i]);
+
+    //в данной реализации процессора в качестве стека используется immortal stack,
+    //соттветственно при push он растет в сторону больших адресов,
+    //а при pop адрес вершины уменьшается
     CPU.Register.esp -= sizeof(ui32);
 }
 
@@ -211,6 +262,10 @@ void run_PUSH(Command cmd)
     ui8* data = (ui8*)dst;
     for (ui8 i = 0; i < sizeof(ui32); i++)
         stackPush(&CPU.stack, &data[i]);
+
+    //в данной реализации процессора в качестве стека используется immortal stack,
+    //соттветственно при push он растет в сторону больших адресов,
+    //а при pop адрес вершины уменьшается
     CPU.Register.esp += sizeof(ui32);
 }
 
@@ -227,15 +282,15 @@ void run_CMP(Command cmd)
 
     ui32 result = *dst - *src;
 
-    setBit(&CPU.Register.eflags, FLAG_CF, result >> (sizeof(ui32) * 8 - 1)   );
-    setBit(&CPU.Register.eflags, FLAG_ZF, result == 0 ? 1 : 0                );
-    setBit(&CPU.Register.eflags, FLAG_SF, (int)result >= 0 ? 0 : 1           );
+    setBit(&CPU.Register.eflags, FLAG_CF, result >> (sizeof(ui32) * 8 - 1));
+    setBit(&CPU.Register.eflags, FLAG_ZF, result == 0 ? 1 : 0);
+    setBit(&CPU.Register.eflags, FLAG_SF, (int)result >= 0 ? 0 : 1);
 
 }
 
 void run_JE(Command cmd)
 {
-    if(getBit(CPU.Register.eflags,FLAG_ZF))
+    if (getBit(CPU.Register.eflags, FLAG_ZF))
         CPU.Register.eip = CPU.Register.ecs + (int)cmd.operand[0];
 }
 
@@ -292,8 +347,13 @@ void run_RET(Command cmd)
     CPU.Register.esp -= sizeof(ui32);
     CPU.Register.eip = ptrReturn;
 }
+/*}@*/
 
-void (*runFunction[])(Command)=
+
+/*
+\breif Массив функций, реализующих поведение процессора
+*/
+void(*runFunction[])(Command) =
 {
     run_MOV,  run_ADD, run_SUB,  run_DIV,
     run_MUL,  run_POP, run_PUSH, run_JMP,
@@ -302,10 +362,18 @@ void (*runFunction[])(Command)=
     run_CALL, run_RET
 };
 
-const ui32 FUNCTION_TABLE_SIZE = sizeof(runFunction) / sizeof(runFunction[0]);
+const ui32 FUNCTION_TABLE_SIZE = sizeof(runFunction) / sizeof(runFunction[0]); ///< Размер таблицы функций, введенный для удобства
 
+
+/*
+\brief Функция, производящая дамп процессора, результат закидывается в outStream
+\param [in] outStream указатель на поток вывода
+*/
 void cpuDump(FILE* outStream)
 {
+    Assert_c(outStream);
+    if (!outStream)
+        return;
     fprintf(outStream, "CPU{\n");
     fprintf(outStream, "    Registers{\n");
     fprintf(outStream, "        eax:0x%X\n", CPU.Register.eax);
@@ -324,20 +392,24 @@ void cpuDump(FILE* outStream)
     fprintf(outStream, "    RAM:\n");
     fprintf(outStream, "    Segment offset |  0x00  0x01  0x02  0x03  0x04  0x05  0x06  0x07  0x08  0x09  0x0A  0x0B  0x0C  0x0D  0x0E  0x0F\n");
     fprintf(outStream, "    ----------------------------------------------------------------------------------------------------------------\n");
-    for (int i = 0; i < CPU_RAM_SIZE; i+=16)
+    for (int i = 0; i < CPU_RAM_SIZE; i += 16)
     {
-        fprintf(outStream, "    Segment:0x%05X|",i);
+        fprintf(outStream, "    Segment:0x%05X|", i);
         for (int j = 0; j < 16; j++)
         {
             ui8 data = i + j < CPU_RAM_SIZE ? CPU.RAM[i + j] : 0;
             fprintf(outStream, "  0x%02X", data & 0xFF);
         }
-        fprintf(outStream, "\n");   
+        fprintf(outStream, "\n");
     }
     fprintf(outStream, "}\n");
-
 }
 
+
+/*
+\brief  Функция, запускает выполнение программы, начиная с текущего значение CPU.Register.eip
+\return Возвращается код ошибки или CPU_OK
+*/
 static CPUerror cpuRun()
 {
     ui8* ptr = &CPU.RAM[CPU.Register.eip];
@@ -350,7 +422,7 @@ static CPUerror cpuRun()
         ptr += sizeof(Mcode);
         CPU.Register.eip += sizeof(Mcode);
         cmd.nOperands = getNumberOperands(cmd.machineCode);
-        
+
         for (int index = 0; index < cmd.nOperands; index++)
         {
             OperandType opType = getOperandType(cmd.machineCode, index);
@@ -397,11 +469,11 @@ static CPUerror cpuRun()
         CPU.stack.data = &CPU.RAM[CPU.Register.ess];
         CPU.stack.size = CPU.Register.esp;
 
-        #ifndef NDEBUG
-            disasmCommand(cmd);
-            cpuDump();
-            system("pause");
-        #endif
+#ifndef NDEBUG
+        disasmCommand(cmd);
+        cpuDump();
+        system("pause");
+#endif
 
     }
 
@@ -412,15 +484,42 @@ static CPUerror cpuRun()
     return CPU_OK;
 }
 
-CPUerror cpuRunProgram(const char* programCode,int size,ui32 ptrStart)
+
+/*
+\brief  Функция загружает программу в RAM процессора, затем запускает её на выпонение
+\param  [in]  programCode  Массив байтов, содержащий программу
+\param  [in]  size         Размер загружаемой программы
+\param  [in]  ptrStart     Номер ячейки, начиная с которой будет производиться копирование в RAM
+\return Возвращается код ошибки или CPU_OK
+*/
+CPUerror cpuRunProgram(const char* programCode, int size, ui32 ptrStart)
 {
     if (!CPU.isValid)
     {
         logger("CPU error", "You try to evaluate program on broken CPU.");
         return CPU_ERROR_INVALID_STRUCUTE;
     }
+    Assert_c(programCode);
+    if (!programCode)
+    {
+        logger("CPU error", "You try execute program, located by NULL pointer.");
+        return CPU_INVALID_INPUT_DATA;
+    }
+    Assert_c(size > 0);
+    if (size <= 0)
+    {
+        logger("CPU error", "You try execute program, that have incorrect size:%d", size);
+        return CPU_INVALID_INPUT_DATA;
+    }
+    Assert_c(ptrStart + size + 1 < CPU_RAM_SIZE);
+    if (ptrStart + size + 1 >= CPU_RAM_SIZE)
+    {
+        logger("CPU error", "Your program doesn't fit in RAM. Try to change ptrStart or write small program");
+        return CPU_INVALID_INPUT_DATA;
+    }
+
     memcpy(&CPU.RAM[ptrStart], programCode, size);
-    *((Mcode*)&CPU.RAM[ptrStart+size]) = ASM_HLT; ///защита от дурака
+    *((Mcode*)&CPU.RAM[ptrStart + size]) = ASM_HLT; ///на всякий случай поставим код остановки, после всей программы
     CPU.Register.eip = ptrStart;
     CPU.Register.ecs = ptrStart;
     CPU.Register.eds = ptrStart;
