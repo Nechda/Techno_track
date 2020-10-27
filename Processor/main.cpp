@@ -200,6 +200,7 @@ int main(int argc, char** argv)
     if(programIndex == PROGRAM_CODE_DISASSEMBLER)
     {
         errorCode = disasm((ui8*)codeStr, inputFileSize, outStream);
+        fclose(outStream);
         free(codeStr);
         printf("Disassembler finished with the code: %d (%s)\n", errorCode, getStringByErrorCode((AsmError)errorCode));
         if (!noLogFileFlag)
