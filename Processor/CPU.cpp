@@ -125,11 +125,24 @@ void cupInit()
     {
         CPU.isValid = 0;
         free(CPU.RAM);
+        CPU.RAM = NULL;
         logger("CPU error", "There are some problems with init stack.");
         return;
     }
     CPU.stack.capacity = -1;
     CPU.isValid = 1;
+}
+
+
+/*
+\brief  Функция делает cleanUp структуры CPU
+*/
+void cpuDestr()
+{
+    if (CPU.RAM)
+        free(CPU.RAM);
+    stackDest(&CPU.stack);
+    CPU.isValid = 0;
 }
 
 /*
@@ -469,15 +482,15 @@ static CPUerror cpuRun()
         CPU.stack.data = &CPU.RAM[CPU.Register.ess];
         CPU.stack.size = CPU.Register.esp;
 
-#ifndef NDEBUG
+#ifdef STEP_BY_STEP
         disasmCommand(cmd);
-        cpuDump();
+        cpuDump(stdout);
         system("pause");
 #endif
 
     }
 
-    fprintf(getLoggerStream(), "Program successful complete! Damped CPU:\n");
+    logger("Cpu", "Program successful complete! Damped CPU:\n");
     cpuDump(getLoggerStream());
     stackDump(CPU.stack, getLoggerStream());
 
@@ -533,3 +546,18 @@ CPUerror cpuRunProgram(const char* programCode, int size, ui32 ptrStart)
         printf("Program successful complete!\n");
     return errorCode;
 }
+
+
+#ifndef NDEBUG
+
+void setCpuRegisters(GeneralReg reg)
+{
+    memcpy(&CPU.Register, &reg, sizeof(GeneralReg));
+}
+
+void getCpuRegisters(GeneralReg* reg)
+{
+    memcpy(reg, &CPU.Register, sizeof(GeneralReg));
+}
+
+#endif

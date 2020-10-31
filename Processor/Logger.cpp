@@ -47,6 +47,8 @@ FILE* getLoggerStream()
 
 void logger(const char* tag, const char* format, ...)
 {
+    if (!fptr)
+        return;
     static char buffer[32] = {};
     int millisec;
     tm* tm_info;
@@ -80,6 +82,8 @@ void logger(const char* tag, const char* format, ...)
 */
 void loggerAssert(const char* expr, const char* file,const char* funciton, unsigned line)
 {
+    if (!fptr)
+        return;
     static char buffer[32] = {};
     int millisec;
     tm* tm_info;
@@ -123,6 +127,6 @@ void loggerInit(const char* filename,const char* mode)
 */
 void loggerDestr()
 {
-    if(!fptr)
+    if(fptr)
         fclose(fptr);
 }

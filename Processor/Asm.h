@@ -64,6 +64,9 @@ enum OperandType
 };
 
 
+
+int readFullFile(const char* filename, char** outString, unsigned* readBytesPtr = NULL); ///< Функция считывает полностью файл в буффер
+
 /*
 \brief Функции для работы с машинным кодом, позволяющие быстро определеть свойства команды
 \details Подробное описание каждой функции смотри в Asm.cpp

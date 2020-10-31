@@ -6,6 +6,53 @@
 #include <iostream>
 
 
+
+
+/**
+\brief  Функция полностью сичтывает файл
+\param  [in]      filename  Имя считываемого файла
+\param  [in,out]  outString Указатель на считанную строку
+\param  [in]      readBytesPtr  Указатель на unsigned, в котором будет храниться количество считанных байтов
+\return В случае успеха возвращается 0. Если произошла ошибка, то возвращается константа ASM_ERROR_CODE.
+\note   Если нам не требуется знать количество считанных байт, то в качетсве аргумента readBytesPtr
+можно передавать NULL или вообще его не указывать при вызове функии.
+*/
+int readFullFile(const char* filename, char** outString, unsigned* readBytesPtr)
+{
+    Assert_c(filename);
+    Assert_c(outString);
+    if (!filename || !outString)
+        return ASM_ERROR_CODE;
+
+    FILE* inputFile = fopen(filename, "rb");
+    Assert_c(inputFile);
+    if (!inputFile)
+        return ASM_ERROR_CODE;
+    if (ferror(inputFile))
+        return ASM_ERROR_CODE;
+
+    fseek(inputFile, 0, SEEK_END);
+    long fsize = ftell(inputFile);
+    fseek(inputFile, 0, SEEK_SET);
+
+    char* string = (char*)calloc(fsize + 1, sizeof(char));
+    Assert_c(string);
+    if (!string)
+        return ASM_ERROR_CODE;
+
+    unsigned nReadBytes = fread(string, sizeof(char), fsize, inputFile);
+    fclose(inputFile);
+    string[fsize] = 0;
+
+    *outString = string;
+    if (readBytesPtr)
+        *readBytesPtr = nReadBytes;
+
+    return 0;
+}
+
+
+
 /*
 \brief Структура, описывающая минимальную единицу языка
 */

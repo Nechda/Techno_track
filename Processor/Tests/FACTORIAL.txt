@@ -1,0 +1,9 @@
+	mov eax, 1
+loop:
+	mul eax, ecx
+	sub ecx, 1
+	cmp ecx, 1
+	jbe end
+	jmp loop
+end:
+	hlt

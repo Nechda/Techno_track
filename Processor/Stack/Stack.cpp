@@ -348,6 +348,8 @@ void _stackDump(const void* stk, const dbgCallInfo dbgInfo,FILE* outStream)
 
     if(!outStream)
         outStream = getLoggerStream();
+    if (!outStream)
+        return;
 
     _BaseStack* stack = (_BaseStack*)stk;
     ui32 elementSize = stack->elementSize;

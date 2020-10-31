@@ -1,0 +1,13 @@
+	mov eax, 1
+	mov ebx, 1
+loop:
+	add eax, ebx
+	mov edx, ebx
+	mov ebx, eax
+	mov eax, edx
+	sub ecx, 1
+	cmp ecx, 1
+	jbe end
+	jmp loop
+end:
+	hlt
