@@ -1,6 +1,10 @@
 #pragma once
 #include "Stack_kernel.h"
 
+#ifdef __GNUG__
+#define __FUNCSIG__ __PRETTY_FUNCTION__
+#endif
+
 /**
 \file Stack.h
 \brief Данный файл содержит описание макросов, позволяющие создавать стек
@@ -101,7 +105,7 @@ inline void stackDest(CONCAT(Stack_, TYPE_)* stk)
 }
 
 #define stackDump(stk,outStream) \
-_stackDump(&stk , {__FILE__, __FUNCSIG__, __LINE__, #stk}, outStream)
+_stackDump(&stk , {__FILE__, __FUNCSIG__ , __LINE__, #stk}, outStream)
 
 /**
 }@

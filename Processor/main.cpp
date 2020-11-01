@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <io.h>
 #include <string.h>
 #include <ctype.h>
 #include "Asm.h"

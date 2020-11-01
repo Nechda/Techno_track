@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <ctime>
-#include <sys/utime.h>
 
 /**
 \brief У винды такой функции нет, поэтому напишем свой вариант
@@ -56,7 +55,7 @@ void logger(const char* tag, const char* format, ...)
 
     gettimeofday(&tv, NULL);
 
-    millisec = lrint(tv.tv_usec / 1000.0);
+    millisec = (int)(tv.tv_usec / 1000.0);
     if (millisec >= 1000)
     {
         millisec -= 1000;
@@ -91,7 +90,7 @@ void loggerAssert(const char* expr, const char* file,const char* funciton, unsig
 
     gettimeofday(&tv, NULL);
 
-    millisec = lrint(tv.tv_usec / 1000.0);
+    millisec = (int)(tv.tv_usec / 1000.0);
     if (millisec >= 1000)
     {
         millisec -= 1000;

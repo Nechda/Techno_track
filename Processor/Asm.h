@@ -3,9 +3,6 @@
 #include "Logger.h"
 
 
-#define Assert_c(expr) if(!(expr)) loggerAssert(#expr,__FILE__,__FUNCSIG__,__LINE__);  ///< Реализация assert для релиза переключить режим можно директивой #define NDEBUG
-
-
 /*
 \brief Упростим себе жизнь, введя короткие названия стандартных типов
 @{
