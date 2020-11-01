@@ -19,8 +19,8 @@ static int tets_Preparation(const char* testProgram)
     unsigned inputFileSize = 0;
     int errorCode = 0;
 
-    errorCode = readFullFile(testProgram, &srcCode, &inputFileSize);
-    if (errorCode)
+    inputFileSize = readFullFile(testProgram, &srcCode);
+    if (inputFileSize == ASM_ERROR_CODE)
     {
         printf("Error: We have some troubles with read code from file:%s\n", testProgram);
         return -1;
@@ -49,8 +49,8 @@ static int tets_Preparation(const char* testProgram)
         return -1;
     }
 
-    errorCode = readFullFile(binFile, &programMachineCode, &programSize);
-    if (errorCode)
+    programSize = readFullFile(binFile, &programMachineCode);
+    if (programSize == ASM_ERROR_CODE)
     {
         printf("Error: We have some troubles with read code from file:%s\n", testProgram);
         return -1;

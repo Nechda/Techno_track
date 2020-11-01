@@ -13,11 +13,10 @@
 \param  [in]      filename  Имя считываемого файла
 \param  [in,out]  outString Указатель на считанную строку
 \param  [in]      readBytesPtr  Указатель на unsigned, в котором будет храниться количество считанных байтов
-\return В случае успеха возвращается 0. Если произошла ошибка, то возвращается константа ASM_ERROR_CODE.
-\note   Если нам не требуется знать количество считанных байт, то в качетсве аргумента readBytesPtr
-можно передавать NULL или вообще его не указывать при вызове функии.
+\return В случае успеха возвращается количество прочитанных байт.
+        Если произошла ошибка, то возвращается константа ASM_ERROR_CODE.
 */
-int readFullFile(const char* filename, char** outString, unsigned* readBytesPtr)
+int readFullFile(const char* filename, char** outString)
 {
     Assert_c(filename);
     Assert_c(outString);
@@ -45,10 +44,8 @@ int readFullFile(const char* filename, char** outString, unsigned* readBytesPtr)
     string[fsize] = 0;
 
     *outString = string;
-    if (readBytesPtr)
-        *readBytesPtr = nReadBytes;
 
-    return 0;
+    return nReadBytes;
 }
 
 

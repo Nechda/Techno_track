@@ -108,8 +108,8 @@ int main(int argc, char** argv)
     }
 
 
-    errorCode = readFullFile(inputParams.inputFilename, &codeStr, &inputFileSize);
-    if (errorCode)
+    inputFileSize = readFullFile(inputParams.inputFilename, &codeStr);
+    if (inputFileSize == ASM_ERROR_CODE)
     {
         printf("Error: We have some troubles with read code from file:%s\n", inputParams.inputFilename);
         return -1;
