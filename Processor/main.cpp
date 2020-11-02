@@ -153,7 +153,7 @@ int main(int argc, char** argv)
     {
         ui32 ramSize = 0;
         if(inputParams.memorySize)
-            sscanf(inputParams.memorySize, "%d", ramSize);
+            sscanf(inputParams.memorySize, "%d", &ramSize);
         cupInit(ramSize);
         errorCode = cpuRunProgram(codeStr, inputFileSize);
         free(codeStr);
@@ -224,7 +224,7 @@ int main(int argc, char** argv)
 
         ui32 ramSize = 0;
         if (inputParams.memorySize)
-            sscanf(inputParams.memorySize, "%d", ramSize);
+            sscanf(inputParams.memorySize, "%d", &ramSize);
         cupInit(ramSize);
         errorCode = cpuRunProgram(codeStr, inputFileSize);
         free(codeStr);
