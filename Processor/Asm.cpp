@@ -62,53 +62,12 @@ struct Lexema
 };
 
 
-/*
-Структура кодирования команд в машинном коде:
-      bytes:            10                     2                       2                 2
-description: command general code | type of second operand | type of first operand  | nOperands
-
-Кодирование типов операндов в машинном коде:
-    0b00 --- operand is register
-    0b01 --- operand is number
-    0b10 --- operand is memory, based by number
-    0b11 --- operand is memory, based by register
-
-
-Типы символов в строках validOperand:
-    R --- operand is Register
-    N --- operand is Number
-    M --- operand is Memory, based by number
-    B --- operand is memory, Based by register
-Пример:
-    Для команды mov строка validOperand будет равна "RMB" для первого операнда и "RNMB" для второго операнда.
-    Такое кодирование означает, что команда mov не может записать данные в число.
-    It means that mov can't put data into number.
-*/
-
 
 
 /*
 \brief Таблица с описанием всех команд, которые поддерживает компилятор
 */
 Lexema Table[] = {
-    {"mov",     1 << 6 | 0 << 4 | 0 << 2 | 0x2 , "RMB" , "RNMB"},  ///< done
-    {"add",     2 << 6 | 0 << 4 | 0 << 2 | 0x2 , "RMB" , "RNMB"},  ///< done
-    {"sub",     3 << 6 | 0 << 4 | 0 << 2 | 0x2 , "RMB" , "RNMB"},  ///< done
-    {"div",     4 << 6 | 0 << 4 | 0 << 2 | 0x2 , "RMB" , "RNMB"},  ///< done
-    {"mul",     5 << 6 | 0 << 4 | 0 << 2 | 0x2 , "RMB" , "RNMB"},  ///< done
-    {"pop",     6 << 6 | 0 << 4 | 0 << 2 | 0x1 , "RMB" , ""    },  ///< done
-    {"push",    7 << 6 | 0 << 4 | 0 << 2 | 0x1 , "RNMB", ""    },  ///< done
-    {"jmp",     8 << 6 | 0 << 4 | 0 << 2 | 0x1 , "N"   , ""    },  ///< done
-    {"hlt",     9 << 6 | 0 << 4 | 0 << 2 | 0x0 , ""    , ""    },  ///< done
-    {"cmp",    10 << 6 | 0 << 4 | 0 << 2 | 0x2 , "RNMB", "RNMB"},  ///< process (implemented CF,ZF,SF )
-    {"je",     11 << 6 | 0 << 4 | 0 << 2 | 0x1 , "N"   , ""    },  ///< done
-    {"jne",    12 << 6 | 0 << 4 | 0 << 2 | 0x1 , "N"   , ""    },  ///< done
-    {"ja",     13 << 6 | 0 << 4 | 0 << 2 | 0x1 , "N"   , ""    },  ///< done
-    {"jae",    14 << 6 | 0 << 4 | 0 << 2 | 0x1 , "N"   , ""    },  ///< done
-    {"jb",     15 << 6 | 0 << 4 | 0 << 2 | 0x1 , "N"   , ""    },  ///< done
-    {"jbe",    16 << 6 | 0 << 4 | 0 << 2 | 0x1 , "N"   , ""    },  ///< done
-    {"call",   17 << 6 | 0 << 4 | 0 << 2 | 0x1 , "N"   , ""    },  ///< done
-    {"ret",    18 << 6 | 0 << 4 | 0 << 0 | 0x0 , ""    , ""    },  ///< done
     #define DEF(name, machineCode, validStrOperand_1, validStrOperand_2, code) \
     {#name, machineCode, validStrOperand_1, validStrOperand_2},
     #include "Extend.h"
