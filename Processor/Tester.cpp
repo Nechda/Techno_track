@@ -88,7 +88,7 @@ static void test_Faclorial() ///< Тестируем процессор на п�
     {
         reg = {0, 0, (ui32)i, 0};
         setCpuRegisters(reg);
-        errorCode = cpuRunProgram(programMachineCode, programSize);
+        errorCode = cpuRunProgram(programMachineCode, programSize, false);
         if(errorCode != CPU_OK)
             printf("CPU finished with the code: %d (%s)\n", errorCode, getStringByErrorCode(errorCode));
         getCpuRegisters(&reg);
@@ -138,7 +138,7 @@ static void test_Fibonacci() ///< Тестируем процессор на п�
     {
         reg = { 0, 0, (ui32)i, 0 };
         setCpuRegisters(reg);
-        errorCode = cpuRunProgram(programMachineCode, programSize);
+        errorCode = cpuRunProgram(programMachineCode, programSize, false);
         if (errorCode != CPU_OK)
             printf("CPU finished with the code: %d (%s)\n", errorCode, getStringByErrorCode(errorCode));
         getCpuRegisters(&reg);
@@ -177,7 +177,7 @@ static void test_SquareEquation()
 
 
     const int rangeSize = 100;
-    const int nTests = 100;
+    const int nTests = 400;
 
 
     GeneralReg reg;
@@ -236,7 +236,7 @@ static void test_SquareEquation()
         reg = { 0, 0, 0, 0 };
         memcpy(&reg, coefficients ,sizeof(coefficients));
         setCpuRegisters(reg);
-        errorCode = cpuRunProgram(programMachineCode, programSize);
+        errorCode = cpuRunProgram(programMachineCode, programSize, false);
         if (errorCode != CPU_OK)
             printf("CPU finished with the code: %d (%s)\n", errorCode, getStringByErrorCode(errorCode));
 

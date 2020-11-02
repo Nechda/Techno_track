@@ -374,8 +374,7 @@ static CPUerror cpuRun(bool writeResultInLog = true)
             #ifdef _WIN32
             system("pause");
             system("cls");
-            #endif
-            #ifdef __linux__
+            #elif __linux__
             system("read -rsp $\"Press any key to continue...\n\" -n 1");
             system("clear");
             #endif
