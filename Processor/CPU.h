@@ -2,12 +2,6 @@
 #include "Asm.h"
 
 
-/*
-\brief Данный дефайн задает режим работы процессора STEP BY STEP:
-       после каждой команды будет выводиться полная информация о процессоре
-       и содержимое памяти.
-*/
-//#define STEP_BY_STEP
 
 /*
 \brief Коды ошибок, возвращаемые процессором
@@ -25,11 +19,12 @@ enum CPUerror
 
 C_string getStringByErrorCode(CPUerror errorCode);///< По коду ошибки восстанавливаем строку
 
-void cupInit(); ///< Функция инициализации структуры CPU
+void setStepByStepMode(bool flag); ///< Устанавливает режим работы процессора step by step
+
+void cupInit(ui32 ramSize); ///< Функция инициализации структуры CPU
 CPUerror cpuRunProgram(const char* programCode, int size, ui32 ptrStart = 0);/// Функция, запускающая программу на исполнение
 void cpuDestr(); ///< Функция делает cleanUp структуры CPU
 
-#ifndef NDEBUG
 /*
 \brief Структура, описывающая набор регистров общего назначения
 */
@@ -48,5 +43,3 @@ struct GeneralReg
 void setCpuRegisters(GeneralReg reg);
 void getCpuRegisters(GeneralReg* reg);
 /**}@*/
-
-#endif

@@ -2,6 +2,10 @@
 #include "Asm.h"
 #include "CPU.h"
 #include <math.h>
+#include <time.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
 char* programMachineCode = 0;
 unsigned programSize = 0;
@@ -150,12 +154,154 @@ static void test_Fibonacci() ///< Тестируем процессор на п�
 }
 /**}@*/
 
+
+
+static int getRandomInt(int start,int end)
+{
+    return rand()%(end-start+1) + start;
+}
+
+static float getRandomFloat()
+{
+    return getRandomInt(0, 1000) / 1000.0;
+}
+
+static void test_SquareEquation()
+{
+    srand(time(0));
+    const char* srcFile = "Tests//SQR_EQ.txt";
+    if (tets_Preparation(srcFile))
+        return;
+
+    printf("Start square equation solver test\n");
+
+
+    const int rangeSize = 100;
+    const int nTests = 100;
+
+
+    GeneralReg reg;
+    CPUerror errorCode;
+    float roots[2] = {};
+    char nRoots = 0;
+    float coefficients[3] = {};
+    const float accuracy = 1E-2;
+    float isTestSuccess = 1;
+    for (int i = 1; i <= nTests; i++)
+    {
+        if (isTestSuccess)
+        {
+            if (i < nTests / 4)
+            {
+                roots[0] = getRandomInt(-rangeSize, rangeSize) + getRandomFloat();
+                roots[1] = getRandomInt(-rangeSize, rangeSize) + getRandomFloat();
+            }
+            if (i > nTests / 4 && i < nTests / 2)
+            {
+                roots[0] = 0;
+                roots[1] = getRandomInt(-rangeSize, rangeSize) + getRandomFloat();
+            }
+            if (i > nTests / 2 && i < 3* nTests / 4)
+            {
+                roots[0] = roots[1] = getRandomInt(-rangeSize, rangeSize) + getRandomFloat();
+            }
+
+            nRoots = 2;
+            if (fabs(roots[0] - roots[1]) < accuracy)
+            {
+                roots[0] += roots[1];
+                roots[0] /= 2;
+                roots[1] = roots[0];
+                nRoots = 1;
+            }
+            coefficients[0] = 1;
+            coefficients[1] = -(roots[0] + roots[1]);
+            coefficients[2] = roots[0] * roots[1];
+
+            if (i > 3 * nTests / 4)
+            {
+                roots[0] = getRandomInt(-rangeSize, rangeSize) + getRandomFloat();
+                coefficients[0] = 0;
+                coefficients[1] = 1;
+                coefficients[2] = -roots[0];
+                nRoots = 1;
+            }
+
+        }
+        isTestSuccess = 1;
+
+
+
+
+        reg = { 0, 0, 0, 0 };
+        memcpy(&reg, coefficients ,sizeof(coefficients));
+        setCpuRegisters(reg);
+        errorCode = cpuRunProgram(programMachineCode, programSize);
+        if (errorCode != CPU_OK)
+            printf("CPU finished with the code: %d (%s)\n", errorCode, getStringByErrorCode(errorCode));
+
+        
+
+        getCpuRegisters(&reg);
+
+        float x1 = *(float*)&reg.eax;
+        float x2 = *(float*)&reg.ebx;
+        char nRootsCalc = (char)(*(float*)&reg.ecx);
+        if (nRoots != nRootsCalc)
+        {
+            printf("Test[%04d]:Fail --- should be (%f,%f); calc (%f,%f); should be nRoots: %d; calc nRoots: %d\n", i, x1, x2, roots[0], roots[1], nRoots, nRootsCalc);
+            isTestSuccess = 0;
+        }
+
+        float error = 0;
+        if (nRoots == 2)
+        {
+            float error_1 = sqrt(pow(x1 - roots[0], 2) + pow(x2 - roots[1], 2));
+            float error_2 = sqrt(pow(x1 - roots[1], 2) + pow(x2 - roots[0], 2));
+            error = error_1 < error_2 ? error_1 : error_2;
+        }
+        else
+        {
+            error = fabs(x1 - roots[0]);
+        }
+
+
+        if (error < accuracy)
+            printf("Test[%04d]:Ok --- ", i);
+        else
+        {
+            printf("Test[%04d]:Fail --- ", i);
+            isTestSuccess = 0;
+        }
+        if (nRoots == 1)
+            printf("should be (%f); calc (%f); ", roots[0], x1);
+        if (nRoots == 2)
+            printf("should be(%f, %f); calc(%f, %f); ", roots[0], roots[1], x1, x2);
+        printf("nRoots: %d; calc nRoots : %d\n", nRoots, nRootsCalc);
+        if (!isTestSuccess)
+        {
+            printf("Run program in step by step mode...\n");
+            setStepByStepMode(1);
+        }
+        else
+            setStepByStepMode(0);
+        
+       
+    }
+    if (programMachineCode)
+        free(programMachineCode);
+    programMachineCode = NULL;
+}
+
+
+
 /*
 \brief  Функция запускает тесты для CPU
 */
 void cpuStartTests()
 {
-    cupInit();
+    cupInit(0);
     test_Faclorial();
     test_Fibonacci();
+    test_SquareEquation();
 }

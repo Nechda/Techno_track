@@ -18,7 +18,6 @@ typedef char* C_string;
 */
 
 const int ASM_ERROR_CODE = -1; /// Стандартный код ошибки, для вспомогательных функций
-
 /*
 \brief Коды ошибок, возвращаемые компилятором и дизасемблером
 */
@@ -76,6 +75,8 @@ inline Mcode getPureMachCode(Mcode machCode);
 /*
 @}
 */
+
+void prepareCompilatorsTable(); ///< Функция формирует таблицу команд, с которыми может работать компилятор
 
 C_string getStringByErrorCode(AsmError errorCode); ///< По коду ошибки восстанавливаем строку
 

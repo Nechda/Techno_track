@@ -1,0 +1,125 @@
+fpmon					  ;включаем работу с дроб€ми
+jmp main                  ;идем выполн€ть основную программу
+
+
+;===================================================================
+;                ‘ункци€ считает корень ax+b = 0
+;          оэффициенты лежат в eax,ebx соответственно
+;                ¬ edi лежит корень уравнени€
+; ¬ ecx лежит количество корней ( == -1 -> бесконечно много корней )
+;===================================================================
+solve_linear:
+	cmp eax, 0.0
+	je mb_many_root	      ;перва€ проверка, что a == 0
+
+	mov edi, ebx          ;честное вычисление корн€
+	mul edi, -1.0
+	div edi, eax
+	mov edx, 1.0
+
+	jmp end_solve_linear
+
+mb_many_root:
+	cmp ebx, 0.0         ;если таки a == 0, b == 0, то корней б\много
+	je many_roots
+	mov edx, 0.0		 ;в противном случае корней вообще нет
+	jmp end_solve_linear
+
+many_roots:
+	mov edx, -1.0	     ;б\много корней
+	jmp end_solve_linear
+
+end_solve_linear:
+	ret
+
+
+;===================================================================
+;           ‘ункци€ считает корни ax^2 + bx + c = 0
+;         оэффициенты лежат в eax, ebx, ecx соответственно
+;                ¬ esi,edi лежат корени уравнени€
+; ¬ ecx лежит количество корней ( == -1 -> бесконечно много корней )
+;===================================================================
+solve_square:
+	
+	cmp eax, 0.0          ;провер€ем, можно ли свеси уравнение к линейному bx + c = 0
+	je prepare_sol_lin_1
+
+	cmp ecx, 0.0          ;провер€ем, можно ли свеси уравнение к линейному ax + b = 0
+	je prepare_sol_lin_2 
+
+	mul ecx, eax          ;честно вычисл€ем дискриминант
+	mul ecx, 4.0
+	mov edx, ebx
+	mul edx, edx
+	sub edx, ecx
+	mov ecx, edx          ;теперь в ecx лежит дискриминант
+
+	cmp ecx, 0.0          ;узнаем знак дискриминанта
+	je D_is_zero
+	ja D_is_pos
+	jb D_is_neg
+
+D_is_zero:                ;D == 0
+	mov edx, 1.0
+	mov esi, ebx
+	mul esi, -0.5
+	div esi, eax
+	jmp end_solve_square
+
+D_is_pos:                 ;D > 0
+	mov edi, ebx
+	mul edi, -1.0
+	mov esi, edi
+
+	push eax
+	sqrt ecx
+	mov ecx, eax
+	pop eax
+
+	add edi, ecx
+	sub esi, ecx
+
+	mul eax, 2.0
+
+	div edi, eax
+	div esi, eax
+
+	mov edx, 2.0
+	jmp end_solve_square
+
+D_is_neg:                 ;D < 0
+	mov edx, 0
+	jmp end_solve_square
+
+
+prepare_sol_lin_1:        ;производим решение уравнени€ bx + c = 0
+	mov eax, ebx
+	mov ebx, ecx
+	call solve_linear	  ;количество корней будет записано в edx
+	mov esi, edi
+	jmp end_solve_square
+
+prepare_sol_lin_2:        ;производим решение уравнени€ ax + b = 0
+	mov esi, 0.0
+	call solve_linear
+	cmp edi, 0.0
+	je one_root
+	mov edx, 2.0          ;вообще количество корней будет равно 2, если только b!=0
+	jmp end_solve_square
+one_root:                 ;если все же получилось так, что корень только один
+	jmp end_solve_square
+
+end_solve_square:
+	ret
+
+	
+main:
+	; коэффициенты квадратного уравнени€ ax^2 + bx + c = 0 соответственно лежат в eax,ebx,ecx
+	call solve_square
+	; корни корней лежат eax,ebx а их количество в ecx
+	mov eax, esi
+	mov ebx, edi
+	mov ecx, edx
+	; отключаем работу с дроб€ми
+	fpmoff
+hlt

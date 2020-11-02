@@ -10,13 +10,6 @@
 #include "Tester.h"
 
 
-
-/**
-TODO:
-    Надо разобраться с функциями дампа процессора: сделать их независимыми от того, был ли инициализирован лог файл или нет.
-*/
-
-
 /**
 \brief  Структура, описывающая входные данные командной строки
 */
@@ -25,6 +18,7 @@ struct
     char* programName = NULL;
     char* inputFilename = NULL;
     char* outputFilename = NULL;
+    char* memorySize = NULL;
     char* logFilename = "log.log";
 }inputParams;
 
@@ -36,22 +30,13 @@ struct
 const ui8 PROGRAM_CODE_CPU = 1;
 const ui8 PROGRAM_CODE_COMPILATOR = 2;
 const ui8 PROGRAM_CODE_DISASSEMBLER = 3;
+const ui8 PROGRAM_CODE_COMPILE_AND_RUN = 4;
 /**}@*/
 
 int main(int argc, char** argv)
 {
-    #ifndef NDEBUG
-        if(argc == 1)
-        {
-            loggerInit("log.log", "w");
-            cpuStartTests();
-            loggerDestr();
-            system("pause");
-            return 0;
-        }
-    #endif
-
     bool noLogFileFlag = 0;
+    bool isTestingMode = 0;
     char** curStr = NULL;
     for (int i = 1; i < argc; i++)
     {
@@ -75,16 +60,49 @@ int main(int argc, char** argv)
             curStr = &inputParams.logFilename;
             continue;
         }
+        if (!strcmp("-m", argv[i]))
+        {
+            curStr = &inputParams.memorySize;
+            continue;
+        }
         if (!strcmp("-ln", argv[i]))
         {
             noLogFileFlag = 1;
+            continue;
+        }
+        if (!strcmp("-t", argv[i]))
+        {
+            isTestingMode = 1;
+            continue;
+        }
+        if (!strcmp("-r", argv[i]))
+        {
+            inputParams.programName = "compile and run";
+            inputParams.outputFilename = "a.bin";
+            continue;
+        }
+        if (!strcmp("-stbs", argv[i]))
+        {
+            setStepByStepMode(1);
             continue;
         }
 
         *curStr = argv[i];
     }
 
-    loggerInit(noLogFileFlag ? NULL : inputParams.logFilename,"w");
+    loggerInit(noLogFileFlag ? NULL : inputParams.logFilename, "w");
+
+    if (isTestingMode)
+    {
+        loggerInit("log.log", "w");
+        prepareCompilatorsTable();
+        cpuStartTests();
+        loggerDestr();
+        return 0;
+    }
+
+
+
 
     if (!inputParams.programName)
     {
@@ -122,6 +140,8 @@ int main(int argc, char** argv)
         programIndex = PROGRAM_CODE_COMPILATOR;
     if (!strcmp("disassembler", inputParams.programName))
         programIndex = PROGRAM_CODE_DISASSEMBLER;
+    if (!strcmp("compile and run", inputParams.programName))
+        programIndex = PROGRAM_CODE_COMPILE_AND_RUN;
 
     if (!programIndex)
     {
@@ -131,7 +151,10 @@ int main(int argc, char** argv)
 
     if (programIndex == PROGRAM_CODE_CPU)
     {
-        cupInit();
+        ui32 ramSize = 0;
+        if(inputParams.memorySize)
+            sscanf(inputParams.memorySize, "%d", ramSize);
+        cupInit(ramSize);
         errorCode = cpuRunProgram(codeStr, inputFileSize);
         free(codeStr);
         printf("CPU finished with the code: %d (%s)\n", errorCode, getStringByErrorCode((CPUerror)errorCode));
@@ -160,6 +183,7 @@ int main(int argc, char** argv)
         return -1;
     }
 
+    prepareCompilatorsTable();
 
 
     if(programIndex == PROGRAM_CODE_COMPILATOR)
@@ -179,6 +203,32 @@ int main(int argc, char** argv)
         fclose(outStream);
         free(codeStr);
         printf("Disassembler finished with the code: %d (%s)\n", errorCode, getStringByErrorCode((AsmError)errorCode));
+        if (!noLogFileFlag)
+            printf("More infromation see in log file: %s\n", inputParams.logFilename);
+        return errorCode;
+    }
+
+    if (programIndex == PROGRAM_CODE_COMPILE_AND_RUN)
+    {
+        errorCode = compile(codeStr, outStream);
+        fclose(outStream);
+        free(codeStr);
+        printf("Compilation finished with the code: %d (%s)\n", errorCode, getStringByErrorCode((AsmError)errorCode));
+        if (!noLogFileFlag)
+            printf("More infromation see in log file: %s\n", inputParams.logFilename);
+        if((AsmError)errorCode != ASM_OK)
+            return errorCode;
+
+        inputFileSize = readFullFile(inputParams.outputFilename, &codeStr);
+
+
+        ui32 ramSize = 0;
+        if (inputParams.memorySize)
+            sscanf(inputParams.memorySize, "%d", ramSize);
+        cupInit(ramSize);
+        errorCode = cpuRunProgram(codeStr, inputFileSize);
+        free(codeStr);
+        printf("CPU finished with the code: %d (%s)\n", errorCode, getStringByErrorCode((CPUerror)errorCode));
         if (!noLogFileFlag)
             printf("More infromation see in log file: %s\n", inputParams.logFilename);
         return errorCode;

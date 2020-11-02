@@ -55,7 +55,7 @@ int readFullFile(const char* filename, char** outString)
 */
 struct Lexema
 {
-    char* command;
+    char command[10];
     Mcode machineCode;
     char* validFirstOperand;
     char* validSecondOperand;
@@ -90,7 +90,7 @@ description: command general code | type of second operand | type of first opera
 /*
 \brief Таблица с описанием всех команд, которые поддерживает компилятор
 */
-const Lexema Table[] = {
+Lexema Table[] = {
     {"mov",     1 << 6 | 0 << 4 | 0 << 2 | 0x2 , "RMB" , "RNMB"},  ///< done
     {"add",     2 << 6 | 0 << 4 | 0 << 2 | 0x2 , "RMB" , "RNMB"},  ///< done
     {"sub",     3 << 6 | 0 << 4 | 0 << 2 | 0x2 , "RMB" , "RNMB"},  ///< done
@@ -108,8 +108,13 @@ const Lexema Table[] = {
     {"jb",     15 << 6 | 0 << 4 | 0 << 2 | 0x1 , "N"   , ""    },  ///< done
     {"jbe",    16 << 6 | 0 << 4 | 0 << 2 | 0x1 , "N"   , ""    },  ///< done
     {"call",   17 << 6 | 0 << 4 | 0 << 2 | 0x1 , "N"   , ""    },  ///< done
-    {"ret",    18 << 6 | 0 << 4 | 0 << 0 | 0x0 , ""    , ""    }   ///< done
+    {"ret",    18 << 6 | 0 << 4 | 0 << 0 | 0x0 , ""    , ""    },  ///< done
+    #define DEF(name, machineCode, validStrOperand_1, validStrOperand_2, code) \
+    {#name, machineCode, validStrOperand_1, validStrOperand_2},
+    #include "Extend.h"
+    #undef DEF
 };
+
 
 /*
 \brief Таблица с описанием всех регистов, которые поддерживает компилятор
@@ -136,11 +141,37 @@ const Lexema Registers[] =
 \brief Описание констант, задающих размер таблиц
 @{
 */
-const ui32 COMMAND_TABLE_SIZE = sizeof(Table)/sizeof(Lexema);
+const ui32 COMMAND_TABLE_SIZE = sizeof(Table) / sizeof(Lexema);; ///< всего 18 базовых команд, которые не реализуются с помощью макрасов 
 const ui32 REGISTER_TABLE_SIZE = sizeof(Registers) / sizeof(Lexema);
 /*
 @}
 */
+
+
+/**
+\brief  Функция переводит все буквы в строке в нижний регистр
+\param  [in]  str  Входящая строка
+*/
+inline void toLowerStr(char* str)
+{
+    if (!str)
+        return;
+    while (*str)
+    {
+        *str = tolower(*str);
+        str++;
+    }
+}
+
+void prepareCompilatorsTable()
+{
+    for (int i = 0; i < COMMAND_TABLE_SIZE; i++)
+    {
+        if(!islower(Table[i].command[0]))
+            toLowerStr(Table[i].command);
+    }
+}
+
 
 /*
 \brief  Функция определяет количество операндов по машинному коду
@@ -269,7 +300,7 @@ struct
     {
         for (int i = 0; i < REGISTER_TABLE_SIZE; i++)
             if (Registers[i].machineCode == machineCode)
-                return Registers[i].command;
+                return (C_string)Registers[i].command;
         return NULL;
     }
 
@@ -457,9 +488,9 @@ struct
     };
 
     /*
-    \brief Функция проверяет, является ли строка ПОЛОЖИТЕЛЬНЫМ числом
+    \brief Функция проверяет, является ли строка числом
     \param [in]  str  Входящая строка
-    \return true, если строка содержит шестнадцатиричное число или ПОЛОЖИТЕЛЬНОЕ число,
+    \return true, если строка содержит шестнадцатиричное число или просто число,
             в противном случае возвращается false.
     */
     static inline bool isNumber(const char* str)
@@ -470,6 +501,10 @@ struct
 
         if (strstr(str, "0x"))
             return true;
+
+        if((strstr(str, ".")))
+            return true;
+
         while (*str)
         {
             if (!isdigit(*str))
@@ -644,6 +679,11 @@ struct
             if (strchr(buffer, 'x'))
             {
                 sscanf(buffer, "0x%X", &bufInt);
+                return &bufInt;
+            }
+            if (strchr(buffer, '.'))
+            {
+                sscanf(buffer, "%f", &bufInt);
                 return &bufInt;
             }
             else
@@ -930,21 +970,32 @@ struct
             ui8 c[2] = {};
             bool pingpong = 0;
             int index = 0;
+            bool isComment = 0;
             for (int i = 0; i < strLen; i++)
             {
                 c[pingpong] = code[i];
                 if (c[pingpong] == ':')
                     nLabels++;
 
-            #define isValidChr(x) (isalpha(x) || isdigit(x) || x==':' || x == '_' || x == '[' || x == ']')
+                if (c[pingpong] == ';')
+                {
+                    while(i < strLen && code[i] != '\n')
+                        i++;
+                    if (i == strLen)
+                        break;
+                    c[pingpong] = code[i];
+                }
+                
+                #define isValidChr(x) (isalpha(x) || isdigit(x) || strchr(":_[].-;" , x) && x )
+
                 if (!isValidChr(c[pingpong]) && !isValidChr(c[pingpong ^ 1]))
                     continue;
-                if (isValidChr(code[i]))
+                else if (isValidChr(code[i]))
                     codeLine[index] = code[i];
                 else
                     codeLine[index] = ' ';
                 index++;
-            #undef isValidChr(x)
+                #undef isValidChr(x)
 
                 pingpong ^= 1;
             }

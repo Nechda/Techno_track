@@ -3,6 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <chrono>
+#include <math.h>
 
 
 #include "Asm.h"
@@ -18,7 +19,7 @@
 \brief Константы, определяющие работу процессора
 @{
 */
-const ui32 CPU_RAM_SIZE = 128; ///< Размер виртуальной RAM в байтах
+ui32 CPU_RAM_SIZE = 512; ///< Размер виртуальной RAM в байтах
 const Mcode ASM_HLT = 9 << 6 | 0 << 4 | 0 << 2 | 0x0; ///< Именно эта команда будет завершать работу процессора
 
 /*
@@ -37,7 +38,9 @@ const ui8 FLAG_SF = 7;
 struct
 {
     bool isValid = 0;
+    bool isFloatPointMath = 0;
     int  interruptCode = 0;
+    bool stepByStep = 0;
     struct
     {
         ui32 eax;
@@ -49,7 +52,7 @@ struct
         ui32 esp;
         ui32 ebp;
         ui32 eip;
-        ui32 eflags;
+        ui32 efl; ///< сокращение от eflags
         ui32 ecs;
         ui32 eds;
         ui32 ess;
@@ -57,6 +60,14 @@ struct
     ui8* RAM = NULL;
     Stack(ui8) stack;
 }CPU;
+
+/**
+\brief Устанавливает режим работы процессора step by step
+*/
+void setStepByStepMode(bool flag)
+{
+    CPU.stepByStep = flag;
+}
 
 /*
 \brief  Функция возвращает указатель на поле структуры CPU.Register,
@@ -103,13 +114,23 @@ C_string getStringByErrorCode(CPUerror errorCode)
     }
 }
 
+
+
+
 /*
 \brief  Функция производит инициализацию структуры CPU
+\param  [in]  ramSize  Размер виртуальной памяти процессора
 \note   Если при инициализации структуры возникли ошибки, то полю isValid присваивается значение 0
 Причина возникновения ошибки записывается в лог файл.
 */
-void cupInit()
+void cupInit(ui32 ramSize)
 {
+    if (ramSize > 1024 * 512)
+    {
+        CPU.isValid = 0;
+        return;
+    }
+    CPU_RAM_SIZE = ramSize > CPU_RAM_SIZE ? ramSize : CPU_RAM_SIZE;
     CPU.RAM = (ui8*)calloc(CPU_RAM_SIZE, sizeof(ui8));
     memset(CPU.RAM, 0, CPU_RAM_SIZE * sizeof(ui8));
     Assert_c(CPU.RAM);
@@ -202,6 +223,17 @@ static inline void getOperandsPointer(Command cmd, ui32** dst, ui32** src)
 }
 
 /*
+\brief  Функция проверяет является ли число нулем с заданной точностью
+\param  [in]  num       Исследуемое число
+\param  [in]  accuracy  Точность сравнения
+\return true, если число близко к нулю и false в противном случае.
+*/
+static inline bool isZero(float num, float accuracy = 1E-7)
+{
+    return fabs(num) < accuracy ? 1 : 0;
+}
+
+/*
 \brief Набор функций, реализующие действие команд над процессором
 @{*/
 void run_MOV(Command cmd)
@@ -218,8 +250,10 @@ void run_ADD(Command cmd)
     ui32* dst = NULL;
     ui32* src = NULL;
     getOperandsPointer(cmd, &dst, &src);
-
-    *dst += *src;
+    if (!CPU.isFloatPointMath)
+        *dst += *src;
+    else
+        *((float*)(dst)) += *((float*)(src));
 }
 
 void run_SUB(Command cmd)
@@ -228,7 +262,10 @@ void run_SUB(Command cmd)
     ui32* src = NULL;
     getOperandsPointer(cmd, &dst, &src);
 
-    *dst -= *src;
+    if (!CPU.isFloatPointMath)
+        *dst -= *src;
+    else
+        *((float*)(dst)) -= *((float*)(src));
 }
 
 void run_DIV(Command cmd)
@@ -237,10 +274,23 @@ void run_DIV(Command cmd)
     ui32* src = NULL;
     getOperandsPointer(cmd, &dst, &src);
 
-    if (*src == 0)
-        CPU.interruptCode = 1; // при делении на ноль, возникает прерывание
+
+
+    if (!CPU.isFloatPointMath)
+    {
+        if (*src == 0)
+            CPU.interruptCode = 1; // при делении на ноль, возникает прерывание
+        else
+            *dst /= *src;
+    }
     else
-        *dst /= *src;
+    {
+        float divisitor = *((float*)src);
+        if (isZero(divisitor))
+            CPU.interruptCode = 1; // при делении на ноль, возникает прерывание
+        else
+            *((float*)dst) /= divisitor;
+    }
 }
 
 void run_MUL(Command cmd)
@@ -249,7 +299,13 @@ void run_MUL(Command cmd)
     ui32* src = NULL;
     getOperandsPointer(cmd, &dst, &src);
 
-    *dst *= *src;
+    if (!CPU.isFloatPointMath)
+        *dst *= *src;
+    else
+    {
+        float mul = *((float*)src);
+        *((float*)(dst)) *= mul;
+    }
 }
 
 void run_POP(Command cmd)
@@ -293,47 +349,58 @@ void run_CMP(Command cmd)
     ui32* src = NULL;
     getOperandsPointer(cmd, &dst, &src);
 
-    ui32 result = *dst - *src;
+    if (!CPU.isFloatPointMath)
+    {
+        ui32 result = *dst - *src;
 
-    setBit(&CPU.Register.eflags, FLAG_CF, result >> (sizeof(ui32) * 8 - 1));
-    setBit(&CPU.Register.eflags, FLAG_ZF, result == 0 ? 1 : 0);
-    setBit(&CPU.Register.eflags, FLAG_SF, (int)result >= 0 ? 0 : 1);
+        setBit(&CPU.Register.efl, FLAG_CF, result >> (sizeof(ui32) * 8 - 1));
+        setBit(&CPU.Register.efl, FLAG_ZF, result == 0 ? 1 : 0);
+        setBit(&CPU.Register.efl, FLAG_SF, (int)result >= 0 ? 0 : 1);
+    }
+    else
+    {
+        float result = *(float*)dst - *(float*)src;
+
+        setBit(&CPU.Register.efl, FLAG_CF, (int)result >> (sizeof(ui32) * 8 - 1));
+        setBit(&CPU.Register.efl, FLAG_ZF, isZero(result));
+        setBit(&CPU.Register.efl, FLAG_SF, result >= 0 ? 0 : 1);
+    }
 
 }
 
 void run_JE(Command cmd)
 {
-    if (getBit(CPU.Register.eflags, FLAG_ZF))
+    if (getBit(CPU.Register.efl, FLAG_ZF))
         CPU.Register.eip = CPU.Register.ecs + (int)cmd.operand[0];
 }
 
 void run_JNE(Command cmd)
 {
-    if (!getBit(CPU.Register.eflags, FLAG_ZF))
+    if (!getBit(CPU.Register.efl, FLAG_ZF))
         CPU.Register.eip = CPU.Register.ecs + (int)cmd.operand[0];
 }
 
 void run_JA(Command cmd)
 {
-    if (!getBit(CPU.Register.eflags, FLAG_CF) && !getBit(CPU.Register.eflags, FLAG_ZF))
+    if (!getBit(CPU.Register.efl, FLAG_CF) && !getBit(CPU.Register.efl, FLAG_ZF))
         CPU.Register.eip = CPU.Register.ecs + (int)cmd.operand[0];
 }
 
 void run_JAE(Command cmd)
 {
-    if (!getBit(CPU.Register.eflags, FLAG_CF))
+    if (!getBit(CPU.Register.efl, FLAG_CF))
         CPU.Register.eip = CPU.Register.ecs + (int)cmd.operand[0];
 }
 
 void run_JB(Command cmd)
 {
-    if (getBit(CPU.Register.eflags, FLAG_CF))
+    if (getBit(CPU.Register.efl, FLAG_CF))
         CPU.Register.eip = CPU.Register.ecs + (int)cmd.operand[0];
 }
 
 void run_JBE(Command cmd)
 {
-    if (getBit(CPU.Register.eflags, FLAG_CF) || getBit(CPU.Register.eflags, FLAG_ZF))
+    if (getBit(CPU.Register.efl, FLAG_CF) || getBit(CPU.Register.efl, FLAG_ZF))
         CPU.Register.eip = CPU.Register.ecs + (int)cmd.operand[0];
 }
 
@@ -364,18 +431,32 @@ void run_RET(Command cmd)
 
 
 /*
+\brief  Объвление дополнительных функций
+*/
+#define DEF(name, machineCode, validStrOperand_1, validStrOperand_2, code) \
+void run_##name(Command cmd) code
+#include "Extend.h"
+#undef DEF
+
+
+/*
 \breif Массив функций, реализующих поведение процессора
 */
-void(*runFunction[])(Command) =
+typedef void(*FunctionType)(Command);
+
+FunctionType runFunction[] =
 {
     run_MOV,  run_ADD, run_SUB,  run_DIV,
     run_MUL,  run_POP, run_PUSH, run_JMP,
     NULL,     run_CMP, run_JE,   run_JNE,
     run_JA,   run_JAE, run_JB,   run_JBE,
-    run_CALL, run_RET
+    run_CALL, run_RET,
+    #define DEF(name, machineCode, validStrOperand_1, validStrOperand_2, code) run_##name,
+    #include "Extend.h"
+    #undef DEF
 };
 
-const ui32 FUNCTION_TABLE_SIZE = sizeof(runFunction) / sizeof(runFunction[0]); ///< Размер таблицы функций, введенный для удобства
+const ui32 FUNCTION_TABLE_SIZE = sizeof(runFunction)/sizeof(FunctionType); ///< Размер таблицы функций, введенный для удобства.
 
 
 /*
@@ -389,18 +470,21 @@ void cpuDump(FILE* outStream)
         return;
     fprintf(outStream, "CPU{\n");
     fprintf(outStream, "    Registers{\n");
-    fprintf(outStream, "        eax:0x%X\n", CPU.Register.eax);
-    fprintf(outStream, "        ebx:0x%X\n", CPU.Register.ebx);
-    fprintf(outStream, "        ecx:0x%X\n", CPU.Register.ecx);
-    fprintf(outStream, "        edx:0x%X\n", CPU.Register.edx);
-    fprintf(outStream, "        esi:0x%X\n", CPU.Register.esi);
-    fprintf(outStream, "        edi:0x%X\n", CPU.Register.edi);
-    fprintf(outStream, "        ebp:0x%X\n", CPU.Register.ebp);
-    fprintf(outStream, "        eip:0x%X\n", CPU.Register.eip);
-    fprintf(outStream, "        efl:0x%X\n", CPU.Register.eflags);
-    fprintf(outStream, "        ecs:0x%X\n", CPU.Register.ecs);
-    fprintf(outStream, "        eds:0x%X\n", CPU.Register.eds);
-    fprintf(outStream, "        ess:0x%X\n", CPU.Register.ess);
+    #define printRegInfo(regName)\
+    fprintf(outStream, "        " #regName ":0x%04X  (int: %d) \t(float: %f)\n", CPU.Register.##regName,CPU.Register.##regName,*((float*)&CPU.Register.##regName))
+    printRegInfo(eax);
+    printRegInfo(ebx);
+    printRegInfo(ecx);
+    printRegInfo(edx);
+    printRegInfo(esi);
+    printRegInfo(edi);
+    printRegInfo(ebp);
+    printRegInfo(eip);
+    printRegInfo(efl);
+    printRegInfo(ecs);
+    printRegInfo(eds);
+    printRegInfo(ess);
+    #undef printRegInfo
     fprintf(outStream, "    }\n");
     fprintf(outStream, "    RAM:\n");
     fprintf(outStream, "    Segment offset |  0x00  0x01  0x02  0x03  0x04  0x05  0x06  0x07  0x08  0x09  0x0A  0x0B  0x0C  0x0D  0x0E  0x0F\n");
@@ -482,11 +566,14 @@ static CPUerror cpuRun()
         CPU.stack.data = &CPU.RAM[CPU.Register.ess];
         CPU.stack.size = CPU.Register.esp;
 
-#ifdef STEP_BY_STEP
-        disasmCommand(cmd);
-        cpuDump(stdout);
-        system("pause");
-#endif
+        if (CPU.stepByStep)
+        {
+            disasmCommand(cmd);
+            cpuDump(stdout);
+            system("pause");
+            system("cls");
+        }
+
 
     }
 
@@ -542,22 +629,25 @@ CPUerror cpuRunProgram(const char* programCode, int size, ui32 ptrStart)
     CPU.stack.data = &CPU.RAM[CPU.Register.ess];
     CPU.stack.size = CPU.Register.esp;
     CPUerror errorCode = cpuRun();
-    if (errorCode == CPU_OK)
-        printf("Program successful complete!\n");
     return errorCode;
 }
 
 
-#ifndef NDEBUG
 
+/**
+\brief  Функция установки регистров общего назначения процессора
+\param  [in]  reg  Структура с регистрами общего назначения
+*/
 void setCpuRegisters(GeneralReg reg)
 {
     memcpy(&CPU.Register, &reg, sizeof(GeneralReg));
 }
 
+/**
+\brief  Функция считывания регистров общего назначения процессора
+\param  [in,out]  reg  Указатель на структуру с регистрами общего назначения
+*/
 void getCpuRegisters(GeneralReg* reg)
 {
     memcpy(reg, &CPU.Register, sizeof(GeneralReg));
 }
-
-#endif
