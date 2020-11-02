@@ -305,9 +305,10 @@ void cpuDump(FILE* outStream)
 
 /*
 \brief  Функция, запускает выполнение программы, начиная с текущего значение CPU.Register.eip
+\param  [in]  writeResultInLog  Флаг, отвечающий за то, хотим ли мы увидеть результат работы программы в логе
 \return Возвращается код ошибки или CPU_OK
 */
-static CPUerror cpuRun()
+static CPUerror cpuRun(bool writeResultInLog = true)
 {
     ui8* ptr = &CPU.RAM[CPU.Register.eip];
     Command cmd;
@@ -370,16 +371,26 @@ static CPUerror cpuRun()
         {
             disasmCommand(cmd);
             cpuDump(stdout);
+            #ifdef _WIN32
             system("pause");
             system("cls");
+            #endif
+            #ifdef __linux__
+            system("read -rsp $\"Press any key to continue...\n\" -n 1");
+            system("clear");
+            #endif
+
         }
 
 
     }
 
-    logger("Cpu", "Program successful complete! Damped CPU:\n");
-    cpuDump(getLoggerStream());
-    stackDump(CPU.stack, getLoggerStream());
+    if (writeResultInLog)
+    {
+        logger("Cpu", "Program successful complete! Damped CPU:\n");
+        cpuDump(getLoggerStream());
+        stackDump(CPU.stack, getLoggerStream());
+    }
 
     return CPU_OK;
 }
@@ -392,7 +403,7 @@ static CPUerror cpuRun()
 \param  [in]  ptrStart     Номер ячейки, начиная с которой будет производиться копирование в RAM
 \return Возвращается код ошибки или CPU_OK
 */
-CPUerror cpuRunProgram(const char* programCode, int size, ui32 ptrStart)
+CPUerror cpuRunProgram(const char* programCode, int size, bool writeResultInLog, ui32 ptrStart)
 {
     if (!CPU.isValid)
     {
@@ -428,7 +439,7 @@ CPUerror cpuRunProgram(const char* programCode, int size, ui32 ptrStart)
 
     CPU.stack.data = &CPU.RAM[CPU.Register.ess];
     CPU.stack.size = CPU.Register.esp;
-    CPUerror errorCode = cpuRun();
+    CPUerror errorCode = cpuRun(writeResultInLog);
     return errorCode;
 }
 
