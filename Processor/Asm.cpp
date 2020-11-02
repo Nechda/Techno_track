@@ -100,7 +100,7 @@ const Lexema Registers[] =
 \brief Описание констант, задающих размер таблиц
 @{
 */
-const ui32 COMMAND_TABLE_SIZE = sizeof(Table) / sizeof(Lexema);; ///< всего 18 базовых команд, которые не реализуются с помощью макрасов 
+const ui32 COMMAND_TABLE_SIZE = sizeof(Table) / sizeof(Lexema);
 const ui32 REGISTER_TABLE_SIZE = sizeof(Registers) / sizeof(Lexema);
 /*
 @}
