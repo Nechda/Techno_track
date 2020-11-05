@@ -278,9 +278,11 @@ int main(int argc, char** argv)
     }
 
     free(buffer);
-    fclose(outStream);
+    if(outStream)
+        fclose(outStream);
 
     loggerDestr();
 
+    //system("pause");
     return 0;
 }
