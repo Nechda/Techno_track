@@ -323,8 +323,11 @@ void _stackDest(void* stk)
     _BaseStack* stack = (_BaseStack*)stk;
     ui8* ptr = (ui8*)stack->data;
     ptr -= STK_CANARY_SIZE;
-    memset(ptr, 0, 2 * STK_CANARY_SIZE + stack->capacity*stack->elementSize);
-    free(ptr);
+    if (stack->capacity != -1)
+    {
+        memset(ptr, 0, 2 * STK_CANARY_SIZE + stack->capacity*stack->elementSize);
+        free(ptr);
+    }
 }
 
 /**
