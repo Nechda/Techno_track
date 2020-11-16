@@ -55,7 +55,8 @@ main:
 	pop ebx
 	pop eax
 
-	add ecx, 0.001
+	add ecx, 0.01
+
 	cmp ecx, 15.0
 	jbe label_loop
 	jmp exit

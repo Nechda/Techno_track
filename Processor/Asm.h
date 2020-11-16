@@ -62,6 +62,7 @@ enum OperandType
 
 
 int readFullFile(const char* filename, char** outString); ///< Функция считывает полностью файл в буффер
+int removeExtraChar(char** ptrStr, const char* dontDelChar = ""); ///< Функция удаляет из строки все лишние символы
 
 /*
 \brief Функции для работы с машинным кодом, позволяющие быстро определеть свойства команды

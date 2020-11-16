@@ -1,0 +1,103 @@
+;movw edi, [0x3FE] ;считываем количество колонок <-> x
+;div edi, 2
+;movw esi, [0x3FC] ;считваем количество линий <-> y
+;div esi, 2
+
+
+fpmon
+jmp main
+
+;рисует символ из ebp по координатам (eax,ebx)
+draw_symbol:
+	fpmoff
+	mov edx, 0x400
+
+	push edi
+	movw edi, [0x3FE]
+	mul ebx, edi
+	pop edi
+
+	add eax, ebx
+	add edx, eax
+	movb [edx], ebp
+	fpmon
+	ret
+
+main:
+	
+	mov ecx, 1.0 ; x velocity
+	mov edx, 0.5 ; y velocity
+	mov ebp, 43
+
+	mov esi, 1000.0
+
+	label_loop:
+	
+	add eax, ecx
+	add ebx, edx
+
+	push esi
+	mov esi, 0.0
+	movw esi, [0x3FC] ;считваем количество линий <-> y
+	float esi
+	cmp ebx, esi
+	jae invert_y_vel
+	cmp ebx, 0
+	jbe invert_y_vel
+
+	jmp invert_y_vel_ret
+	invert_y_vel:
+	mul edx, -0.998
+	add ebx, edx
+	invert_y_vel_ret:
+	pop esi
+
+
+	push esi
+	mov esi, 0.0
+	movw esi, [0x3FE] ;считваем количество колонок <-> x
+	float esi
+	cmp eax, esi
+	jae invert_x_vel
+	cmp eax, 0
+	jbe invert_x_vel
+
+	jmp invert_x_vel_ret
+	invert_x_vel:
+	mul ecx, -0.998
+	add eax, ecx
+	invert_x_vel_ret:
+	pop esi
+
+	add edx, 0.004
+
+	mul ecx, 0.998
+	mul edx, 0.998
+
+	cmp edx, 0.2
+	jb on_ground
+	jmp on_ground_ret
+	on_ground:
+	mov edx, 0.0
+	on_ground_ret:
+
+
+	push eax
+	push ebx
+	push edx
+	push ecx
+	trunc eax
+	trunc ebx
+	call draw_symbol
+	pop ecx
+	pop edx
+	pop ebx
+	pop eax
+
+	;sub esi, 1.0
+	;cmp esi, 1.0
+	;je exit
+
+	jmp label_loop
+exit:
+	hlt

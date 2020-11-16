@@ -3,8 +3,10 @@
 #include <string.h>
 #include <ctype.h>
 #include <chrono>
+#define _USE_MATH_DEFINES
 #include <math.h>
 
+#include <GL\freeglut.h>
 
 #include "Asm.h"
 #include "CPU.h"
@@ -19,8 +21,7 @@
 \brief Константы, определяющие работу процессора
 @{
 */
-ui32 CPU_RAM_SIZE = 512; ///< Размер виртуальной RAM в байтах
-const Mcode ASM_HLT = 9 << 6 | 0 << 4 | 0 << 2 | 0x0; ///< Именно эта команда будет завершать работу процессора
+const Mcode ASM_HLT = 0 << 6 | 0 << 4 | 0 << 2 | 0x0; ///< Именно эта команда будет завершать работу процессора
 
 /*
 \brief Номера битов в регистре eflag, отвечающие различным флагам
@@ -32,15 +33,35 @@ const ui8 FLAG_SF = 7;
 }@
 */
 
+
+/**
+\brief Константы, задающие режим работы с графикой
+*/
+
+const ui32 VIDEO_MEMORY_PTR = 0x400;    ///< именно в сюда нужно будет писать данные в память, чтобы можно было что-то выводить на экран
+const ui16 STANDART_FONT_SIZE = 105;    ///< Размер шрифта в юнитах, данная константа получена через glutWidth(...)
+
+void drawFromVideoMemory();///< Функция, которая будет рисовать на экран все, что располагается в видео буффере
+
+
+
 /*
 \brief Описание структуры процессора
 */
-struct
+struct CPUStruct
 {
     bool isValid = 0;
     bool isFloatPointMath = 0;
     int  interruptCode = 0;
     bool stepByStep = 0;
+    bool isGraphMode = 0;
+    bool isVideoMemoryChanged = 0;
+    struct
+    {
+        ui32 x = 0;
+        ui32 y = 0;
+    }ChangedPixel;
+    ui32 ramSize = 512;
     struct
     {
         ui32 eax;
@@ -60,6 +81,22 @@ struct
     ui8* RAM = NULL;
     Stack(ui8) stack;
 }CPU;
+
+/*
+\brief Описание структуры консольного окна
+*/
+struct Window
+{
+    ui16 nCols = 80;
+    ui16 nLines = 25;
+    ui16 fontWidth = 8;
+    ui16 fontHeight = 8;
+    //эти два значения будут исползоваться для вывода шрифтов на экран
+    float ratioX;
+    float ratioY;
+    ui16 winWidth;
+    ui16 winHeight;
+}window;
 
 /**
 \brief Устанавливает режим работы процессора step by step
@@ -114,25 +151,26 @@ C_string getStringByErrorCode(CPUerror errorCode)
     }
 }
 
-
-
-
 /*
 \brief  Функция производит инициализацию структуры CPU
 \param  [in]  ramSize  Размер виртуальной памяти процессора
 \note   Если при инициализации структуры возникли ошибки, то полю isValid присваивается значение 0
 Причина возникновения ошибки записывается в лог файл.
 */
-void cupInit(ui32 ramSize)
+void cupInit(const InputParams inParam)
 {
-    if (ramSize > 1024 * 512)
+    CPU.isGraphMode = inParam.useGraphMode;
+    CPU.ramSize = inParam.memorySize;
+
+    if (CPU.ramSize > 1024 * 512)
     {
         CPU.isValid = 0;
+        logger("CPU error", "I'm not sure that you really want too much memory: %d.", CPU.ramSize);
         return;
     }
-    CPU_RAM_SIZE = ramSize > CPU_RAM_SIZE ? ramSize : CPU_RAM_SIZE;
-    CPU.RAM = (ui8*)calloc(CPU_RAM_SIZE, sizeof(ui8));
-    memset(CPU.RAM, 0, CPU_RAM_SIZE * sizeof(ui8));
+    CPU.ramSize = CPU.ramSize > 512 ? CPU.ramSize : 512;
+    CPU.RAM = (ui8*)calloc(CPU.ramSize, sizeof(ui8));
+    memset(CPU.RAM, 0, CPU.ramSize * sizeof(ui8));
     Assert_c(CPU.RAM);
     if (!CPU.RAM)
     {
@@ -152,6 +190,30 @@ void cupInit(ui32 ramSize)
     }
     CPU.stack.capacity = -1;
     CPU.isValid = 1;
+
+
+    if (CPU.isGraphMode)
+    {
+        ///тут важно, что данные структуры имеют одинаковое расположение полей
+        memcpy(&window, &inParam.Window, sizeof(inParam.Window));
+        window.winWidth = window.nCols * window.fontWidth;
+        window.winHeight = window.nLines * window.fontHeight;
+
+        window.ratioX = (float)window.fontWidth  / STANDART_FONT_SIZE;
+        window.ratioY = (float)window.fontHeight / STANDART_FONT_SIZE;
+
+        glutInitWindowSize(window.winWidth, window.winHeight);
+        glutInitWindowPosition(0, 0);
+        glutCreateWindow("Screen");
+        glutDisplayFunc(drawFromVideoMemory);
+
+        glViewport(0, 0, window.winWidth, window.winHeight);
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        gluOrtho2D(0, window.winWidth, 0, window.winHeight);
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+    }
 }
 
 
@@ -165,6 +227,49 @@ void cpuDestr()
     stackDest(&CPU.stack);
     CPU.isValid = 0;
 }
+
+/*
+\brief Функция, производящая дамп процессора, результат закидывается в outStream
+\param [in] outStream указатель на поток вывода
+*/
+void cpuDump(FILE* outStream)
+{
+    Assert_c(outStream);
+    if (!outStream)
+        return;
+    fprintf(outStream, "CPU{\n");
+    fprintf(outStream, "    Registers{\n");
+    #define printRegInfo(regName)\
+    fprintf(outStream, "        " #regName ":0x%04X  (int: %d) \t(float: %f)\n", CPU.Register.##regName,CPU.Register.##regName,*((float*)&CPU.Register.##regName))
+    printRegInfo(eax);printRegInfo(ebx);printRegInfo(ecx);printRegInfo(edx);
+    printRegInfo(esi);printRegInfo(edi);printRegInfo(ebp);printRegInfo(eip);
+    printRegInfo(efl);printRegInfo(ecs);printRegInfo(eds);printRegInfo(ess);
+    #undef printRegInfo
+    fprintf(outStream, "    }\n");
+   
+    #ifdef DUMP_PRINT_MEMORY
+    fprintf(outStream, "    RAM:\n");
+    fprintf(outStream, "    Segment offset |  0x00  0x01  0x02  0x03  0x04  0x05  0x06  0x07  0x08  0x09  0x0A  0x0B  0x0C  0x0D  0x0E  0x0F\n");
+    fprintf(outStream, "    ----------------------------------------------------------------------------------------------------------------\n");
+    for (int i = 0; i < CPU.ramSize ; i += 16)
+    {
+        fprintf(outStream, "    Segment:0x%05X|", i);
+        for (int j = 0; j < 16; j++)
+        {
+            ui8 data = i + j < CPU.ramSize ? CPU.RAM[i + j] : 0;
+            fprintf(outStream, "  0x%02X", data & 0xFF);
+        }
+        fprintf(outStream, "\n");
+    }
+    #endif
+    fprintf(outStream, "}\n");
+
+    #ifdef DUMP_PRINT_STACK
+    stackDump(CPU.stack, getLoggerStream());
+    #endif
+}
+
+
 
 /*
 \brief  Функции для работы с битами: set\get
@@ -198,6 +303,7 @@ static inline void getOperandsPointer(Command cmd, ui32** dst, ui32** src)
 {
     ui32** ptrOperands[2] = { dst, src };
     OperandType opType;
+    ui32 offset = 0;
     for (ui8 i = 0; i < cmd.nOperands; i++)
     {
         opType = getOperandType(cmd.machineCode, i);
@@ -210,10 +316,40 @@ static inline void getOperandsPointer(Command cmd, ui32** dst, ui32** src)
             *ptrOperands[i] = &cmd.operand[i];
             break;
         case OPERAND_MEMORY:
-            *ptrOperands[i] = (ui32*)&CPU.RAM[CPU.Register.eds + cmd.operand[i]];
+            offset = CPU.Register.eds + cmd.operand[i];
+            if (offset+sizeof(ui32) >= CPU.ramSize)
+            {
+                Assert_c(!"The command tries to access a nonexistent memory area!");
+                CPU.interruptCode = 3;
+                break;
+            }
+            if (CPU.isGraphMode && offset >= VIDEO_MEMORY_PTR && offset <= VIDEO_MEMORY_PTR + sizeof(ui8) * window.nCols * window.nLines)
+            {
+                CPU.isVideoMemoryChanged = 1;
+                CPU.ChangedPixel.x = offset - VIDEO_MEMORY_PTR;
+                CPU.ChangedPixel.y = CPU.ChangedPixel.x;
+                CPU.ChangedPixel.x %= window.nCols;
+                CPU.ChangedPixel.y /= window.nCols;
+            }
+            *ptrOperands[i] = (ui32*)&CPU.RAM[offset];
             break;
         case OPERAND_MEM_BY_REG:
-            *ptrOperands[i] = (ui32*)&CPU.RAM[CPU.Register.eds + *getRegisterPtr(cmd.operand[i])];
+            offset = CPU.Register.eds + *getRegisterPtr(cmd.operand[i]);
+            if (offset+sizeof(ui32)>= CPU.ramSize)
+            {
+                Assert_c(!"The command tries to access a nonexistent memory area!");
+                CPU.interruptCode = 3;
+                break;
+            }
+            if (CPU.isGraphMode && offset >= VIDEO_MEMORY_PTR && offset <= VIDEO_MEMORY_PTR + sizeof(ui8) * window.nCols * window.nLines)
+            {
+                CPU.isVideoMemoryChanged = 1;
+                CPU.ChangedPixel.x = offset - VIDEO_MEMORY_PTR;
+                CPU.ChangedPixel.y = CPU.ChangedPixel.x;
+                CPU.ChangedPixel.x %= window.nCols;
+                CPU.ChangedPixel.y /= window.nCols;
+            }
+            *ptrOperands[i] = (ui32*)&CPU.RAM[offset];
             break;
         default:
             Assert_c(!"Invalid type of operand.");
@@ -244,6 +380,7 @@ void run_##name(Command cmd) code
 #undef DEF
 
 
+
 /*
 \breif Массив функций, реализующих поведение процессора
 */
@@ -258,49 +395,6 @@ FunctionType runFunction[] =
 
 const ui32 FUNCTION_TABLE_SIZE = sizeof(runFunction)/sizeof(FunctionType); ///< Размер таблицы функций, введенный для удобства.
 
-
-/*
-\brief Функция, производящая дамп процессора, результат закидывается в outStream
-\param [in] outStream указатель на поток вывода
-*/
-void cpuDump(FILE* outStream)
-{
-    Assert_c(outStream);
-    if (!outStream)
-        return;
-    fprintf(outStream, "CPU{\n");
-    fprintf(outStream, "    Registers{\n");
-    #define printRegInfo(regName)\
-    fprintf(outStream, "        " #regName ":0x%04X  (int: %d) \t(float: %f)\n", CPU.Register.##regName,CPU.Register.##regName,*((float*)&CPU.Register.##regName))
-    printRegInfo(eax);
-    printRegInfo(ebx);
-    printRegInfo(ecx);
-    printRegInfo(edx);
-    printRegInfo(esi);
-    printRegInfo(edi);
-    printRegInfo(ebp);
-    printRegInfo(eip);
-    printRegInfo(efl);
-    printRegInfo(ecs);
-    printRegInfo(eds);
-    printRegInfo(ess);
-    #undef printRegInfo
-    fprintf(outStream, "    }\n");
-    fprintf(outStream, "    RAM:\n");
-    fprintf(outStream, "    Segment offset |  0x00  0x01  0x02  0x03  0x04  0x05  0x06  0x07  0x08  0x09  0x0A  0x0B  0x0C  0x0D  0x0E  0x0F\n");
-    fprintf(outStream, "    ----------------------------------------------------------------------------------------------------------------\n");
-    for (int i = 0; i < CPU_RAM_SIZE; i += 16)
-    {
-        fprintf(outStream, "    Segment:0x%05X|", i);
-        for (int j = 0; j < 16; j++)
-        {
-            ui8 data = i + j < CPU_RAM_SIZE ? CPU.RAM[i + j] : 0;
-            fprintf(outStream, "  0x%02X", data & 0xFF);
-        }
-        fprintf(outStream, "\n");
-    }
-    fprintf(outStream, "}\n");
-}
 
 
 /*
@@ -338,38 +432,9 @@ static CPUerror cpuRun(bool writeResultInLog = true)
             }
         }
 
-        ui32 indexCalledFunc = (getPureMachCode(cmd.machineCode) >> 6) - 1;
-        if (indexCalledFunc >= FUNCTION_TABLE_SIZE)
-        {
-            logger("CPU error", "Invalid machine code of command.");
-            cpuDump(getLoggerStream());
-            stackDump(CPU.stack, getLoggerStream());
-            return CPU_ERROR_INVALID_COMMAND;
-        }
-        runFunction[indexCalledFunc](cmd);
-        ptr = &CPU.RAM[CPU.Register.eip];
-
-        if (CPU.interruptCode)
-        {
-            logger("CPU error", "Catch exception after execution command:");
-            disasmCommand(cmd, getLoggerStream());
-            cpuDump(getLoggerStream());
-            stackDump(CPU.stack, getLoggerStream());
-            return CPU_ERROR_EXCEPTION;
-        }
-        if (CPU.Register.eip >= CPU_RAM_SIZE)
-        {
-            logger("CPU error", "Register epi quite big for RAM.");
-            cpuDump(getLoggerStream());
-            stackDump(CPU.stack, getLoggerStream());
-            return CPU_ERROR_EPI_OUT_OF_RANE;
-        }
-        CPU.stack.data = &CPU.RAM[CPU.Register.ess];
-        CPU.stack.size = CPU.Register.esp;
-
         if (CPU.stepByStep)
         {
-            disasmCommand(cmd);
+            disasmCommand(cmd, stdout);
             cpuDump(stdout);
             #ifdef _WIN32
             system("pause");
@@ -382,13 +447,43 @@ static CPUerror cpuRun(bool writeResultInLog = true)
         }
 
 
+        ui32 indexCalledFunc = (getPureMachCode(cmd.machineCode) >> 6);
+        if (indexCalledFunc >= FUNCTION_TABLE_SIZE)
+        {
+            logger("CPU error", "Invalid machine code of command.");
+            cpuDump(getLoggerStream());
+            return CPU_ERROR_INVALID_COMMAND;
+        }
+        runFunction[indexCalledFunc](cmd);
+        ptr = &CPU.RAM[CPU.Register.eip];
+
+        if (CPU.interruptCode)
+        {
+            logger("CPU error", "Catch exception after execution command:");
+            disasmCommand(cmd, getLoggerStream());
+            cpuDump(getLoggerStream());
+            return CPU_ERROR_EXCEPTION;
+        }
+        if (CPU.Register.eip >= CPU.ramSize)
+        {
+            logger("CPU error", "Register epi quite big for RAM.");
+            cpuDump(getLoggerStream());
+            return CPU_ERROR_EPI_OUT_OF_RANE;
+        }
+        CPU.stack.data = &CPU.RAM[CPU.Register.ess];
+        CPU.stack.size = CPU.Register.esp;
+
+        if (CPU.isGraphMode && CPU.isVideoMemoryChanged)
+        {
+            drawFromVideoMemory();
+            CPU.isVideoMemoryChanged = 0;
+        }
     }
 
     if (writeResultInLog)
     {
         logger("Cpu", "Program successful complete! Damped CPU:\n");
         cpuDump(getLoggerStream());
-        stackDump(CPU.stack, getLoggerStream());
     }
 
     return CPU_OK;
@@ -421,8 +516,8 @@ CPUerror cpuRunProgram(const char* programCode, int size, bool writeResultInLog,
         logger("CPU error", "You try execute program, that have incorrect size:%d", size);
         return CPU_INVALID_INPUT_DATA;
     }
-    Assert_c(ptrStart + size + 1 < CPU_RAM_SIZE);
-    if (ptrStart + size + 1 >= CPU_RAM_SIZE)
+    Assert_c(ptrStart + size + 1 < CPU.ramSize);
+    if (ptrStart + size + 1 >= CPU.ramSize)
     {
         logger("CPU error", "Your program doesn't fit in RAM. Try to change ptrStart or write small program");
         return CPU_INVALID_INPUT_DATA;
@@ -435,6 +530,14 @@ CPUerror cpuRunProgram(const char* programCode, int size, bool writeResultInLog,
     CPU.Register.eds = ptrStart;
     CPU.Register.ess = ptrStart;
     CPU.Register.esp = size + 1; /// стек будет лежать за кодом
+
+    /// Перед видеопамятью расположим информацию о количестве строк и столбиков
+    if (CPU.isGraphMode && CPU.ramSize >= VIDEO_MEMORY_PTR)
+    {
+        *((ui16*)&CPU.RAM[VIDEO_MEMORY_PTR - 2 * sizeof(ui16)]) = window.nLines;
+        *((ui16*)&CPU.RAM[VIDEO_MEMORY_PTR - 1 * sizeof(ui16)]) = window.nCols;
+    }
+
 
     CPU.stack.data = &CPU.RAM[CPU.Register.ess];
     CPU.stack.size = CPU.Register.esp;
@@ -460,4 +563,39 @@ void setCpuRegisters(GeneralReg reg)
 void getCpuRegisters(GeneralReg* reg)
 {
     memcpy(reg, &CPU.Register, sizeof(GeneralReg));
+}
+
+
+
+static inline void renderChar(float x, float y, const char c)
+{
+    glColor3f(0,0,0);
+    glRectf(x, y, x + window.fontWidth, y + window.fontHeight);
+
+    glColor3f(1, 1, 1);
+    glPushMatrix();
+    glTranslatef(x, y, 0);
+    glScalef(window.ratioX, window.ratioY, 1.0);
+    glutStrokeCharacter(GLUT_STROKE_MONO_ROMAN, c);
+    glPopMatrix();
+}
+
+
+void drawFromVideoMemory()
+{
+    ///если раскомментировать этот кусок, то получится красивый эффект
+    /*
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glColor4f(0, 0, 0, 0.01);
+    glRectf(0, 0, window.winWidth, window.winHeight);
+    */
+
+    
+    static const char* string = (char*)&CPU.RAM[VIDEO_MEMORY_PTR];    
+    int col = CPU.ChangedPixel.x;
+    int line = CPU.ChangedPixel.y;
+    renderChar(col * window.fontWidth, window.winHeight - (line+1) * window.fontWidth, string[col + line * window.nCols]);
+
+    glFlush();
 }

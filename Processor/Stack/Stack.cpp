@@ -386,6 +386,7 @@ void _stackDump(const void* stk, const dbgCallInfo dbgInfo,FILE* outStream)
         fprintf(outStream,"           leftSide[0x%X] = 0x%llX\n", ptrData + capacity*elementSize, *((CanaryType*)(ptrData + capacity*elementSize)));
         fprintf(outStream,"       }\n");
     #endif
+        
     for (int i = 0; i < size; i++)
     {
         fprintf(outStream,"        ");
@@ -398,6 +399,7 @@ void _stackDump(const void* stk, const dbgCallInfo dbgInfo,FILE* outStream)
             fprintf(outStream,"%X", *((char*)stack->data + i*elementSize + j) & 0xFF);
         fprintf(outStream,"\n");
     }
+    
     fprintf(outStream,"   }\n");
     fprintf(outStream,"}\n");
 

@@ -34,7 +34,7 @@ int readFullFile(const char* filename, char** outString)
     long fsize = ftell(inputFile);
     fseek(inputFile, 0, SEEK_SET);
 
-    char* string = (char*)calloc(fsize + 1, sizeof(char));
+    char* string = (char*)calloc(fsize + 2, sizeof(char));
     Assert_c(string);
     if (!string)
         return ASM_ERROR_CODE;
@@ -49,6 +49,49 @@ int readFullFile(const char* filename, char** outString)
 }
 
 
+/**
+\brief  Функция удаляет из строки все спец символы, кроме тех, которые указаны в строке dontDelChar
+\param  [in,out]      ptrStr  Указатель на строку в которой будем производить удаление
+\param  [in,out]      dontDelChar Строка, задающая набор символов, которые не следует удалять
+\return В случае успеха возвращается новая длина строки.
+        Если произошла ошибка, то возвращается константа ASM_ERROR_CODE.
+\note   В новой строке будут только числа,буквы и символы из строки dontDelChar
+*/
+int removeExtraChar(char** ptrStr, const char* dontDelChar)
+{
+    Assert_c(ptrStr);
+    Assert_c(dontDelChar);
+    if (!ptrStr || !dontDelChar)
+        return ASM_ERROR_CODE;
+    char* str = *ptrStr;
+    Assert_c(str);
+    if (!str)
+        return ASM_ERROR_CODE;
+
+    ui32 i = 0;
+    ui32 j = 0;
+    #define isValid(x) (isalpha(x) || isdigit(x) || strchr(dontDelChar , x))
+    while (str[j])
+    {
+        if (isValid(str[j]))
+        {
+            str[i] = str[j];
+            i++;
+        }
+        j++;
+    }
+    str[i++] = 0;
+    i++;
+    #undef isValid
+    str = (char*)realloc(str, i);
+    Assert_c(str);
+    if (!str)
+        return ASM_ERROR_CODE;
+
+    *ptrStr = str;
+
+    return i;
+}
 
 /*
 \brief Структура, описывающая минимальную единицу языка
@@ -100,7 +143,7 @@ const Lexema Registers[] =
 \brief Описание констант, задающих размер таблиц
 @{
 */
-const ui32 COMMAND_TABLE_SIZE = sizeof(Table) / sizeof(Lexema);
+const ui32 COMMAND_TABLE_SIZE = sizeof(Table) / sizeof(Lexema);; ///< всего 18 базовых команд, которые не реализуются с помощью макрасов 
 const ui32 REGISTER_TABLE_SIZE = sizeof(Registers) / sizeof(Lexema);
 /*
 @}
@@ -456,6 +499,9 @@ struct
     {
         Assert_c(str);
         if (!str)
+            return false;
+
+        if (!isdigit(*str) && *str != '-')
             return false;
 
         if (strstr(str, "0x"))

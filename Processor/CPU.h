@@ -1,5 +1,6 @@
 #pragma once
 #include "Asm.h"
+#include "Argparser.h"
 
 
 
@@ -21,8 +22,8 @@ C_string getStringByErrorCode(CPUerror errorCode);///< По коду ошибк�
 
 void setStepByStepMode(bool flag); ///< Устанавливает режим работы процессора step by step
 
-void cupInit(ui32 ramSize); ///< Функция инициализации структуры CPU
-CPUerror cpuRunProgram(const char* programCode, int size, ui32 ptrStart = 0);/// Функция, запускающая программу на исполнение
+void cupInit(const InputParams inParam); ///< Функция инициализации структуры CPU
+CPUerror cpuRunProgram(const char* programCode, int size, bool writeResultInLog = true, ui32 ptrStart = 0);/// Функция, запускающая программу на исполнение
 void cpuDestr(); ///< Функция делает cleanUp структуры CPU
 
 /*

@@ -46,7 +46,13 @@
 
 */
 
+#define isInterruptOccur() if(CPU.interruptCode) return;
 
+DEF(
+    HLT,
+    0 << 6 | 0 << 4 | 0 << 2 | 0x0, "", "",
+    {}
+)
 
 DEF(
     MOV,
@@ -55,6 +61,7 @@ DEF(
         ui32* dst = NULL;
         ui32* src = NULL;
         getOperandsPointer(cmd, &dst, &src);
+        isInterruptOccur();
 
         *dst = *src;
     }
@@ -67,6 +74,9 @@ DEF(
         ui32* dst = NULL;
         ui32* src = NULL;
         getOperandsPointer(cmd, &dst, &src);
+        isInterruptOccur();
+
+
         if (!CPU.isFloatPointMath)
             *dst += *src;
         else
@@ -81,7 +91,7 @@ DEF(
         ui32* dst = NULL;
         ui32* src = NULL;
         getOperandsPointer(cmd, &dst, &src);
-
+        isInterruptOccur();
         if (!CPU.isFloatPointMath)
             *dst -= *src;
         else
@@ -96,7 +106,7 @@ DEF(
         ui32* dst = NULL;
         ui32* src = NULL;
         getOperandsPointer(cmd, &dst, &src);
-
+        isInterruptOccur();
 
 
         if (!CPU.isFloatPointMath)
@@ -124,6 +134,7 @@ DEF(
         ui32* dst = NULL;
         ui32* src = NULL;
         getOperandsPointer(cmd, &dst, &src);
+        isInterruptOccur();
 
         if (!CPU.isFloatPointMath)
             *dst *= *src;
@@ -142,6 +153,14 @@ DEF(
         ui32* dst = NULL;
         ui32* src = NULL;
         getOperandsPointer(cmd, &dst, &src);
+        isInterruptOccur();
+        /*
+            Загадка от Жака Фреско:
+                А что, нельзя было сразу сделать стек на ui32?
+                На размышление дается 1 неделя.
+            Ответ от Жака Фреско:
+                Можно реализовать систему команд, работающую с различными размерами операндов.
+        */
         ui8* data = (ui8*)dst;
         for (ui8 i = 0; i < sizeof(ui32); i++)
             stackPop(&CPU.stack, &data[sizeof(ui32) - 1 - i]);
@@ -160,6 +179,7 @@ DEF(
         ui32* dst = NULL;
         ui32* src = NULL;
         getOperandsPointer(cmd, &dst, &src);
+        isInterruptOccur();
         ui8* data = (ui8*)dst;
         for (ui8 i = 0; i < sizeof(ui32); i++)
             stackPush(&CPU.stack, &data[i]);
@@ -179,19 +199,15 @@ DEF(
     }
 )
 
-DEF(
-    HLT,
-    9 << 6 | 0 << 4 | 0 << 2 | 0x0, "", "",
-    {}
-)
 
 DEF(
     CMP,
-    10 << 6 | 0 << 4 | 0 << 2 | 0x2, "RNMB", "RNMB",
+    9 << 6 | 0 << 4 | 0 << 2 | 0x2, "RNMB", "RNMB",
     {
         ui32* dst = NULL;
         ui32* src = NULL;
         getOperandsPointer(cmd, &dst, &src);
+        isInterruptOccur();
 
         if (!CPU.isFloatPointMath)
         {
@@ -214,7 +230,7 @@ DEF(
 
 DEF(
     JE,
-    11 << 6 | 0 << 4 | 0 << 2 | 0x1, "N", "",
+    10 << 6 | 0 << 4 | 0 << 2 | 0x1, "N", "",
     {
         if (getBit(CPU.Register.efl, FLAG_ZF))
         CPU.Register.eip = CPU.Register.ecs + (int)cmd.operand[0];
@@ -223,7 +239,7 @@ DEF(
 
 DEF(
     JNE,
-    12 << 6 | 0 << 4 | 0 << 2 | 0x1, "N", "",
+    11 << 6 | 0 << 4 | 0 << 2 | 0x1, "N", "",
     {
         if (!getBit(CPU.Register.efl, FLAG_ZF))
         CPU.Register.eip = CPU.Register.ecs + (int)cmd.operand[0];
@@ -232,7 +248,7 @@ DEF(
 
 DEF(
     JA,
-    13 << 6 | 0 << 4 | 0 << 2 | 0x1, "N", "",
+    12 << 6 | 0 << 4 | 0 << 2 | 0x1, "N", "",
     {
         if (!getBit(CPU.Register.efl, FLAG_CF) && !getBit(CPU.Register.efl, FLAG_ZF))
         CPU.Register.eip = CPU.Register.ecs + (int)cmd.operand[0];
@@ -241,7 +257,7 @@ DEF(
 
 DEF(
     JAE,
-    14 << 6 | 0 << 4 | 0 << 2 | 0x1, "N", "",
+    13 << 6 | 0 << 4 | 0 << 2 | 0x1, "N", "",
     {
         if (!getBit(CPU.Register.efl, FLAG_CF))
         CPU.Register.eip = CPU.Register.ecs + (int)cmd.operand[0];
@@ -250,7 +266,7 @@ DEF(
 
 DEF(
     JB,
-    15 << 6 | 0 << 4 | 0 << 2 | 0x1, "N", "",
+    14 << 6 | 0 << 4 | 0 << 2 | 0x1, "N", "",
     {
         if (getBit(CPU.Register.efl, FLAG_CF))
         CPU.Register.eip = CPU.Register.ecs + (int)cmd.operand[0];
@@ -259,7 +275,7 @@ DEF(
 
 DEF(
     JBE,
-    16 << 6 | 0 << 4 | 0 << 2 | 0x1, "N", "",
+    15 << 6 | 0 << 4 | 0 << 2 | 0x1, "N", "",
     {
         if (getBit(CPU.Register.efl, FLAG_CF) || getBit(CPU.Register.efl, FLAG_ZF))
         CPU.Register.eip = CPU.Register.ecs + (int)cmd.operand[0];
@@ -268,11 +284,12 @@ DEF(
 
 DEF(
     CALL,
-    17 << 6 | 0 << 4 | 0 << 2 | 0x1, "N", "",
+    16 << 6 | 0 << 4 | 0 << 2 | 0x1, "N", "",
     {
         ui32* dst = NULL;
         ui32* src = NULL;
         getOperandsPointer(cmd, &dst, &src);
+        isInterruptOccur();
 
         ui8* data = (ui8*)&CPU.Register.eip;
         for (ui8 i = 0; i < sizeof(ui32); i++)
@@ -284,7 +301,7 @@ DEF(
 
 DEF(
     RET,
-    18 << 6 | 0 << 4 | 0 << 0 | 0x0, "", "",
+    17 << 6 | 0 << 4 | 0 << 2 | 0x0, "", "",
     {
         ui32 ptrReturn = 0;
 
@@ -298,7 +315,7 @@ DEF(
 
 DEF(
     FPMON,
-    19 << 6 | 0 << 4 | 0 << 0 | 0x0, "", "",
+    18 << 6 | 0 << 4 | 0 << 2 | 0x0, "", "",
     {
         CPU.isFloatPointMath = 1;
     }
@@ -306,7 +323,7 @@ DEF(
 
 DEF(
     FPMOFF,
-    20 << 6 | 0 << 4 | 0 << 0 | 0x0, "", "",
+    19 << 6 | 0 << 4 | 0 << 2 | 0x0, "", "",
     {
         CPU.isFloatPointMath = 0;
     }
@@ -315,17 +332,112 @@ DEF(
 
 DEF(
     SQRT,
-    21 << 6 | 0 << 4 | 0 << 0 | 0x1, "RNMB", "",
+    20 << 6 | 0 << 4 | 0 << 2 | 0x1, "RNMB", "",
     {
         ui32* dst = NULL;
         ui32* src = NULL;
         getOperandsPointer(cmd, &dst, &src);
+        isInterruptOccur();
 
         if (dst < 0)
         {
-            CPU.interruptCode = 2;
+            CPU.interruptCode = 3; // извлечение корня из отрицательного числа
             return;
         }
         *((float*)&CPU.Register.eax) = sqrt(*((float*)dst));
+    }
+)
+
+
+DEF(
+    TRUNC,
+    21 << 6 | 0 << 4 | 0 << 2 | 0x1, "RMB", "",
+    {
+        ui32* dst = NULL;
+        ui32* src = NULL;
+        getOperandsPointer(cmd, &dst, &src);
+        isInterruptOccur();
+
+        *dst = *((float*)dst);
+    }
+)
+
+
+DEF(
+    SIN,
+    22 << 6 | 0 << 4 | 0 << 2 | 0x1, "RNMB", "",
+    {
+        ui32* dst = NULL;
+        ui32* src = NULL;
+        getOperandsPointer(cmd, &dst, &src);
+        isInterruptOccur();
+
+        *((float*)&CPU.Register.eax) = sinf(*((float*)dst));
+    }
+)
+
+
+DEF(
+    COS,
+    23 << 6 | 0 << 4 | 0 << 2 | 0x1, "RNMB", "",
+    {
+        ui32* dst = NULL;
+        ui32* src = NULL;
+        getOperandsPointer(cmd, &dst, &src);
+        isInterruptOccur();
+
+        *((float*)&CPU.Register.eax) = cosf(*((float*)dst));
+    }
+)
+
+
+DEF(
+    MOVB,
+    24 << 6 | 0 << 4 | 0 << 2 | 0x2, "RMB", "RNMB",
+    {
+        ui32* dst = NULL;
+        ui32* src = NULL;
+        getOperandsPointer(cmd, &dst, &src);
+        isInterruptOccur();
+
+        ui8 srcB = *src;
+        memcpy(dst, &srcB,sizeof(ui8));
+        
+    }
+)
+
+DEF(
+    MOVW,
+    25 << 6 | 0 << 4 | 0 << 2 | 0x2, "RMB", "RNMB",
+    {
+        ui32* dst = NULL;
+        ui32* src = NULL;
+        getOperandsPointer(cmd, &dst, &src);
+        isInterruptOccur();
+        ui16 srcB = *src;
+        memcpy(dst, &srcB,sizeof(ui16));
+
+    }
+)
+
+DEF(
+    DUMP,
+    26 << 6 | 0 << 4 | 0 << 2 | 0x0, "", "",
+    {
+        cpuDump(stdout);
+        system("pause");
+    }
+)
+
+DEF(
+    FLOAT,
+    27 << 6 | 0 << 4 | 0 << 2 | 0x1, "RMB", "",
+    {
+        ui32* dst = NULL;
+        ui32* src = NULL;
+        getOperandsPointer(cmd, &dst, &src);
+        isInterruptOccur();
+
+        *((float*)dst) = (float)*dst;
     }
 )

@@ -300,7 +300,25 @@ static void test_SquareEquation()
 */
 void cpuStartTests()
 {
-    cupInit(0);
+    InputParams inParams = 
+    {
+        PROG_UNDEFINED,
+        "",
+        "",
+        "",
+        1024,
+        0,
+        0,
+        0,
+        0,
+        {
+            0,
+            0,
+            0,
+            0
+        }
+    };
+    cupInit(inParams);
     test_Faclorial();
     test_Fibonacci();
     test_SquareEquation();
