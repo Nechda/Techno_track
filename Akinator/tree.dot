@@ -6,16 +6,16 @@ edge[color = "black", fontsize = 24]
 "cat" [shape = "ellipse", fillcolor = "lightgreen"] 
  "is it a doge?" 
  "is it a doge?" -> "cat" [label = "No", fontcolor = "red" ] 
- "is it a doge?" -> "doge" [label = "Yes", fontcolor = "green", labeldistance=7.5, labelangle = 75 ] 
+ "is it a doge?" -> "doge" [label = "Yes", fontcolor = "green" ] 
  "is it a lizzard?" 
  "is it a lizzard?" -> "is it a doge?" [label = "No", fontcolor = "red" ] 
- "is it a lizzard?" -> "lizzard" [label = "Yes", fontcolor = "green", labeldistance=7.5, labelangle = 75 ] 
+ "is it a lizzard?" -> "lizzard" [label = "Yes", fontcolor = "green" ] 
 "pen" [shape = "ellipse", fillcolor = "lightgreen"] 
 "notebook" [shape = "ellipse", fillcolor = "lightgreen"] 
  "is it a pen?" 
  "is it a pen?" -> "notebook" [label = "No", fontcolor = "red" ] 
- "is it a pen?" -> "pen" [label = "Yes", fontcolor = "green", labeldistance=7.5, labelangle = 75 ] 
+ "is it a pen?" -> "pen" [label = "Yes", fontcolor = "green" ] 
  "is it alive?" 
  "is it alive?" -> "is it a pen?" [label = "No", fontcolor = "red" ] 
- "is it alive?" -> "is it a lizzard?" [label = "Yes", fontcolor = "green", labeldistance=7.5, labelangle = 75 ] 
+ "is it alive?" -> "is it a lizzard?" [label = "Yes", fontcolor = "green" ] 
 }
