@@ -191,6 +191,35 @@ static void printInteration(Node* root, int level, Stream stream)
 }
 
 
+const char* DOT_LEAF_STYLE = "[shape = \"ellipse\", fillcolor = \"lightgreen\"]";
+const char* DOT_NODE_STYLE = "node[color = \"black\", fontsize = 24, shape = \"box\", style = \"filled, rounded\", fillcolor = \"lightgray\"]";
+const char* DOT_EDGE_STYLE = "edge[color = \"black\", fontsize = 24]";
+
+static void drawTreeInteration(Node* root, FILE* file)
+{
+    Assert_c(file);
+    Assert_c(root);
+    if (!file || !root)
+        return;
+
+    bool isLeaf = !root->l;
+
+    if (isLeaf)
+    {
+        fprintf(file,
+            "\"%s\" %s \n", root->data, DOT_LEAF_STYLE
+        );
+    }
+    else
+    {
+        drawTreeInteration(root->l, file);
+        drawTreeInteration(root->r, file);
+        fprintf(file, " \"%s\" \n", root->data);
+
+        fprintf(file, " \"%s\" -> \"%s\" [label = \"No\", fontcolor = \"red\" ] \n", root->data, root->r->data);
+        fprintf(file, " \"%s\" -> \"%s\" [label = \"Yes\", fontcolor = \"green\" ] \n", root->data, root->l->data);
+    }
+}
 
 struct Tree
 {
@@ -198,6 +227,7 @@ struct Tree
     void init(const C_string filename);
     void destr();
     void print(Stream stream = stdout);
+    void draw(const char* filename = "tree.dot");
 };
 
 void Tree::init(const C_string filename)
@@ -239,6 +269,32 @@ void Tree::print(Stream stream)
 {
     printInteration(root, 0, stream);
 }
+
+void Tree::draw(const char* filename)
+{
+    FILE* file = fopen(filename, "w");
+    Assert_c(file);
+    if (!file)
+        return;
+
+    fprintf(file,
+        "digraph{\n"
+        "node %s\n"
+        "edge %s\n"
+        , DOT_NODE_STYLE, DOT_EDGE_STYLE
+    );
+
+    drawTreeInteration(root,file);
+        
+
+    fprintf(file,
+        "}"
+    );
+
+    fclose(file);
+    system("dot -Tpng tree.dot -o tree.png");
+}
+
 
 void runAkinator()
 {
@@ -312,10 +368,13 @@ void runAkinator()
 
     Stream outStream = fopen("base.txt", "w");
     base.print(outStream);
+    base.draw();
     base.destr();
     if(outStream)
         fclose(outStream);
 }
+
+
 
 int main()
 {
