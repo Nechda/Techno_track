@@ -1,0 +1,9 @@
+digraph{
+node [color = "black", fontsize = 24, shape = "box", style = "filled, rounded", fillcolor = "lightgray"]
+edge [color = "black", fontsize = 24]
+"10" [shape = "ellipse", fillcolor = "lightgreen"] 
+"x" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "/" 
+ "/" ->  "x" [label = "L[1]", fontsize = 14] 
+ "/" ->  "10" [label = "L[0]", fontsize = 14] 
+}
