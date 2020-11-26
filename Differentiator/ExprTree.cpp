@@ -4,35 +4,39 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "Parser.h"
 
 
 
-C_string expInfoToStr(ExpInfo exp)
+C_string expInfoToStr(ExpInfo* exp)
 {
-    static char buffer[32] = {};
+    static char buffer[64] = {};
     static char* opDict = "+-*/";
-    if (exp.type == EXP_NUMBER)
+    if (exp->expType == EXP_NUMBER)
     {
-        sprintf(buffer, "%d", exp.value);
+        sprintf(buffer, "%d\n0x%X", exp->value, exp);
         return buffer;
     }
 
-    if (exp.type == EXP_OPERATION)
+    if (exp->expType == EXP_OPERATION)
     {
-        sprintf(buffer, "%c", opDict[exp.value]);
+        sprintf(buffer, "%c\n0x%X", opDict[exp->value], exp);
         return buffer;
     }
 
-    if (exp.type == EXP_VARIABLE)
+    if (exp->expType == EXP_VARIABLE)
     {
-        sprintf(buffer, "x");
+        sprintf(buffer, "x\n0x%X", exp);
         return buffer;
     }
 
     return buffer;
 }
 
-
+Expression::Expression(const Expression& exp)
+{
+    setRoot(rCopy<ExpInfo>(exp.ground.link[0]));
+}
 
 void Expression::printNodeInDotFile(TNode* node, Stream stream)
 {
@@ -46,7 +50,7 @@ void Expression::printNodeInDotFile(TNode* node, Stream stream)
     if (isLeaf)
     {
         fprintf(stream,
-            "\"%s\" %s \n", expInfoToStr(*node->data), DOT_LEAF_STYLE
+            "\"%s\" %s \n", expInfoToStr(node->data), DOT_LEAF_STYLE
         );
     }
     else
@@ -54,12 +58,12 @@ void Expression::printNodeInDotFile(TNode* node, Stream stream)
         printNodeInDotFile(node->link[0], stream);
         printNodeInDotFile(node->link[1], stream);
 
-        fprintf(stream, " \"%s\" \n", expInfoToStr(*node->data));
+        fprintf(stream, " \"%s\" \n", expInfoToStr(node->data));
 
-        fprintf(stream, " \"%s\" -> ", expInfoToStr(*node->data));
-        fprintf(stream, " \"%s\" [label = \"L[1]\", fontsize = 14] \n", expInfoToStr(*node->link[1]->data));
-        fprintf(stream, " \"%s\" -> ", expInfoToStr(*node->data));
-        fprintf(stream, " \"%s\" [label = \"L[0]\", fontsize = 14] \n", expInfoToStr(*node->link[0]->data));
+        fprintf(stream, " \"%s\" -> ", expInfoToStr(node->data));
+        fprintf(stream, " \"%s\" [label = \"L[1]\", fontsize = 14] \n", expInfoToStr(node->link[1]->data));
+        fprintf(stream, " \"%s\" -> ", expInfoToStr(node->data));
+        fprintf(stream, " \"%s\" [label = \"L[0]\", fontsize = 14] \n", expInfoToStr(node->link[0]->data));
     }
 }
 
@@ -76,7 +80,7 @@ void printInteration(const Expression::TNode* root, int level, Stream stream)
 
     if (isLeaf)
     {
-        fprintf(stream, "(%s)", expInfoToStr(*root->data));
+        fprintf(stream, "(%s)", expInfoToStr(root->data));
         return;
     }
     else
@@ -84,7 +88,7 @@ void printInteration(const Expression::TNode* root, int level, Stream stream)
         if (level)
             fprintf(stream, "(");
         printInteration(root->link[0], level + 1, stream);
-        fprintf(stream, "%s", expInfoToStr(*root->data));
+        fprintf(stream, "%s", expInfoToStr(root->data));
         printInteration(root->link[1], level + 1, stream);
         if (level)
             fprintf(stream, ")");
@@ -109,28 +113,28 @@ ExpInfo* getData(C_string str, ui32 len)
     switch (tmpStr[0])
     {
     case '+':
-        ptr->type = EXP_OPERATION;
+        ptr->expType = EXP_OPERATION;
         ptr->value = 0;
         break;
     case '-':
-        ptr->type = EXP_OPERATION;
+        ptr->expType = EXP_OPERATION;
         ptr->value = 1;
         break;
     case '*':
-        ptr->type = EXP_OPERATION;
+        ptr->expType = EXP_OPERATION;
         ptr->value = 2;
         break;
     case '/':
     case '\\':
-        ptr->type = EXP_OPERATION;
+        ptr->expType = EXP_OPERATION;
         ptr->value = 3;
         break;
     case 'x':
-        ptr->type = EXP_VARIABLE;
+        ptr->expType = EXP_VARIABLE;
         ptr->value = 3;
         break;
     default:
-        ptr->type = EXP_NUMBER;
+        ptr->expType = EXP_NUMBER;
         ptr->value = atoi(tmpStr);
         break;
     }
@@ -235,11 +239,11 @@ bool constantSimplify(Expression::TNode* node, bool& isChangedTree)
 {
     bool isLeaf = !node->link[0] && !node->link[1];
     if (isLeaf)
-        return node->data->type == EXP_NUMBER ? 1 : 0;
+        return node->data->expType == EXP_NUMBER ? 1 : 0;
 
 
 
-    if (node->data->type == EXP_OPERATION)
+    if (node->data->expType == EXP_OPERATION)
     {
         bool canEvaluate = 1;
         canEvaluate &= constantSimplify(node->link[0], isChangedTree);
@@ -252,12 +256,10 @@ bool constantSimplify(Expression::TNode* node, bool& isChangedTree)
         num[1] = node->link[1]->data->value;
 
         node->data->value = evaluateFunctions[node->data->value](num[0], num[1]);
-        node->data->type = EXP_NUMBER;
+        node->data->expType = EXP_NUMBER;
 
-        node->link[0]->cleanUp();
-        node->link[1]->cleanUp();
-        free(node->link[0]);
-        free(node->link[1]);
+        rCleanUp(node->link[0]);
+        rCleanUp(node->link[1]);
         node->link[0] = NULL;
         node->link[1] = NULL;
 
@@ -277,10 +279,10 @@ void identitySimplify(Expression::TNode* node, bool& isChangedTree)
     identitySimplify(node->link[1], isChangedTree);
 
 
-#define isZeroNumber(p) p->data->value == 0 && p->data->type == EXP_NUMBER
-#define isOneNumber(p) p->data->value == 1 && p->data->type == EXP_NUMBER
+    #define isZeroNumber(p) p->data->value == 0 && p->data->expType == EXP_NUMBER
+    #define isOneNumber(p) p->data->value == 1 && p->data->expType == EXP_NUMBER
 
-    if (node->data->type == EXP_OPERATION)
+    if (node->data->expType == EXP_OPERATION)
     {
         Expression::TNode* prnt = NULL;
         Expression::TNode* lnk = NULL;
@@ -299,8 +301,7 @@ void identitySimplify(Expression::TNode* node, bool& isChangedTree)
 
                     lnk->parent = prnt;
 
-                    node->link[j]->cleanUp();
-                    free(node->link[j]);
+                    rCleanUp(node->link[j]);
                     free(node->data);
                     free(node);
                     isChangedTree |= 1;
@@ -319,15 +320,14 @@ void identitySimplify(Expression::TNode* node, bool& isChangedTree)
                     lnk = (Expression::TNode*)calloc(1, sizeof(Expression::TNode));
                     lnk->parent = prnt;
                     lnk->data = (ExpInfo*)calloc(1, sizeof(ExpInfo));
-                    lnk->data->type = EXP_NUMBER;
+                    lnk->data->expType = EXP_NUMBER;
                     lnk->data->value = 0;
 
                     for (ui8 i = 0; i < 2; i++)
                         if (prnt->link[i] == node && prnt)
                             prnt->link[i] = lnk;
 
-                    node->cleanUp();
-                    free(node);
+                    rCleanUp(node);
                     isChangedTree |= 1;
                     return;
                 }
@@ -345,8 +345,7 @@ void identitySimplify(Expression::TNode* node, bool& isChangedTree)
 
                     lnk->parent = prnt;
 
-                    node->link[j]->cleanUp();
-                    free(node->link[j]);
+                    rCleanUp(node->link[j]);
                     free(node->data);
                     free(node);
                     isChangedTree |= 1;
@@ -366,8 +365,7 @@ void identitySimplify(Expression::TNode* node, bool& isChangedTree)
 
                 lnk->parent = prnt;
 
-                node->link[1]->cleanUp();
-                free(node->link[1]);
+                rCleanUp(node->link[1]);
                 free(node->data);
                 free(node);
                 isChangedTree |= 1;
@@ -380,8 +378,8 @@ void identitySimplify(Expression::TNode* node, bool& isChangedTree)
             break;
         }
     }
-#undef isZeroNumber(p)
-#undef isOneNumber(p)
+    #undef isZeroNumber(p)
+    #undef isOneNumber(p)
 }
 
 void Expression::simplify()

@@ -18,20 +18,32 @@ struct Node
     Type* data;
     Node<Type>* link[2];
     Node<Type>* parent;
-    void cleanUp()
-    {
-        if (!data)
-            return;
-        for(int i=0;i<2;i++)
-        if (link[i])
-        {
-            link[i]->cleanUp();
-            free(link[i]);
-        }
-        free(data);
-    }
 };
 
+template <class Type>
+void rCleanUp(Node<Type>* node)
+{
+    if (!node) return;
+    if (node->data) free(node->data);
+    rCleanUp(node->link[0]);
+    rCleanUp(node->link[1]);
+    free(node);
+}
+
+template <class Type>
+Node<Type>* rCopy(const Node<Type>* node,Node<Type>* parent = NULL)
+{
+    if (!node)
+        return NULL;
+    Node<Type>* res = (Node<Type>*)calloc(1, sizeof(Node<Type>));
+    *res = *node;
+    res->data = (Type*)calloc(1, sizeof(Type));
+    *(res->data) = *(node->data);
+    res->link[0] = rCopy(node->link[0], res);
+    res->link[1] = rCopy(node->link[1], res);
+    res->parent = parent;
+    return res;
+}
 
 
 template <class Type>
@@ -46,12 +58,17 @@ class Tree
         inline void setRoot(TNode* ptr);
         inline TNode* getRoot();
         bool isValid = 0;
-    private:
-        TNode* ground = NULL;
+        TNode ground;
     public:
         Tree() {};
         Tree(const C_string filename);
         ~Tree();
+        void genTreeByRoot(TNode* node)
+        {
+            ground.link[0] = node;
+            node->parent = &ground;
+            isValid = 1;
+        }
         void print(Stream stream = stdout);
         void drawGraph(const C_string outFilename = "tree.dot");
 };
@@ -59,13 +76,13 @@ class Tree
 template <class Type>
 inline Node<Type>* Tree<Type>::getRoot()
 {
-    return ground->link[0];
+    return ground.link[0];
 }
 
 template <class Type>
 inline void Tree<Type>::setRoot(TNode* ptr)
 {
-    ground->link[0] = ptr;
+    ground.link[0] = ptr;
 }
 
 template <class Type>
@@ -73,16 +90,16 @@ Tree<Type>::Tree(const C_string filename)
 {
     if (isValid)
         return;
-    Assert_c(!ground);
-    if (ground)
-        return;
 
-    ground = (Node<Type>*)calloc(1, sizeof(Node<Type>));
-    ground->link[0] = (Node<Type>*)calloc(1, sizeof(Node<Type>));
-    Assert_c(ground || ground->link[0]);
-    if (!ground && !ground->link[0])
+    ground.link[0] = (Node<Type>*)calloc(1, sizeof(Node<Type>));
+    ground.link[1] = NULL;
+    ground.data = NULL;
+    ground.parent = NULL;
+
+    Assert_c(ground.link[0]);
+    if (!ground.link[0])
         return;
-    getRoot()->parent = ground;
+    getRoot()->parent = &ground;
     isValid = 1;
 }
 
@@ -90,12 +107,8 @@ template <class Type>
 Tree<Type>::~Tree()
 {
     isValid = 0;
-    ground->cleanUp();
-    if (ground)
-    {
-        free(ground);
-        ground = NULL;
-    }
+    rCleanUp(ground.link[0]);
+    ground.link[0] = NULL;
 }
 
 template <class Type>
@@ -122,5 +135,5 @@ void Tree<Type>::drawGraph(const C_string outFilename)
         "}"
     );
     fclose(file);
-    //system("dot -Tpng tree.dot -o tree.png");
+    system("C:\\Users\\Dmitry\\Desktop\\bin\\dot -Tpng tree.dot -o tree.png");
 }
