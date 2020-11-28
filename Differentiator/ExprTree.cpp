@@ -5,45 +5,61 @@
 #include <stdio.h>
 #include <string.h>
 #include "Parser.h"
+#include "CallStack.h"
 
 
 
 C_string expInfoToStr(ExpInfo* exp)
-{
+{$
     static char buffer[64] = {};
     static char* opDict = "+-*/";
     if (exp->expType == EXP_NUMBER)
     {
         sprintf(buffer, "%d\n0x%X", exp->value, exp);
+        $$
         return buffer;
     }
 
     if (exp->expType == EXP_OPERATION)
     {
         sprintf(buffer, "%c\n0x%X", opDict[exp->value], exp);
+        $$
         return buffer;
     }
 
     if (exp->expType == EXP_VARIABLE)
     {
         sprintf(buffer, "x\n0x%X", exp);
+        $$
         return buffer;
     }
 
+    $$$("We can't parse this ExpInfo structure.");
     return buffer;
 }
 
 Expression::Expression(const Expression& exp)
-{
+{$
     setRoot(rCopy<ExpInfo>(exp.ground.link[0]));
+    $$
 }
 
+Expression::Expression(const C_string filename) : Tree(filename)
+{$
+    readTreeFromFile(filename);
+    $$
+};
+
+
 void Expression::printNodeInDotFile(TNode* node, Stream stream)
-{
+{$
     Assert_c(stream);
     Assert_c(node);
     if (!stream || !node)
+    {
+        $$$("NULL ptr in node or stream structure");
         return;
+    }
 
     bool isLeaf = !node->link[0] && !node->link[1];
 
@@ -65,22 +81,31 @@ void Expression::printNodeInDotFile(TNode* node, Stream stream)
         fprintf(stream, " \"%s\" -> ", expInfoToStr(node->data));
         fprintf(stream, " \"%s\" [label = \"L[0]\", fontsize = 14] \n", expInfoToStr(node->link[0]->data));
     }
+    $$
 }
 
 
 void printInteration(const Expression::TNode* root, int level, Stream stream)
 {
+    $
     Assert_c(stream);
     if (!stream)
+    {
+        $$$("stream is NULL");
         return;
+    }
     if (!root)
+    {
+        $$
         return;
+    }
 
     bool isLeaf = !root->link[0] && !root->link[1];
 
     if (isLeaf)
     {
         fprintf(stream, "(%s)", expInfoToStr(root->data));
+        $$
         return;
     }
     else
@@ -92,18 +117,21 @@ void printInteration(const Expression::TNode* root, int level, Stream stream)
         printInteration(root->link[1], level + 1, stream);
         if (level)
             fprintf(stream, ")");
+        $$
         return;
     }
+    $$
 }
 
 void Expression::writeTreeInFile(TNode* node, ui32 level, Stream stream)
-{
+{$
     printInteration(getRoot(), 0, stream);
+    $$
 }
 
 
 ExpInfo* getData(C_string str, ui32 len)
-{
+{$
     ExpInfo* ptr = (ExpInfo*)calloc(1, sizeof(ExpInfo));
     static char tmpStr[32] = {};
     memcpy(tmpStr, str, len);
@@ -140,12 +168,12 @@ ExpInfo* getData(C_string str, ui32 len)
     }
 
 
-
+    $$
     return ptr;
 }
 
 void readInteration(Expression::TNode* node, C_string& str, Expression::TNode* TREEROOT)
-{
+{$
     ui8 linkIndex = 0;
     C_string c = NULL;
     while (str[0])
@@ -161,6 +189,7 @@ void readInteration(Expression::TNode* node, C_string& str, Expression::TNode* T
         if (str[0] == ')')
         {
             str++;
+            $$
             return;
         }
         if (str[0])
@@ -173,19 +202,24 @@ void readInteration(Expression::TNode* node, C_string& str, Expression::TNode* T
             if (*c == ')')
             {
                 str++;
+                $$
                 return;
             }
             else
                 continue;
         }
     }
+    $$
 }
 
 void Expression::readTreeFromFile(const C_string filename)
-{
+{$
     Assert_c(filename);
     if (!filename || !isValid)
+    {
+        $$$("invalid tree structure or filename is NULL");
         return;
+    }
 
     char* buffer = NULL;
     int errorCode = 0;
@@ -194,6 +228,7 @@ void Expression::readTreeFromFile(const C_string filename)
     {
         free(getRoot());
         setRoot(NULL);
+        $$$("readFullFile has returned error");
         return;
     }
 
@@ -202,12 +237,13 @@ void Expression::readTreeFromFile(const C_string filename)
     {
         free(getRoot());
         setRoot(NULL);
+        $$$("removeExtraChar has returned error");
         return;
     }
 
     C_string str = buffer;
     readInteration(getRoot(), str, getRoot());
-
+    $$
 }
 
 typedef ui32(*FunctionType)(ui32, ui32);
@@ -237,9 +273,13 @@ FunctionType evaluateFunctions[] = {
 
 bool constantSimplify(Expression::TNode* node, bool& isChangedTree)
 {
+    $
     bool isLeaf = !node->link[0] && !node->link[1];
     if (isLeaf)
+    {
+        $$
         return node->data->expType == EXP_NUMBER ? 1 : 0;
+    }
 
 
 
@@ -249,7 +289,10 @@ bool constantSimplify(Expression::TNode* node, bool& isChangedTree)
         canEvaluate &= constantSimplify(node->link[0], isChangedTree);
         canEvaluate &= constantSimplify(node->link[1], isChangedTree);
         if (!canEvaluate)
+        {
+            $$
             return false;
+        }
 
         ui32 num[2] = {};
         num[0] = node->link[0]->data->value;
@@ -266,14 +309,18 @@ bool constantSimplify(Expression::TNode* node, bool& isChangedTree)
         isChangedTree |= 1;
     }
 
+    $$
     return true;
 }
 
 void identitySimplify(Expression::TNode* node, bool& isChangedTree)
-{
+{$
     bool isLeaf = !node->link[0] && !node->link[1];
     if (isLeaf)
+    {
+        $$
         return;
+    }
 
     identitySimplify(node->link[0], isChangedTree);
     identitySimplify(node->link[1], isChangedTree);
@@ -305,6 +352,7 @@ void identitySimplify(Expression::TNode* node, bool& isChangedTree)
                     free(node->data);
                     free(node);
                     isChangedTree |= 1;
+                    $$
                     return;
                 }
             break;
@@ -329,6 +377,7 @@ void identitySimplify(Expression::TNode* node, bool& isChangedTree)
 
                     rCleanUp(node);
                     isChangedTree |= 1;
+                    $$
                     return;
                 }
 
@@ -349,6 +398,7 @@ void identitySimplify(Expression::TNode* node, bool& isChangedTree)
                     free(node->data);
                     free(node);
                     isChangedTree |= 1;
+                    $$
                     return;
                 }
             break;
@@ -369,6 +419,7 @@ void identitySimplify(Expression::TNode* node, bool& isChangedTree)
                 free(node->data);
                 free(node);
                 isChangedTree |= 1;
+                $$
                 return;
             }
 
@@ -380,10 +431,11 @@ void identitySimplify(Expression::TNode* node, bool& isChangedTree)
     }
     #undef isZeroNumber(p)
     #undef isOneNumber(p)
+    $$
 }
 
 void Expression::simplify()
-{
+{$
     bool isChangedTree = 0;
     do
     {
@@ -391,4 +443,5 @@ void Expression::simplify()
         constantSimplify(getRoot(), isChangedTree);
         identitySimplify(getRoot(), isChangedTree);
     } while (isChangedTree);
+    $$
 }

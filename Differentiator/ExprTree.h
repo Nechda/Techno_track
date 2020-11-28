@@ -26,10 +26,7 @@ class Expression : public Tree<ExpInfo>
     public:
         Expression() {};
         Expression(const Expression& exp);
-        Expression(const C_string filename) : Tree(filename)
-        {
-            readTreeFromFile(filename);
-        };
+        Expression(const C_string filename);
         ~Expression() {};
         void simplify();
 };

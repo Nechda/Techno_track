@@ -3,6 +3,7 @@
 #include <string.h>
 #include "ExprTree.h"
 #include "Parser.h"
+#include "CallStack.h"
 
 #include <ctype.h>
 #include <vector>
@@ -22,8 +23,8 @@ TODO:
     [ ] добавить функцию рекурентного дифференцирования
     [ ] написать функции генерации теха учитывая стандартные функции
     [x] разнести весь код по отдельным файлам
-    [ ] прописать везде макросы, для отслеживания стека вызовов
-    [ ] дописать в некоторых местах Asset_c
+    [x] прописать везде макросы, для отслеживания стека вызовов
+    [ ] дописать в некоторых местах Asset_c(?)
     [x] конструктор копирования для класса Expression
 */
 
@@ -31,6 +32,9 @@ TODO:
 
 int main()
 {
+    initCallStack();
+    loggerInit("log.log");
+    $
     C_string line = "2*2+100*2+(100/x*20+x)";
     Parser pr;
     Expression exprTree;
@@ -38,5 +42,8 @@ int main()
     exprTree.simplify();
     exprTree.drawGraph();
     system("pause");
+    $$
+    loggerDestr();
+    callStackDestr();
     return 0;
 }

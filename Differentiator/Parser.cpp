@@ -1,8 +1,11 @@
 #include "Parser.h"
+#include "CallStack.h"
 
 Parser::~Parser()
-{
+{$
+
     tokens.clear();
+$$
 }
 
 /*
@@ -12,7 +15,7 @@ Parser::~Parser()
 */
 
 ui32 Parser::isOperation(ui8 opType, ui32 start, ui32 end)
-{
+{$
     ui32 p = end;
     ui32 brackets = 0;
     while (start <= p && p<= end)
@@ -33,15 +36,19 @@ ui32 Parser::isOperation(ui8 opType, ui32 start, ui32 end)
             p--;
             continue;
         }
-        if(tokens[p].data.symbol == opType)
+        if (tokens[p].data.symbol == opType)
+        {
+            $$
             return p;
+        }
         p--;
     }
+    $$
     return -1;
 }
 
 void Parser::parse_expr(Expression::TNode** ptrNode,ui32 start, ui32 end)
-{
+{$
     ui32 opPos = 0;
     static const ui8 operations[2] = { '+', '-' };
 
@@ -57,15 +64,17 @@ void Parser::parse_expr(Expression::TNode** ptrNode,ui32 start, ui32 end)
 
             parse_expr(&(*ptrNode)->link[0], start, opPos - 1);
             parse_term(&(*ptrNode)->link[1], opPos + 1, end  );
+            $$
             return;
         }
     }
 
     parse_term(ptrNode, start, end);
+    $$
 }
 
 void Parser::parse_term(Expression::TNode** ptrNode, ui32 start, ui32 end)
-{
+{$
     ui32 opPos = 0;
     static const ui8 operations[2] = { '*', '/' };
 
@@ -81,15 +90,17 @@ void Parser::parse_term(Expression::TNode** ptrNode, ui32 start, ui32 end)
 
             parse_term(&(*ptrNode)->link[0], start, opPos - 1);
             parse_fact(&(*ptrNode)->link[1], opPos + 1, end);
+            $$
             return;
         }
     }
 
     parse_fact(ptrNode, start, end);
+   $$
 }
 
 void Parser::parse_fact(Expression::TNode** ptrNode, ui32 start, ui32 end)
-{
+{$
     ui32 brackets = 0;
     ui32 p = start;
     switch (tokens[start].data.symbol)
@@ -117,16 +128,19 @@ void Parser::parse_fact(Expression::TNode** ptrNode, ui32 start, ui32 end)
         (*ptrNode)->data->value = tokens[start].data.ivalue;
         break;
     }
+    $$
 }
 
 Parser::Token Parser::getNextToken(C_string& str)
 {
+    $
     Token result;
     if (strchr("()", str[0]))
     {
         result.type = LEX_BRACKET;
         result.data.symbol = str[0];
         str++;
+        $$
         return result;
     }
 
@@ -135,6 +149,7 @@ Parser::Token Parser::getNextToken(C_string& str)
         result.type = LEX_VARIABLE;
         result.data.symbol = str[0];
         str++;
+        $$
         return result;
     }
 
@@ -143,6 +158,7 @@ Parser::Token Parser::getNextToken(C_string& str)
         result.type = LEX_OPERATION;
         result.data.symbol = str[0];
         str++;
+        $$
         return result;
     }
 
@@ -150,11 +166,13 @@ Parser::Token Parser::getNextToken(C_string& str)
     sscanf(str, "%d%n", &result.data.ivalue, &offset);
     str += offset;
     result.type = LEX_NUMBER;
+    $$
     return result;
 }
 
 Expression::TNode* Parser::parse(C_string expression)
 {
+    $
     Expression::TNode* root = NULL;
     tokens.clear();
 
@@ -174,5 +192,6 @@ Expression::TNode* Parser::parse(C_string expression)
 
     parse_expr(&root, 0, tokens.size() - 1);
 
+    $$
     return root;
 }
