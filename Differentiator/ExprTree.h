@@ -2,22 +2,34 @@
 #include "Tree.h"
 #include "Types.h"
 
-enum ExpType
+enum NodeType
 {
     EXP_UNDEFINED,
     EXP_NUMBER,
     EXP_OPERATION,
-    EXP_VARIABLE
+    EXP_VARIABLE,
+    EXP_FUNCTION
 };
 
-
-struct ExpInfo
+enum OperationType
 {
-    ExpType expType;
-    ui32 value;
+    OP_SUM,
+    OP_SUB,
+    OP_MUL,
+    OP_DIV
 };
 
-class Expression : public Tree<ExpInfo>
+struct NodeInfo
+{
+    NodeType type;
+    union
+    {
+        ui32 opNumber;
+        double number;
+    }data;
+};
+
+class Expression : public Tree<NodeInfo>
 {
     private:
         void printNodeInDotFile(TNode* node, Stream stream);
@@ -29,4 +41,5 @@ class Expression : public Tree<ExpInfo>
         Expression(const C_string filename);
         ~Expression() {};
         void simplify();
+        void genTex(Stream stream = stdout);
 };

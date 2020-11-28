@@ -1,5 +1,5 @@
 function: int __cdecl main(void)
-  function: struct Node<struct ExpInfo> *__thiscall Parser::parse(char *)
+  function: struct Node<struct NodeInfo> *__thiscall Parser::parse(char *)
     function: struct Parser::Token __thiscall Parser::getNextToken(char *&)
     return OK
     function: struct Parser::Token __thiscall Parser::getNextToken(char *&)
@@ -34,288 +34,754 @@ function: int __cdecl main(void)
     return OK
     function: struct Parser::Token __thiscall Parser::getNextToken(char *&)
     return OK
-    function: void __thiscall Parser::parse_expr(struct Node<struct ExpInfo> **,unsigned int,unsigned int)
+    function: struct Parser::Token __thiscall Parser::getNextToken(char *&)
+    return OK
+    function: struct Parser::Token __thiscall Parser::getNextToken(char *&)
+    return OK
+    function: struct Parser::Token __thiscall Parser::getNextToken(char *&)
+    return OK
+    function: struct Parser::Token __thiscall Parser::getNextToken(char *&)
+    return OK
+    function: struct Parser::Token __thiscall Parser::getNextToken(char *&)
+    return OK
+    function: struct Parser::Token __thiscall Parser::getNextToken(char *&)
+    return OK
+    function: struct Parser::Token __thiscall Parser::getNextToken(char *&)
+    return OK
+    function: struct Parser::Token __thiscall Parser::getNextToken(char *&)
+    return OK
+    function: struct Parser::Token __thiscall Parser::getNextToken(char *&)
+    return OK
+    function: struct Parser::Token __thiscall Parser::getNextToken(char *&)
+    return OK
+    function: struct Parser::Token __thiscall Parser::getNextToken(char *&)
+    return OK
+    function: struct Parser::Token __thiscall Parser::getNextToken(char *&)
+    return OK
+    function: struct Parser::Token __thiscall Parser::getNextToken(char *&)
+    return OK
+    function: struct Parser::Token __thiscall Parser::getNextToken(char *&)
+    return OK
+    function: struct Parser::Token __thiscall Parser::getNextToken(char *&)
+    return OK
+    function: struct Parser::Token __thiscall Parser::getNextToken(char *&)
+    return OK
+    function: void __thiscall Parser::parse_expr(struct Node<struct NodeInfo> **,unsigned int,unsigned int)
       function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
       return OK
-      function: void __thiscall Parser::parse_expr(struct Node<struct ExpInfo> **,unsigned int,unsigned int)
+      function: void __thiscall Parser::parse_expr(struct Node<struct NodeInfo> **,unsigned int,unsigned int)
         function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
         return OK
-        function: void __thiscall Parser::parse_expr(struct Node<struct ExpInfo> **,unsigned int,unsigned int)
+        function: void __thiscall Parser::parse_expr(struct Node<struct NodeInfo> **,unsigned int,unsigned int)
           function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
           return OK
           function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
           return OK
-          function: void __thiscall Parser::parse_term(struct Node<struct ExpInfo> **,unsigned int,unsigned int)
+          function: void __thiscall Parser::parse_term(struct Node<struct NodeInfo> **,unsigned int,unsigned int)
             function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
             return OK
-            function: void __thiscall Parser::parse_term(struct Node<struct ExpInfo> **,unsigned int,unsigned int)
+            function: void __thiscall Parser::parse_term(struct Node<struct NodeInfo> **,unsigned int,unsigned int)
               function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
               return OK
               function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
               return OK
-              function: void __thiscall Parser::parse_fact(struct Node<struct ExpInfo> **,unsigned int,unsigned int)
-              return OK
-            return OK
-            function: void __thiscall Parser::parse_fact(struct Node<struct ExpInfo> **,unsigned int,unsigned int)
-            return OK
-          return OK
-        return OK
-        function: void __thiscall Parser::parse_term(struct Node<struct ExpInfo> **,unsigned int,unsigned int)
-          function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
-          return OK
-          function: void __thiscall Parser::parse_term(struct Node<struct ExpInfo> **,unsigned int,unsigned int)
-            function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
-            return OK
-            function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
-            return OK
-            function: void __thiscall Parser::parse_fact(struct Node<struct ExpInfo> **,unsigned int,unsigned int)
-            return OK
-          return OK
-          function: void __thiscall Parser::parse_fact(struct Node<struct ExpInfo> **,unsigned int,unsigned int)
-          return OK
-        return OK
-      return OK
-      function: void __thiscall Parser::parse_term(struct Node<struct ExpInfo> **,unsigned int,unsigned int)
-        function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
-        return OK
-        function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
-        return OK
-        function: void __thiscall Parser::parse_fact(struct Node<struct ExpInfo> **,unsigned int,unsigned int)
-          function: void __thiscall Parser::parse_expr(struct Node<struct ExpInfo> **,unsigned int,unsigned int)
-            function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
-            return OK
-            function: void __thiscall Parser::parse_expr(struct Node<struct ExpInfo> **,unsigned int,unsigned int)
-              function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
-              return OK
-              function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
-              return OK
-              function: void __thiscall Parser::parse_term(struct Node<struct ExpInfo> **,unsigned int,unsigned int)
+              function: void __thiscall Parser::parse_term(struct Node<struct NodeInfo> **,unsigned int,unsigned int)
                 function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
                 return OK
-                function: void __thiscall Parser::parse_term(struct Node<struct ExpInfo> **,unsigned int,unsigned int)
-                  function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
-                  return OK
-                  function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
-                  return OK
-                  function: void __thiscall Parser::parse_term(struct Node<struct ExpInfo> **,unsigned int,unsigned int)
+                function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
+                return OK
+                function: void __thiscall Parser::parse_fact(struct Node<struct NodeInfo> **,unsigned int,unsigned int)
+                  function: void __thiscall Parser::parse_expr(struct Node<struct NodeInfo> **,unsigned int,unsigned int)
                     function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
                     return OK
                     function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
                     return OK
-                    function: void __thiscall Parser::parse_fact(struct Node<struct ExpInfo> **,unsigned int,unsigned int)
+                    function: void __thiscall Parser::parse_term(struct Node<struct NodeInfo> **,unsigned int,unsigned int)
+                      function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
+                      return OK
+                      function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
+                      return OK
+                      function: void __thiscall Parser::parse_fact(struct Node<struct NodeInfo> **,unsigned int,unsigned int)
+                      return OK
                     return OK
-                  return OK
-                  function: void __thiscall Parser::parse_fact(struct Node<struct ExpInfo> **,unsigned int,unsigned int)
                   return OK
                 return OK
-                function: void __thiscall Parser::parse_fact(struct Node<struct ExpInfo> **,unsigned int,unsigned int)
+              return OK
+              function: void __thiscall Parser::parse_fact(struct Node<struct NodeInfo> **,unsigned int,unsigned int)
+                function: void __thiscall Parser::parse_expr(struct Node<struct NodeInfo> **,unsigned int,unsigned int)
+                  function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
+                  return OK
+                  function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
+                  return OK
+                  function: void __thiscall Parser::parse_term(struct Node<struct NodeInfo> **,unsigned int,unsigned int)
+                    function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
+                    return OK
+                    function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
+                    return OK
+                    function: void __thiscall Parser::parse_fact(struct Node<struct NodeInfo> **,unsigned int,unsigned int)
+                    return OK
+                  return OK
                 return OK
               return OK
             return OK
-            function: void __thiscall Parser::parse_term(struct Node<struct ExpInfo> **,unsigned int,unsigned int)
+            function: void __thiscall Parser::parse_fact(struct Node<struct NodeInfo> **,unsigned int,unsigned int)
+            return OK
+          return OK
+        return OK
+        function: void __thiscall Parser::parse_term(struct Node<struct NodeInfo> **,unsigned int,unsigned int)
+          function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
+          return OK
+          function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
+          return OK
+          function: void __thiscall Parser::parse_fact(struct Node<struct NodeInfo> **,unsigned int,unsigned int)
+            function: void __thiscall Parser::parse_expr(struct Node<struct NodeInfo> **,unsigned int,unsigned int)
               function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
               return OK
-              function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
+              function: void __thiscall Parser::parse_expr(struct Node<struct NodeInfo> **,unsigned int,unsigned int)
+                function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
+                return OK
+                function: void __thiscall Parser::parse_expr(struct Node<struct NodeInfo> **,unsigned int,unsigned int)
+                  function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
+                  return OK
+                  function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
+                  return OK
+                  function: void __thiscall Parser::parse_term(struct Node<struct NodeInfo> **,unsigned int,unsigned int)
+                    function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
+                    return OK
+                    function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
+                    return OK
+                    function: void __thiscall Parser::parse_fact(struct Node<struct NodeInfo> **,unsigned int,unsigned int)
+                    return OK
+                  return OK
+                return OK
+                function: void __thiscall Parser::parse_term(struct Node<struct NodeInfo> **,unsigned int,unsigned int)
+                  function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
+                  return OK
+                  function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
+                  return OK
+                  function: void __thiscall Parser::parse_fact(struct Node<struct NodeInfo> **,unsigned int,unsigned int)
+                  return OK
+                return OK
               return OK
-              function: void __thiscall Parser::parse_fact(struct Node<struct ExpInfo> **,unsigned int,unsigned int)
+              function: void __thiscall Parser::parse_term(struct Node<struct NodeInfo> **,unsigned int,unsigned int)
+                function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
+                return OK
+                function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
+                return OK
+                function: void __thiscall Parser::parse_term(struct Node<struct NodeInfo> **,unsigned int,unsigned int)
+                  function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
+                  return OK
+                  function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
+                  return OK
+                  function: void __thiscall Parser::parse_fact(struct Node<struct NodeInfo> **,unsigned int,unsigned int)
+                    function: void __thiscall Parser::parse_expr(struct Node<struct NodeInfo> **,unsigned int,unsigned int)
+                      function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
+                      return OK
+                      function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
+                      return OK
+                      function: void __thiscall Parser::parse_term(struct Node<struct NodeInfo> **,unsigned int,unsigned int)
+                        function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
+                        return OK
+                        function: void __thiscall Parser::parse_term(struct Node<struct NodeInfo> **,unsigned int,unsigned int)
+                          function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
+                          return OK
+                          function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
+                          return OK
+                          function: void __thiscall Parser::parse_fact(struct Node<struct NodeInfo> **,unsigned int,unsigned int)
+                          return OK
+                        return OK
+                        function: void __thiscall Parser::parse_fact(struct Node<struct NodeInfo> **,unsigned int,unsigned int)
+                        return OK
+                      return OK
+                    return OK
+                  return OK
+                return OK
+                function: void __thiscall Parser::parse_fact(struct Node<struct NodeInfo> **,unsigned int,unsigned int)
+                return OK
               return OK
             return OK
           return OK
         return OK
       return OK
+      function: void __thiscall Parser::parse_term(struct Node<struct NodeInfo> **,unsigned int,unsigned int)
+        function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
+        return OK
+        function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
+        return OK
+        function: void __thiscall Parser::parse_term(struct Node<struct NodeInfo> **,unsigned int,unsigned int)
+          function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
+          return OK
+          function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
+          return OK
+          function: void __thiscall Parser::parse_fact(struct Node<struct NodeInfo> **,unsigned int,unsigned int)
+            function: void __thiscall Parser::parse_expr(struct Node<struct NodeInfo> **,unsigned int,unsigned int)
+              function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
+              return OK
+              function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
+              return OK
+              function: void __thiscall Parser::parse_term(struct Node<struct NodeInfo> **,unsigned int,unsigned int)
+                function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
+                return OK
+                function: unsigned int __thiscall Parser::isOperation(unsigned char,unsigned int,unsigned int)
+                return OK
+                function: void __thiscall Parser::parse_fact(struct Node<struct NodeInfo> **,unsigned int,unsigned int)
+                return OK
+              return OK
+            return OK
+          return OK
+        return OK
+        function: void __thiscall Parser::parse_fact(struct Node<struct NodeInfo> **,unsigned int,unsigned int)
+        return OK
+      return OK
     return OK
   return OK
-  function: void __thiscall Tree<struct ExpInfo>::genTreeByRoot(struct Node<struct ExpInfo> *)
+  function: void __thiscall Tree<struct NodeInfo>::genTreeByRoot(struct Node<struct NodeInfo> *)
+  return OK
+  function: void __thiscall Tree<struct NodeInfo>::drawGraph(char *const )
+    function: void __thiscall Expression::printNodeInDotFile(struct Node<struct NodeInfo> *,struct _iobuf *)
+      function: void __thiscall Expression::printNodeInDotFile(struct Node<struct NodeInfo> *,struct _iobuf *)
+        function: void __thiscall Expression::printNodeInDotFile(struct Node<struct NodeInfo> *,struct _iobuf *)
+          function: void __thiscall Expression::printNodeInDotFile(struct Node<struct NodeInfo> *,struct _iobuf *)
+            function: void __thiscall Expression::printNodeInDotFile(struct Node<struct NodeInfo> *,struct _iobuf *)
+              function: void __thiscall Expression::printNodeInDotFile(struct Node<struct NodeInfo> *,struct _iobuf *)
+                function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+                return OK
+              return OK
+              function: void __thiscall Expression::printNodeInDotFile(struct Node<struct NodeInfo> *,struct _iobuf *)
+              return at line: 81   reason:NULL ptr in node or stream structure 
+              function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+              return OK
+              function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+              return OK
+              function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+              return OK
+            return OK
+            function: void __thiscall Expression::printNodeInDotFile(struct Node<struct NodeInfo> *,struct _iobuf *)
+              function: void __thiscall Expression::printNodeInDotFile(struct Node<struct NodeInfo> *,struct _iobuf *)
+                function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+                return OK
+              return OK
+              function: void __thiscall Expression::printNodeInDotFile(struct Node<struct NodeInfo> *,struct _iobuf *)
+              return at line: 81   reason:NULL ptr in node or stream structure 
+              function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+              return OK
+              function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+              return OK
+              function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+              return OK
+            return OK
+            function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+            return OK
+            function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+            return OK
+            function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+            return OK
+            function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+            return OK
+            function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+            return OK
+          return OK
+          function: void __thiscall Expression::printNodeInDotFile(struct Node<struct NodeInfo> *,struct _iobuf *)
+            function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+            return OK
+          return OK
+          function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+          return OK
+          function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+          return OK
+          function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+          return OK
+          function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+          return OK
+          function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+          return OK
+        return OK
+        function: void __thiscall Expression::printNodeInDotFile(struct Node<struct NodeInfo> *,struct _iobuf *)
+          function: void __thiscall Expression::printNodeInDotFile(struct Node<struct NodeInfo> *,struct _iobuf *)
+            function: void __thiscall Expression::printNodeInDotFile(struct Node<struct NodeInfo> *,struct _iobuf *)
+              function: void __thiscall Expression::printNodeInDotFile(struct Node<struct NodeInfo> *,struct _iobuf *)
+                function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+                return OK
+              return OK
+              function: void __thiscall Expression::printNodeInDotFile(struct Node<struct NodeInfo> *,struct _iobuf *)
+                function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+                return OK
+              return OK
+              function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+              return OK
+              function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+              return OK
+              function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+              return OK
+              function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+              return OK
+              function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+              return OK
+            return OK
+            function: void __thiscall Expression::printNodeInDotFile(struct Node<struct NodeInfo> *,struct _iobuf *)
+              function: void __thiscall Expression::printNodeInDotFile(struct Node<struct NodeInfo> *,struct _iobuf *)
+                function: void __thiscall Expression::printNodeInDotFile(struct Node<struct NodeInfo> *,struct _iobuf *)
+                  function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+                  return OK
+                return OK
+                function: void __thiscall Expression::printNodeInDotFile(struct Node<struct NodeInfo> *,struct _iobuf *)
+                  function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+                  return OK
+                return OK
+                function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+                return OK
+                function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+                return OK
+                function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+                return OK
+                function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+                return OK
+                function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+                return OK
+              return OK
+              function: void __thiscall Expression::printNodeInDotFile(struct Node<struct NodeInfo> *,struct _iobuf *)
+                function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+                return OK
+              return OK
+              function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+              return OK
+              function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+              return OK
+              function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+              return OK
+              function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+              return OK
+              function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+              return OK
+            return OK
+            function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+            return OK
+            function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+            return OK
+            function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+            return OK
+            function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+            return OK
+            function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+            return OK
+          return OK
+          function: void __thiscall Expression::printNodeInDotFile(struct Node<struct NodeInfo> *,struct _iobuf *)
+          return at line: 81   reason:NULL ptr in node or stream structure 
+          function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+          return OK
+          function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+          return OK
+          function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+          return OK
+        return OK
+        function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+        return OK
+        function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+        return OK
+        function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+        return OK
+        function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+        return OK
+        function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+        return OK
+      return OK
+      function: void __thiscall Expression::printNodeInDotFile(struct Node<struct NodeInfo> *,struct _iobuf *)
+        function: void __thiscall Expression::printNodeInDotFile(struct Node<struct NodeInfo> *,struct _iobuf *)
+          function: void __thiscall Expression::printNodeInDotFile(struct Node<struct NodeInfo> *,struct _iobuf *)
+            function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+            return OK
+          return OK
+          function: void __thiscall Expression::printNodeInDotFile(struct Node<struct NodeInfo> *,struct _iobuf *)
+          return at line: 81   reason:NULL ptr in node or stream structure 
+          function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+          return OK
+          function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+          return OK
+          function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+          return OK
+        return OK
+        function: void __thiscall Expression::printNodeInDotFile(struct Node<struct NodeInfo> *,struct _iobuf *)
+          function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+          return OK
+        return OK
+        function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+        return OK
+        function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+        return OK
+        function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+        return OK
+        function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+        return OK
+        function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+        return OK
+      return OK
+      function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+      return OK
+      function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+      return OK
+      function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+      return OK
+      function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+      return OK
+      function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+      return OK
+    return OK
   return OK
   function: void __thiscall Expression::simplify(void)
-    function: bool __cdecl constantSimplify(struct Node<struct ExpInfo> *,bool &)
-      function: bool __cdecl constantSimplify(struct Node<struct ExpInfo> *,bool &)
-        function: bool __cdecl constantSimplify(struct Node<struct ExpInfo> *,bool &)
-          function: bool __cdecl constantSimplify(struct Node<struct ExpInfo> *,bool &)
+    function: bool __cdecl constantSimplify(struct Node<struct NodeInfo> *,bool &)
+      function: bool __cdecl constantSimplify(struct Node<struct NodeInfo> *,bool &)
+        function: bool __cdecl constantSimplify(struct Node<struct NodeInfo> *,bool &)
+          function: bool __cdecl constantSimplify(struct Node<struct NodeInfo> *,bool &)
+            function: bool __cdecl constantSimplify(struct Node<struct NodeInfo> *,bool &)
+              function: bool __cdecl constantSimplify(struct Node<struct NodeInfo> *,bool &)
+              return OK
+              function: void __cdecl rCleanUp<struct NodeInfo>(struct Node<struct NodeInfo> *)
+                function: void __cdecl rCleanUp<struct NodeInfo>(struct Node<struct NodeInfo> *)
+                return OK
+                function: void __cdecl rCleanUp<struct NodeInfo>(struct Node<struct NodeInfo> *)
+                return OK
+              return OK
+              function: void __cdecl rCleanUp<struct NodeInfo>(struct Node<struct NodeInfo> *)
+              return OK
+            return OK
+            function: bool __cdecl constantSimplify(struct Node<struct NodeInfo> *,bool &)
+              function: bool __cdecl constantSimplify(struct Node<struct NodeInfo> *,bool &)
+              return OK
+              function: void __cdecl rCleanUp<struct NodeInfo>(struct Node<struct NodeInfo> *)
+                function: void __cdecl rCleanUp<struct NodeInfo>(struct Node<struct NodeInfo> *)
+                return OK
+                function: void __cdecl rCleanUp<struct NodeInfo>(struct Node<struct NodeInfo> *)
+                return OK
+              return OK
+              function: void __cdecl rCleanUp<struct NodeInfo>(struct Node<struct NodeInfo> *)
+              return OK
+            return OK
+            function: void __cdecl rCleanUp<struct NodeInfo>(struct Node<struct NodeInfo> *)
+              function: void __cdecl rCleanUp<struct NodeInfo>(struct Node<struct NodeInfo> *)
+              return OK
+              function: void __cdecl rCleanUp<struct NodeInfo>(struct Node<struct NodeInfo> *)
+              return OK
+            return OK
+            function: void __cdecl rCleanUp<struct NodeInfo>(struct Node<struct NodeInfo> *)
+              function: void __cdecl rCleanUp<struct NodeInfo>(struct Node<struct NodeInfo> *)
+              return OK
+              function: void __cdecl rCleanUp<struct NodeInfo>(struct Node<struct NodeInfo> *)
+              return OK
+            return OK
           return OK
-          function: bool __cdecl constantSimplify(struct Node<struct ExpInfo> *,bool &)
-          return OK
-          function: void __cdecl rCleanUp<struct ExpInfo>(struct Node<struct ExpInfo> *)
-            function: void __cdecl rCleanUp<struct ExpInfo>(struct Node<struct ExpInfo> *)
-            return OK
-            function: void __cdecl rCleanUp<struct ExpInfo>(struct Node<struct ExpInfo> *)
-            return OK
-          return OK
-          function: void __cdecl rCleanUp<struct ExpInfo>(struct Node<struct ExpInfo> *)
-            function: void __cdecl rCleanUp<struct ExpInfo>(struct Node<struct ExpInfo> *)
-            return OK
-            function: void __cdecl rCleanUp<struct ExpInfo>(struct Node<struct ExpInfo> *)
-            return OK
+          function: bool __cdecl constantSimplify(struct Node<struct NodeInfo> *,bool &)
           return OK
         return OK
-        function: bool __cdecl constantSimplify(struct Node<struct ExpInfo> *,bool &)
-          function: bool __cdecl constantSimplify(struct Node<struct ExpInfo> *,bool &)
-          return OK
-          function: bool __cdecl constantSimplify(struct Node<struct ExpInfo> *,bool &)
-          return OK
-          function: void __cdecl rCleanUp<struct ExpInfo>(struct Node<struct ExpInfo> *)
-            function: void __cdecl rCleanUp<struct ExpInfo>(struct Node<struct ExpInfo> *)
+        function: bool __cdecl constantSimplify(struct Node<struct NodeInfo> *,bool &)
+          function: bool __cdecl constantSimplify(struct Node<struct NodeInfo> *,bool &)
+            function: bool __cdecl constantSimplify(struct Node<struct NodeInfo> *,bool &)
+              function: bool __cdecl constantSimplify(struct Node<struct NodeInfo> *,bool &)
+              return OK
+              function: bool __cdecl constantSimplify(struct Node<struct NodeInfo> *,bool &)
+              return OK
             return OK
-            function: void __cdecl rCleanUp<struct ExpInfo>(struct Node<struct ExpInfo> *)
+            function: bool __cdecl constantSimplify(struct Node<struct NodeInfo> *,bool &)
+              function: bool __cdecl constantSimplify(struct Node<struct NodeInfo> *,bool &)
+                function: bool __cdecl constantSimplify(struct Node<struct NodeInfo> *,bool &)
+                return OK
+                function: bool __cdecl constantSimplify(struct Node<struct NodeInfo> *,bool &)
+                return OK
+                function: void __cdecl rCleanUp<struct NodeInfo>(struct Node<struct NodeInfo> *)
+                  function: void __cdecl rCleanUp<struct NodeInfo>(struct Node<struct NodeInfo> *)
+                  return OK
+                  function: void __cdecl rCleanUp<struct NodeInfo>(struct Node<struct NodeInfo> *)
+                  return OK
+                return OK
+                function: void __cdecl rCleanUp<struct NodeInfo>(struct Node<struct NodeInfo> *)
+                  function: void __cdecl rCleanUp<struct NodeInfo>(struct Node<struct NodeInfo> *)
+                  return OK
+                  function: void __cdecl rCleanUp<struct NodeInfo>(struct Node<struct NodeInfo> *)
+                  return OK
+                return OK
+              return OK
+              function: bool __cdecl constantSimplify(struct Node<struct NodeInfo> *,bool &)
+              return OK
+              function: void __cdecl rCleanUp<struct NodeInfo>(struct Node<struct NodeInfo> *)
+                function: void __cdecl rCleanUp<struct NodeInfo>(struct Node<struct NodeInfo> *)
+                return OK
+                function: void __cdecl rCleanUp<struct NodeInfo>(struct Node<struct NodeInfo> *)
+                return OK
+              return OK
+              function: void __cdecl rCleanUp<struct NodeInfo>(struct Node<struct NodeInfo> *)
+                function: void __cdecl rCleanUp<struct NodeInfo>(struct Node<struct NodeInfo> *)
+                return OK
+                function: void __cdecl rCleanUp<struct NodeInfo>(struct Node<struct NodeInfo> *)
+                return OK
+              return OK
             return OK
-          return OK
-          function: void __cdecl rCleanUp<struct ExpInfo>(struct Node<struct ExpInfo> *)
-            function: void __cdecl rCleanUp<struct ExpInfo>(struct Node<struct ExpInfo> *)
-            return OK
-            function: void __cdecl rCleanUp<struct ExpInfo>(struct Node<struct ExpInfo> *)
-            return OK
-          return OK
-        return OK
-        function: void __cdecl rCleanUp<struct ExpInfo>(struct Node<struct ExpInfo> *)
-          function: void __cdecl rCleanUp<struct ExpInfo>(struct Node<struct ExpInfo> *)
-          return OK
-          function: void __cdecl rCleanUp<struct ExpInfo>(struct Node<struct ExpInfo> *)
-          return OK
-        return OK
-        function: void __cdecl rCleanUp<struct ExpInfo>(struct Node<struct ExpInfo> *)
-          function: void __cdecl rCleanUp<struct ExpInfo>(struct Node<struct ExpInfo> *)
-          return OK
-          function: void __cdecl rCleanUp<struct ExpInfo>(struct Node<struct ExpInfo> *)
           return OK
         return OK
       return OK
-      function: bool __cdecl constantSimplify(struct Node<struct ExpInfo> *,bool &)
-        function: bool __cdecl constantSimplify(struct Node<struct ExpInfo> *,bool &)
-          function: bool __cdecl constantSimplify(struct Node<struct ExpInfo> *,bool &)
-            function: bool __cdecl constantSimplify(struct Node<struct ExpInfo> *,bool &)
+      function: bool __cdecl constantSimplify(struct Node<struct NodeInfo> *,bool &)
+        function: bool __cdecl constantSimplify(struct Node<struct NodeInfo> *,bool &)
+          function: bool __cdecl constantSimplify(struct Node<struct NodeInfo> *,bool &)
+          return OK
+          function: void __cdecl rCleanUp<struct NodeInfo>(struct Node<struct NodeInfo> *)
+            function: void __cdecl rCleanUp<struct NodeInfo>(struct Node<struct NodeInfo> *)
             return OK
-            function: bool __cdecl constantSimplify(struct Node<struct ExpInfo> *,bool &)
+            function: void __cdecl rCleanUp<struct NodeInfo>(struct Node<struct NodeInfo> *)
             return OK
           return OK
-          function: bool __cdecl constantSimplify(struct Node<struct ExpInfo> *,bool &)
+          function: void __cdecl rCleanUp<struct NodeInfo>(struct Node<struct NodeInfo> *)
           return OK
         return OK
-        function: bool __cdecl constantSimplify(struct Node<struct ExpInfo> *,bool &)
+        function: bool __cdecl constantSimplify(struct Node<struct NodeInfo> *,bool &)
         return OK
       return OK
     return OK
-    function: void __cdecl identitySimplify(struct Node<struct ExpInfo> *,bool &)
-      function: void __cdecl identitySimplify(struct Node<struct ExpInfo> *,bool &)
-      return OK
-      function: void __cdecl identitySimplify(struct Node<struct ExpInfo> *,bool &)
-        function: void __cdecl identitySimplify(struct Node<struct ExpInfo> *,bool &)
-          function: void __cdecl identitySimplify(struct Node<struct ExpInfo> *,bool &)
-            function: void __cdecl identitySimplify(struct Node<struct ExpInfo> *,bool &)
-            return OK
-            function: void __cdecl identitySimplify(struct Node<struct ExpInfo> *,bool &)
-            return OK
+    function: void __cdecl identitySimplify(struct Node<struct NodeInfo> *,bool &)
+      function: void __cdecl identitySimplify(struct Node<struct NodeInfo> *,bool &)
+        function: void __cdecl identitySimplify(struct Node<struct NodeInfo> *,bool &)
+          function: void __cdecl identitySimplify(struct Node<struct NodeInfo> *,bool &)
           return OK
-          function: void __cdecl identitySimplify(struct Node<struct ExpInfo> *,bool &)
+          function: void __cdecl identitySimplify(struct Node<struct NodeInfo> *,bool &)
           return OK
         return OK
-        function: void __cdecl identitySimplify(struct Node<struct ExpInfo> *,bool &)
-        return OK
-      return OK
-    return OK
-    function: bool __cdecl constantSimplify(struct Node<struct ExpInfo> *,bool &)
-      function: bool __cdecl constantSimplify(struct Node<struct ExpInfo> *,bool &)
-      return OK
-      function: bool __cdecl constantSimplify(struct Node<struct ExpInfo> *,bool &)
-        function: bool __cdecl constantSimplify(struct Node<struct ExpInfo> *,bool &)
-          function: bool __cdecl constantSimplify(struct Node<struct ExpInfo> *,bool &)
-            function: bool __cdecl constantSimplify(struct Node<struct ExpInfo> *,bool &)
+        function: void __cdecl identitySimplify(struct Node<struct NodeInfo> *,bool &)
+          function: void __cdecl identitySimplify(struct Node<struct NodeInfo> *,bool &)
+            function: void __cdecl identitySimplify(struct Node<struct NodeInfo> *,bool &)
+              function: void __cdecl identitySimplify(struct Node<struct NodeInfo> *,bool &)
+              return OK
+              function: void __cdecl identitySimplify(struct Node<struct NodeInfo> *,bool &)
+              return OK
             return OK
-            function: bool __cdecl constantSimplify(struct Node<struct ExpInfo> *,bool &)
+            function: void __cdecl identitySimplify(struct Node<struct NodeInfo> *,bool &)
             return OK
           return OK
-          function: bool __cdecl constantSimplify(struct Node<struct ExpInfo> *,bool &)
-          return OK
         return OK
-        function: bool __cdecl constantSimplify(struct Node<struct ExpInfo> *,bool &)
+      return OK
+      function: void __cdecl identitySimplify(struct Node<struct NodeInfo> *,bool &)
+        function: void __cdecl identitySimplify(struct Node<struct NodeInfo> *,bool &)
+        return OK
+        function: void __cdecl identitySimplify(struct Node<struct NodeInfo> *,bool &)
         return OK
       return OK
     return OK
-    function: void __cdecl identitySimplify(struct Node<struct ExpInfo> *,bool &)
-      function: void __cdecl identitySimplify(struct Node<struct ExpInfo> *,bool &)
-      return OK
-      function: void __cdecl identitySimplify(struct Node<struct ExpInfo> *,bool &)
-        function: void __cdecl identitySimplify(struct Node<struct ExpInfo> *,bool &)
-          function: void __cdecl identitySimplify(struct Node<struct ExpInfo> *,bool &)
-            function: void __cdecl identitySimplify(struct Node<struct ExpInfo> *,bool &)
-            return OK
-            function: void __cdecl identitySimplify(struct Node<struct ExpInfo> *,bool &)
-            return OK
+    function: bool __cdecl constantSimplify(struct Node<struct NodeInfo> *,bool &)
+      function: bool __cdecl constantSimplify(struct Node<struct NodeInfo> *,bool &)
+        function: bool __cdecl constantSimplify(struct Node<struct NodeInfo> *,bool &)
+          function: bool __cdecl constantSimplify(struct Node<struct NodeInfo> *,bool &)
           return OK
-          function: void __cdecl identitySimplify(struct Node<struct ExpInfo> *,bool &)
+          function: bool __cdecl constantSimplify(struct Node<struct NodeInfo> *,bool &)
           return OK
         return OK
-        function: void __cdecl identitySimplify(struct Node<struct ExpInfo> *,bool &)
+        function: bool __cdecl constantSimplify(struct Node<struct NodeInfo> *,bool &)
+          function: bool __cdecl constantSimplify(struct Node<struct NodeInfo> *,bool &)
+            function: bool __cdecl constantSimplify(struct Node<struct NodeInfo> *,bool &)
+              function: bool __cdecl constantSimplify(struct Node<struct NodeInfo> *,bool &)
+              return OK
+              function: bool __cdecl constantSimplify(struct Node<struct NodeInfo> *,bool &)
+              return OK
+            return OK
+            function: bool __cdecl constantSimplify(struct Node<struct NodeInfo> *,bool &)
+            return OK
+          return OK
+        return OK
+      return OK
+      function: bool __cdecl constantSimplify(struct Node<struct NodeInfo> *,bool &)
+        function: bool __cdecl constantSimplify(struct Node<struct NodeInfo> *,bool &)
+        return OK
+        function: bool __cdecl constantSimplify(struct Node<struct NodeInfo> *,bool &)
+        return OK
+      return OK
+    return OK
+    function: void __cdecl identitySimplify(struct Node<struct NodeInfo> *,bool &)
+      function: void __cdecl identitySimplify(struct Node<struct NodeInfo> *,bool &)
+        function: void __cdecl identitySimplify(struct Node<struct NodeInfo> *,bool &)
+          function: void __cdecl identitySimplify(struct Node<struct NodeInfo> *,bool &)
+          return OK
+          function: void __cdecl identitySimplify(struct Node<struct NodeInfo> *,bool &)
+          return OK
+        return OK
+        function: void __cdecl identitySimplify(struct Node<struct NodeInfo> *,bool &)
+          function: void __cdecl identitySimplify(struct Node<struct NodeInfo> *,bool &)
+            function: void __cdecl identitySimplify(struct Node<struct NodeInfo> *,bool &)
+              function: void __cdecl identitySimplify(struct Node<struct NodeInfo> *,bool &)
+              return OK
+              function: void __cdecl identitySimplify(struct Node<struct NodeInfo> *,bool &)
+              return OK
+            return OK
+            function: void __cdecl identitySimplify(struct Node<struct NodeInfo> *,bool &)
+            return OK
+          return OK
+        return OK
+      return OK
+      function: void __cdecl identitySimplify(struct Node<struct NodeInfo> *,bool &)
+        function: void __cdecl identitySimplify(struct Node<struct NodeInfo> *,bool &)
+        return OK
+        function: void __cdecl identitySimplify(struct Node<struct NodeInfo> *,bool &)
         return OK
       return OK
     return OK
   return OK
-  function: void __thiscall Tree<struct ExpInfo>::drawGraph(char *const )
-    function: void __thiscall Expression::printNodeInDotFile(struct Node<struct ExpInfo> *,struct _iobuf *)
-      function: void __thiscall Expression::printNodeInDotFile(struct Node<struct ExpInfo> *,struct _iobuf *)
-        function: char *__cdecl expInfoToStr(struct ExpInfo *)
+  function: void __thiscall Tree<struct NodeInfo>::drawGraph(char *const )
+    function: void __thiscall Expression::printNodeInDotFile(struct Node<struct NodeInfo> *,struct _iobuf *)
+      function: void __thiscall Expression::printNodeInDotFile(struct Node<struct NodeInfo> *,struct _iobuf *)
+        function: void __thiscall Expression::printNodeInDotFile(struct Node<struct NodeInfo> *,struct _iobuf *)
+          function: void __thiscall Expression::printNodeInDotFile(struct Node<struct NodeInfo> *,struct _iobuf *)
+            function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+            return OK
+          return OK
+          function: void __thiscall Expression::printNodeInDotFile(struct Node<struct NodeInfo> *,struct _iobuf *)
+            function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+            return OK
+          return OK
+          function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+          return OK
+          function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+          return OK
+          function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+          return OK
+          function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+          return OK
+          function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+          return OK
         return OK
-      return OK
-      function: void __thiscall Expression::printNodeInDotFile(struct Node<struct ExpInfo> *,struct _iobuf *)
-        function: void __thiscall Expression::printNodeInDotFile(struct Node<struct ExpInfo> *,struct _iobuf *)
-          function: void __thiscall Expression::printNodeInDotFile(struct Node<struct ExpInfo> *,struct _iobuf *)
-            function: void __thiscall Expression::printNodeInDotFile(struct Node<struct ExpInfo> *,struct _iobuf *)
-              function: char *__cdecl expInfoToStr(struct ExpInfo *)
+        function: void __thiscall Expression::printNodeInDotFile(struct Node<struct NodeInfo> *,struct _iobuf *)
+          function: void __thiscall Expression::printNodeInDotFile(struct Node<struct NodeInfo> *,struct _iobuf *)
+            function: void __thiscall Expression::printNodeInDotFile(struct Node<struct NodeInfo> *,struct _iobuf *)
+              function: void __thiscall Expression::printNodeInDotFile(struct Node<struct NodeInfo> *,struct _iobuf *)
+                function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+                return OK
+              return OK
+              function: void __thiscall Expression::printNodeInDotFile(struct Node<struct NodeInfo> *,struct _iobuf *)
+                function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+                return OK
+              return OK
+              function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+              return OK
+              function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+              return OK
+              function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+              return OK
+              function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+              return OK
+              function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
               return OK
             return OK
-            function: void __thiscall Expression::printNodeInDotFile(struct Node<struct ExpInfo> *,struct _iobuf *)
-              function: char *__cdecl expInfoToStr(struct ExpInfo *)
+            function: void __thiscall Expression::printNodeInDotFile(struct Node<struct NodeInfo> *,struct _iobuf *)
+              function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
               return OK
             return OK
-            function: char *__cdecl expInfoToStr(struct ExpInfo *)
+            function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
             return OK
-            function: char *__cdecl expInfoToStr(struct ExpInfo *)
+            function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
             return OK
-            function: char *__cdecl expInfoToStr(struct ExpInfo *)
+            function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
             return OK
-            function: char *__cdecl expInfoToStr(struct ExpInfo *)
+            function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
             return OK
-            function: char *__cdecl expInfoToStr(struct ExpInfo *)
-            return OK
-          return OK
-          function: void __thiscall Expression::printNodeInDotFile(struct Node<struct ExpInfo> *,struct _iobuf *)
-            function: char *__cdecl expInfoToStr(struct ExpInfo *)
+            function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
             return OK
           return OK
-          function: char *__cdecl expInfoToStr(struct ExpInfo *)
+          function: void __thiscall Expression::printNodeInDotFile(struct Node<struct NodeInfo> *,struct _iobuf *)
+          return at line: 81   reason:NULL ptr in node or stream structure 
+          function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
           return OK
-          function: char *__cdecl expInfoToStr(struct ExpInfo *)
+          function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
           return OK
-          function: char *__cdecl expInfoToStr(struct ExpInfo *)
-          return OK
-          function: char *__cdecl expInfoToStr(struct ExpInfo *)
-          return OK
-          function: char *__cdecl expInfoToStr(struct ExpInfo *)
+          function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
           return OK
         return OK
-        function: void __thiscall Expression::printNodeInDotFile(struct Node<struct ExpInfo> *,struct _iobuf *)
-          function: char *__cdecl expInfoToStr(struct ExpInfo *)
-          return OK
+        function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
         return OK
-        function: char *__cdecl expInfoToStr(struct ExpInfo *)
+        function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
         return OK
-        function: char *__cdecl expInfoToStr(struct ExpInfo *)
+        function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
         return OK
-        function: char *__cdecl expInfoToStr(struct ExpInfo *)
+        function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
         return OK
-        function: char *__cdecl expInfoToStr(struct ExpInfo *)
-        return OK
-        function: char *__cdecl expInfoToStr(struct ExpInfo *)
+        function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
         return OK
       return OK
-      function: char *__cdecl expInfoToStr(struct ExpInfo *)
+      function: void __thiscall Expression::printNodeInDotFile(struct Node<struct NodeInfo> *,struct _iobuf *)
+        function: void __thiscall Expression::printNodeInDotFile(struct Node<struct NodeInfo> *,struct _iobuf *)
+          function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+          return OK
+        return OK
+        function: void __thiscall Expression::printNodeInDotFile(struct Node<struct NodeInfo> *,struct _iobuf *)
+          function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+          return OK
+        return OK
+        function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+        return OK
+        function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+        return OK
+        function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+        return OK
+        function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+        return OK
+        function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+        return OK
       return OK
-      function: char *__cdecl expInfoToStr(struct ExpInfo *)
+      function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
       return OK
-      function: char *__cdecl expInfoToStr(struct ExpInfo *)
+      function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
       return OK
-      function: char *__cdecl expInfoToStr(struct ExpInfo *)
+      function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
       return OK
-      function: char *__cdecl expInfoToStr(struct ExpInfo *)
+      function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+      return OK
+      function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+      return OK
+    return OK
+  return OK
+  function: void __thiscall Expression::genTex(struct _iobuf *)
+    function: void __cdecl genTexInteration(const struct Node<struct NodeInfo> *,int,struct _iobuf *)
+      function: void __cdecl genTexInteration(const struct Node<struct NodeInfo> *,int,struct _iobuf *)
+        function: void __cdecl genTexInteration(const struct Node<struct NodeInfo> *,int,struct _iobuf *)
+          function: void __cdecl genTexInteration(const struct Node<struct NodeInfo> *,int,struct _iobuf *)
+            function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+            return OK
+          return OK
+          function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+          return OK
+          function: void __cdecl genTexInteration(const struct Node<struct NodeInfo> *,int,struct _iobuf *)
+            function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+            return OK
+          return OK
+        return OK
+        function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+        return OK
+        function: void __cdecl genTexInteration(const struct Node<struct NodeInfo> *,int,struct _iobuf *)
+          function: void __cdecl genTexInteration(const struct Node<struct NodeInfo> *,int,struct _iobuf *)
+            function: void __cdecl genTexInteration(const struct Node<struct NodeInfo> *,int,struct _iobuf *)
+              function: void __cdecl genTexInteration(const struct Node<struct NodeInfo> *,int,struct _iobuf *)
+                function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+                return OK
+              return OK
+              function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+              return OK
+              function: void __cdecl genTexInteration(const struct Node<struct NodeInfo> *,int,struct _iobuf *)
+                function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+                return OK
+              return OK
+            return OK
+            function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+            return OK
+            function: void __cdecl genTexInteration(const struct Node<struct NodeInfo> *,int,struct _iobuf *)
+              function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+              return OK
+            return OK
+          return OK
+        return OK
+      return OK
+      function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+      return OK
+      function: void __cdecl genTexInteration(const struct Node<struct NodeInfo> *,int,struct _iobuf *)
+        function: void __cdecl genTexInteration(const struct Node<struct NodeInfo> *,int,struct _iobuf *)
+          function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+          return OK
+        return OK
+        function: void __cdecl genTexInteration(const struct Node<struct NodeInfo> *,int,struct _iobuf *)
+          function: char *__cdecl expInfoToStr(struct NodeInfo *,bool)
+          return OK
+        return OK
       return OK
     return OK
   return OK

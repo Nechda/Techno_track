@@ -3,6 +3,17 @@
 #include "Types.h"
 #include <vector>
 
+
+const C_string function_names[] =
+{
+    "sin",
+    "cos",
+    "tan",
+    "cot",
+    "ln"
+};
+
+
 class Parser
 {
     private:
@@ -12,16 +23,11 @@ class Parser
             LEX_NUMBER,
             LEX_OPERATION,
             LEX_BRACKET,
-            LEX_VARIABLE
+            LEX_VARIABLE,
+            LEX_FUNCTION
         };
 
-        enum OperationType
-        {
-            OP_SUM,
-            OP_SUB,
-            OP_MUL,
-            OP_DIV
-        };
+       
 
         struct Token
         {
@@ -29,8 +35,7 @@ class Parser
             union
             {
                 char symbol;
-                ui32 ivalue;
-                double dvalue;
+                double value;
             }data;
         };
 

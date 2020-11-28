@@ -79,7 +79,7 @@ class Tree
             $$
         }
         void print(Stream stream = stdout);
-        void drawGraph(const C_string outFilename = "tree.dot");
+        void drawGraph(const C_string outFilename = "tree"); ///<имя файла нужно указывать без расширения!!!
 };
 
 template <class Type>
@@ -132,19 +132,30 @@ template <class Type>
 void Tree<Type>::print(Stream stream = stdout)
 {$
     writeTreeInFile(getRoot(), 0, stream);
+    if (stream == stdout)
+        printf("\n");
     $$
 }
 
 template <class Type>
 void Tree<Type>::drawGraph(const C_string outFilename)
 {$
-    FILE* file = fopen(outFilename, "w");
+    char buffer[256];
+    Assert_c(outFilename);
+    if (!outFilename)
+    {
+        $$$("NULL ptr in C_string outFilename")
+        return;
+    }
+    sprintf(buffer, "%s.dot", outFilename);
+    FILE* file = fopen(buffer, "w");
     Assert_c(file);
     if (!file)
     {
-        $$$("Can't open file, FILE* consists NULL");
+        $$$("NULL ptr in FILE* file");
         return;
     }
+
     fprintf(file,
         "digraph{\n"
         "node %s\n"
@@ -155,7 +166,10 @@ void Tree<Type>::drawGraph(const C_string outFilename)
     fprintf(file,
         "}"
     );
+
     fclose(file);
-    system("dot -Tpng tree.dot -o tree.png");
+
+    sprintf(buffer, "dot -Tpng %s.dot -o %s.png", outFilename, outFilename);
+    system(buffer);
     $$
 }

@@ -5,7 +5,7 @@
 #include <ctime>
 
 /**
-\brief РЈ РІРёРЅРґС‹ С‚Р°РєРѕР№ С„СѓРЅРєС†РёРё РЅРµС‚, РїРѕСЌС‚РѕРјСѓ РЅР°РїРёС€РµРј СЃРІРѕР№ РІР°СЂРёР°РЅС‚
+\brief У винды такой функции нет, поэтому напишем свой вариант
 */
 #if defined(_WIN32)
     #include <chrono>
@@ -30,12 +30,12 @@ int gettimeofday(struct timeval* tp, struct timezone* tzp)
 #endif
 
 
-static FILE *fptr = NULL; ///< РїРµСЂРµРјРµРЅРЅР°СЏ С„Р°Р№Р»Р° - Р»РѕРіР°
+static FILE *fptr = NULL; ///< переменная файла - лога
 
 
 /**
-\brief Р¤СѓРЅРєС†РёСЏ РІРѕР·РІСЂР°С‰Р°РµС‚ С„Р°Р№Р»РѕРІСѓСЋ РїРµСЂРµРјРµРЅРЅСѓСЋ Р»РѕРіР°
-\return Р¤Р°Р№Р»РѕРІР°СЏ РїРµСЂРµРјРµРЅРЅР°СЏ Р»РѕРіР°
+\brief Функция возвращает файловую переменную лога
+\return Файловая переменная лога
 */
 FILE* getLoggerStream()
 {
@@ -76,8 +76,8 @@ void logger(const char* tag, const char* format, ...)
 }
 
 /**
-\brief Р¤СѓРЅРєС†РёСЏ, РЅР°РїСЂР°РІР»СЏСЋС‰Р°СЏ СЃРѕРѕР±С‰РµРЅРёРµ Assert_c РІ Р»РѕРі
-\note  РЎРјРѕС‚СЂРё РјР°РєСЂРѕСЃ Assert_c(exp)
+\brief Функция, направляющая сообщение Assert_c в лог
+\note  Смотри макрос Assert_c(exp)
 */
 void loggerAssert(const char* expr, const char* file,const char* funciton, unsigned line)
 {
@@ -103,7 +103,7 @@ void loggerAssert(const char* expr, const char* file,const char* funciton, unsig
 }
 
 /**
-\brief Р¤СѓРЅРєС†РёСЏ РёРЅРёС†РёР°Р»РёР·Р°С†РёРё С„Р°Р№Р»Р°-Р»РѕРіР°
+\brief Функция инициализации файла-лога
 */
 void loggerInit(const char* filename,const char* mode)
 {
@@ -121,8 +121,8 @@ void loggerInit(const char* filename,const char* mode)
 }
 
 /**
-\brief Р¤СѓРЅРєС†РёСЏ СѓРЅРёС‡С‚РѕР¶РµРЅРёСЏ Р»РѕРіРіРµСЂР°
-\note  Р”Р°РЅРЅР°СЏ С„СѓРЅРєС†РёСЏ РїСЂРѕСЃС‚Рѕ РІС‹Р·С‹РІР°РµС‚ fclose()
+\brief Функция уничтожения логгера
+\note  Данная функция просто вызывает fclose()
 */
 void loggerDestr()
 {

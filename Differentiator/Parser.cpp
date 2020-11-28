@@ -58,9 +58,9 @@ void Parser::parse_expr(Expression::TNode** ptrNode,ui32 start, ui32 end)
         if (opPos != -1)
         {
             *ptrNode = (Expression::TNode*)calloc(1, sizeof(Expression::TNode));
-            (*ptrNode)->data = (ExpInfo*)calloc(1, sizeof(ExpInfo));
-            (*ptrNode)->data->expType = EXP_OPERATION;
-            (*ptrNode)->data->value = OP_SUM + i;
+            (*ptrNode)->data = (NodeInfo*)calloc(1, sizeof(NodeInfo));
+            (*ptrNode)->data->type = EXP_OPERATION;
+            (*ptrNode)->data->data.opNumber = OP_SUM + i;
 
             parse_expr(&(*ptrNode)->link[0], start, opPos - 1);
             parse_term(&(*ptrNode)->link[1], opPos + 1, end  );
@@ -84,9 +84,9 @@ void Parser::parse_term(Expression::TNode** ptrNode, ui32 start, ui32 end)
         if (opPos != -1)
         {
             *ptrNode = (Expression::TNode*)calloc(1, sizeof(Expression::TNode));
-            (*ptrNode)->data = (ExpInfo*)calloc(1, sizeof(ExpInfo));
-            (*ptrNode)->data->expType = EXP_OPERATION;
-            (*ptrNode)->data->value = OP_MUL + i;
+            (*ptrNode)->data = (NodeInfo*)calloc(1, sizeof(NodeInfo));
+            (*ptrNode)->data->type = EXP_OPERATION;
+            (*ptrNode)->data->data.opNumber = OP_MUL + i;
 
             parse_term(&(*ptrNode)->link[0], start, opPos - 1);
             parse_fact(&(*ptrNode)->link[1], opPos + 1, end);
@@ -103,9 +103,9 @@ void Parser::parse_fact(Expression::TNode** ptrNode, ui32 start, ui32 end)
 {$
     ui32 brackets = 0;
     ui32 p = start;
-    switch (tokens[start].data.symbol)
+    switch (tokens[start].type)
     {
-    case '(':
+    case LEX_BRACKET:
         do
         {
             if (tokens[p].data.symbol == '(') brackets++;
@@ -115,26 +115,61 @@ void Parser::parse_fact(Expression::TNode** ptrNode, ui32 start, ui32 end)
         p--;
         parse_expr(ptrNode, start + 1, p - 1);
         break;
-    case 'x':
+    case LEX_VARIABLE:
         *ptrNode = (Expression::TNode*)calloc(1, sizeof(Expression::TNode));
-        (*ptrNode)->data = (ExpInfo*)calloc(1, sizeof(ExpInfo));
-        (*ptrNode)->data->expType = EXP_VARIABLE;
-        (*ptrNode)->data->value = 0;
+        (*ptrNode)->data = (NodeInfo*)calloc(1, sizeof(NodeInfo));
+        (*ptrNode)->data->type = EXP_VARIABLE;
+        (*ptrNode)->data->data.number = 0;
+        break;
+    case LEX_NUMBER:
+        *ptrNode = (Expression::TNode*)calloc(1, sizeof(Expression::TNode));
+        (*ptrNode)->data = (NodeInfo*)calloc(1, sizeof(NodeInfo));
+        (*ptrNode)->data->type = EXP_NUMBER;
+        (*ptrNode)->data->data.number = tokens[start].data.value;
+        break;
+    case LEX_FUNCTION:
+        *ptrNode = (Expression::TNode*)calloc(1, sizeof(Expression::TNode));
+        (*ptrNode)->data = (NodeInfo*)calloc(1, sizeof(NodeInfo));
+        (*ptrNode)->data->type = EXP_FUNCTION;
+        (*ptrNode)->data->data.opNumber = static_cast<int>(tokens[start].data.value);
+        start++;
+        p = start;
+        do
+        {
+            if (tokens[p].data.symbol == '(') brackets++;
+            if (tokens[p].data.symbol == ')') brackets--;
+            p++;
+        } while (brackets && p<end);
+        p--;
+        parse_expr(&(*ptrNode)->link[0], start + 1, p - 1);
         break;
     default:
-        *ptrNode = (Expression::TNode*)calloc(1, sizeof(Expression::TNode));
-        (*ptrNode)->data = (ExpInfo*)calloc(1, sizeof(ExpInfo));
-        (*ptrNode)->data->expType = EXP_NUMBER;
-        (*ptrNode)->data->value = tokens[start].data.ivalue;
-        break;
+        Assert_c("Undefined token type.");
+        $$$("Undefined token type.");
+        return;
     }
     $$
+}
+
+static bool isEqualTo(C_string str, C_string sub)
+{
+    while (*sub && *str)
+    {
+        if (*str != *sub)
+            return 0;
+        str++;
+        sub++;
+    }
+    return !*sub;
 }
 
 Parser::Token Parser::getNextToken(C_string& str)
 {
     $
+    static char buff[16] = {};
     Token result;
+    while (*str && strchr(" ", str[0]))
+        str++;
     if (strchr("()", str[0]))
     {
         result.type = LEX_BRACKET;
@@ -143,6 +178,20 @@ Parser::Token Parser::getNextToken(C_string& str)
         $$
         return result;
     }
+    
+    
+    for (ui8 i = 0; i < sizeof(function_names) / sizeof(function_names[0]); i++)
+    {
+        if (isEqualTo(str, function_names[i]))
+        {
+            result.type = LEX_FUNCTION;
+            result.data.value = i;
+            str += strlen(function_names[i]);
+            $$
+            return result;
+        }
+    }
+    
 
     if (str[0] == 'x')
     {
@@ -152,6 +201,7 @@ Parser::Token Parser::getNextToken(C_string& str)
         $$
         return result;
     }
+
 
     if (strchr("+-*/\\", str[0]))
     {
@@ -163,7 +213,7 @@ Parser::Token Parser::getNextToken(C_string& str)
     }
 
     ui32 offset = 0;
-    sscanf(str, "%d%n", &result.data.ivalue, &offset);
+    sscanf(str, "%lf%n", &result.data.value, &offset);
     str += offset;
     result.type = LEX_NUMBER;
     $$
@@ -182,11 +232,12 @@ Expression::TNode* Parser::parse(C_string expression)
     #ifndef NDEBUG
     for (std::vector<Token>::iterator it = tokens.begin(); it != tokens.end(); it++)
     {
-        printf("Token type: %d ");
         if (it->type == LEX_NUMBER)
-            printf("data: %d\n", it->data.ivalue);
-        else
+            printf("data: %lf\n", it->data.value);
+        if (it->type == LEX_OPERATION)
             printf("data: %c\n", it->data.symbol);
+        if (it->type == LEX_FUNCTION)
+            printf("data: %s\n", function_names[(int)it->data.value]);
     }
     #endif
 

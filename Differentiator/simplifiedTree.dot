@@ -1,0 +1,71 @@
+digraph{
+node [color = "black", fontsize = 24, shape = "box", style = "filled, rounded", fillcolor = "lightgray"]
+edge [color = "black", fontsize = 24]
+"2
+0x153B098" [shape = "ellipse", fillcolor = "lightgreen"] 
+"x
+0x15410B8" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "*
+0x153B018" 
+ "*
+0x153B018" ->  "2
+0x153B098" [label = "L[0]", fontsize = 14] 
+ "*
+0x153B018" ->  "x
+0x15410B8" [label = "L[1]", fontsize = 14] 
+"x
+0x15414B8" [shape = "ellipse", fillcolor = "lightgreen"] 
+"10
+0x1541278" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "+
+0x15417F8" 
+ "+
+0x15417F8" ->  "x
+0x15414B8" [label = "L[0]", fontsize = 14] 
+ "+
+0x15417F8" ->  "10
+0x1541278" [label = "L[1]", fontsize = 14] 
+"7.500
+0x1541478" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "+
+0x1541778" 
+ "+
+0x1541778" ->  "+
+0x15417F8" [label = "L[0]", fontsize = 14] 
+ "+
+0x1541778" ->  "7.500
+0x1541478" [label = "L[1]", fontsize = 14] 
+ "sin
+0x1541138" 
+ "sin
+0x1541138" ->  "+
+0x1541778" [label = "L[0]", fontsize = 14] 
+ "+
+0x1535880" 
+ "+
+0x1535880" ->  "*
+0x153B018" [label = "L[0]", fontsize = 14] 
+ "+
+0x1535880" ->  "sin
+0x1541138" [label = "L[1]", fontsize = 14] 
+"-1.811
+0x1541D48" [shape = "ellipse", fillcolor = "lightgreen"] 
+"x
+0x1541C08" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "/
+0x15411B8" 
+ "/
+0x15411B8" ->  "-1.811
+0x1541D48" [label = "L[0]", fontsize = 14] 
+ "/
+0x15411B8" ->  "x
+0x1541C08" [label = "L[1]", fontsize = 14] 
+ "+
+0x1535740" 
+ "+
+0x1535740" ->  "+
+0x1535880" [label = "L[0]", fontsize = 14] 
+ "+
+0x1535740" ->  "/
+0x15411B8" [label = "L[1]", fontsize = 14] 
+}
