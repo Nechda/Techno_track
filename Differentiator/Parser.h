@@ -4,14 +4,6 @@
 #include <vector>
 
 
-const C_string function_names[] =
-{
-    "sin",
-    "cos",
-    "tan",
-    "cot",
-    "ln"
-};
 
 
 class Parser
@@ -27,8 +19,6 @@ class Parser
             LEX_FUNCTION
         };
 
-       
-
         struct Token
         {
             LexemaType type;
@@ -36,16 +26,16 @@ class Parser
             {
                 char symbol;
                 double value;
-            }data;
+            }ptrToData;
         };
 
         std::vector<Token> tokens;
         ui32 isOperation(ui8 opType, ui32 start, ui32 end);
 
 
-        void parse_expr(Expression::TNode** ptrNode, ui32 start, ui32 end);
-        void parse_term(Expression::TNode** ptrNode, ui32 start, ui32 end);
-        void parse_fact(Expression::TNode** ptrNode, ui32 start, ui32 end);
+        void parse_expr(Expression::TNode** ptrNode, ui32 start, ui32 end, Expression::TNode* parent);
+        void parse_term(Expression::TNode** ptrNode, ui32 start, ui32 end, Expression::TNode* parent);
+        void parse_fact(Expression::TNode** ptrNode, ui32 start, ui32 end, Expression::TNode* parent);
         Token getNextToken(C_string& str);
     public:
         Parser() {};

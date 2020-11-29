@@ -4,20 +4,43 @@
 
 enum NodeType
 {
-    EXP_UNDEFINED,
-    EXP_NUMBER,
-    EXP_OPERATION,
-    EXP_VARIABLE,
-    EXP_FUNCTION
+    NODE_TYPE_UNDEFINED,
+    NODE_TYPE_NUMBER,
+    NODE_TYPE_OPERATION,
+    NODE_TYPE_VARIABLE,
+    NODE_TYPE_FUNCTION
 };
 
-enum OperationType
+enum OpType
 {
-    OP_SUM,
-    OP_SUB,
-    OP_MUL,
-    OP_DIV
+    #define FUNC_DEFINE(name, enumName, implentation, texPrintImplemenation)
+    #define OP_DEFINE(symbol, name, enumName, priority, implentation,texPrintImplemenation)\
+        enumName,
+    #include "FUNCTIONS.h"
+    #undef FUNC_DEFINE
+    #undef OP_DEFINE
 };
+
+enum FuncType
+{
+    #define OP_DEFINE(name, enumName, implentation, texPrintImplemenation)
+    #define FUNC_DEFINE(name, enumName, implentation, texPrintImplemenation)\
+        enumName,
+        #include "FUNCTIONS.h"
+    #undef FUNC_DEFINE
+    #undef OP_DEFINE
+};
+
+const C_string FUNCTION_NAMES_TABLE[] =
+{
+    #define OP_DEFINE(name, enumName, implentation, texPrintImplemenation)
+    #define FUNC_DEFINE(name, enumName, implentation, texPrintImplemenation)\
+        #name,
+        #include "FUNCTIONS.h"
+    #undef FUNC_DEFINE
+    #undef OP_DEFINE
+};
+const ui32 FUNCTION_TABLE_SIZE = sizeof(FUNCTION_NAMES_TABLE) / sizeof(FUNCTION_NAMES_TABLE[0]);
 
 struct NodeInfo
 {
@@ -28,6 +51,11 @@ struct NodeInfo
         double number;
     }data;
 };
+
+#define createNode(node_, type_)\
+    (node_) = (Expression::TNode*)calloc(1, sizeof(Expression::TNode));\
+    (node_)->ptrToData = (NodeInfo*)calloc(1, sizeof(NodeInfo));\
+    (node_)->ptrToData->type = (type_);
 
 class Expression : public Tree<NodeInfo>
 {
@@ -41,5 +69,7 @@ class Expression : public Tree<NodeInfo>
         Expression(const C_string filename);
         ~Expression() {};
         void simplify();
+        double evaluate(double variable);
         void genTex(Stream stream = stdout);
+        void differentiate();
 };

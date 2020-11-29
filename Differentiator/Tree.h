@@ -16,7 +16,7 @@ typedef FILE* Stream;
 template <class Type>
 struct Node
 {
-    Type* data;
+    Type* ptrToData;
     Node<Type>* link[2];
     Node<Type>* parent;
 };
@@ -25,7 +25,7 @@ template <class Type>
 void rCleanUp(Node<Type>* node)
 {$
     if (!node) { $$ return; }
-    if (node->data) free(node->data);
+    if (node->ptrToData) free(node->ptrToData);
     rCleanUp(node->link[0]);
     rCleanUp(node->link[1]);
     free(node);
@@ -43,8 +43,8 @@ Node<Type>* rCopy(const Node<Type>* node,Node<Type>* parent = NULL)
     }
     Node<Type>* res = (Node<Type>*)calloc(1, sizeof(Node<Type>));
     *res = *node;
-    res->data = (Type*)calloc(1, sizeof(Type));
-    *(res->data) = *(node->data);
+    res->ptrToData = (Type*)calloc(1, sizeof(Type));
+    *(res->ptrToData) = *(node->ptrToData);
     res->link[0] = rCopy(node->link[0], res);
     res->link[1] = rCopy(node->link[1], res);
     res->parent = parent;
@@ -73,6 +73,8 @@ class Tree
         void genTreeByRoot(TNode* node)
         {
             $
+            if (isValid)
+                return;
             ground.link[0] = node;
             node->parent = &ground;
             isValid = 1;
@@ -105,7 +107,7 @@ Tree<Type>::Tree(const C_string filename)
 
     ground.link[0] = (Node<Type>*)calloc(1, sizeof(Node<Type>));
     ground.link[1] = NULL;
-    ground.data = NULL;
+    ground.ptrToData = NULL;
     ground.parent = NULL;
 
     Assert_c(ground.link[0]);
@@ -131,6 +133,11 @@ Tree<Type>::~Tree()
 template <class Type>
 void Tree<Type>::print(Stream stream = stdout)
 {$
+    printf("Hey hey hey, are you sure, that you really need this function?\n"
+           "This function can't work with standard functions, so if you don't want your computer will burn\n"
+           "don't use this function anymore");
+    $$
+    return;
     writeTreeInFile(getRoot(), 0, stream);
     if (stream == stdout)
         printf("\n");
