@@ -9,10 +9,11 @@ $$
 }
 
 /*
-    E -> E + T | E - T | T
+    E -> E + E | E - E | T
     T -> T * T | T / T | T ^ T | F
-    F -> N     | (E)   | -(E)  | -T
+    F -> N     | (E)   | -(E)  | -F
 */
+
 
 
 ui32 Parser::isOperation(ui8 opType, ui32 start, ui32 end)
@@ -58,14 +59,9 @@ void Parser::parse_expr(Expression::TNode** ptrNode,ui32 start, ui32 end, Expres
         opPos = isOperation(operations[i], start, end);
         if (opPos != -1)
         {
-            *ptrNode = (Expression::TNode*)calloc(1, sizeof(Expression::TNode));
-            (*ptrNode)->ptrToData = (NodeInfo*)calloc(1, sizeof(NodeInfo));
-            (*ptrNode)->ptrToData->type = NODE_TYPE_OPERATION;
-            (*ptrNode)->ptrToData->data.opNumber = OP_SUM + i;
-            (*ptrNode)->parent = parent;
-
+            *ptrNode = createNode(NULL, NULL, NODE_TYPE_OPERATION, OP_SUM + i, parent);
             parse_expr(&(*ptrNode)->link[0], start, opPos - 1, *ptrNode);
-            parse_term(&(*ptrNode)->link[1], opPos + 1, end,   *ptrNode);
+            parse_expr(&(*ptrNode)->link[1], opPos + 1, end,   *ptrNode);
             $$
             return;
         }
@@ -85,14 +81,8 @@ void Parser::parse_term(Expression::TNode** ptrNode, ui32 start, ui32 end, Expre
         opPos = isOperation(operations[i], start, end);
         if (opPos != -1)
         {
-            *ptrNode = (Expression::TNode*)calloc(1, sizeof(Expression::TNode));
-            (*ptrNode)->ptrToData = (NodeInfo*)calloc(1, sizeof(NodeInfo));
-            (*ptrNode)->ptrToData->type = NODE_TYPE_OPERATION;
-            (*ptrNode)->ptrToData->data.opNumber = OP_MUL + i;
-            (*ptrNode)->parent = parent;
-
+            *ptrNode = createNode(NULL, NULL, NODE_TYPE_OPERATION, OP_MUL + i, parent);
             parse_term(&(*ptrNode)->link[0], start, opPos - 1, *ptrNode);
-            //parse_fact(&(*ptrNode)->link[1], opPos + 1, end);
             parse_term(&(*ptrNode)->link[1], opPos + 1, end, *ptrNode);
             $$
             return;
@@ -120,19 +110,13 @@ void Parser::parse_fact(Expression::TNode** ptrNode, ui32 start, ui32 end, Expre
         parse_expr(ptrNode, start + 1, p - 1, parent);
         break;
     case LEX_VARIABLE:
-        createNode(*ptrNode, NODE_TYPE_VARIABLE);
-        (*ptrNode)->ptrToData->data.number = 0;
-        (*ptrNode)->parent = parent;
+        *ptrNode = createNode(NULL, NULL, NODE_TYPE_VARIABLE, 0, parent);
         break;
     case LEX_NUMBER:
-        createNode(*ptrNode, NODE_TYPE_NUMBER);
-        (*ptrNode)->ptrToData->data.number = tokens[start].ptrToData.value;
-        (*ptrNode)->parent = parent;
+        *ptrNode = createNode(NULL, NULL, NODE_TYPE_NUMBER, tokens[start].ptrToData.value, parent);
         break;
     case LEX_FUNCTION:
-        createNode(*ptrNode, NODE_TYPE_FUNCTION);
-        (*ptrNode)->ptrToData->data.opNumber = static_cast<int>(tokens[start].ptrToData.value);
-        (*ptrNode)->parent = parent;
+        *ptrNode = createNode(NULL, NULL, NODE_TYPE_FUNCTION, tokens[start].ptrToData.value, parent);
         start++;
         p = start;
         do
@@ -140,11 +124,11 @@ void Parser::parse_fact(Expression::TNode** ptrNode, ui32 start, ui32 end, Expre
             if (tokens[p].ptrToData.symbol == '(') brackets++;
             if (tokens[p].ptrToData.symbol == ')') brackets--;
             p++;
-        } while (brackets && p<end);
+        } while (brackets && p<=end);
         p--;
         if (start != p)
         {
-            parse_expr(&(*ptrNode)->link[0], start + 1, p, *ptrNode);
+            parse_expr(&(*ptrNode)->link[0], start + 1, p-1, *ptrNode);
             break;
         }
 
@@ -155,7 +139,7 @@ void Parser::parse_fact(Expression::TNode** ptrNode, ui32 start, ui32 end, Expre
             if (tokens[p].ptrToData.symbol == '(') brackets++;
             if (tokens[p].ptrToData.symbol == ')') brackets--;
             p++;
-            if (p > end) break;
+            //if (p > end) break;
         } while ((tokens[p].type != LEX_OPERATION || brackets) && p <= end);
         parse_fact(&(*ptrNode)->link[0], start, p, *ptrNode);
 

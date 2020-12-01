@@ -77,7 +77,6 @@ class Tree
                 return;
             ground.link[0] = node;
             node->parent = &ground;
-            isValid = 1;
             $$
         }
         void print(Stream stream = stdout);
@@ -117,7 +116,6 @@ Tree<Type>::Tree(const C_string filename)
         return;
     }
     getRoot()->parent = &ground;
-    isValid = 1;
     $$
 }
 

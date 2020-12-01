@@ -1,71 +1,136 @@
 digraph{
 node [color = "black", fontsize = 24, shape = "box", style = "filled, rounded", fillcolor = "lightgray"]
 edge [color = "black", fontsize = 24]
+"1
+0x1065330" [shape = "ellipse", fillcolor = "lightgreen"] 
 "2
-0x153B098" [shape = "ellipse", fillcolor = "lightgreen"] 
+0x1065530" [shape = "ellipse", fillcolor = "lightgreen"] 
 "x
-0x15410B8" [shape = "ellipse", fillcolor = "lightgreen"] 
+0x10654B0" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "sqrt
+0x10653F0" 
+ "sqrt
+0x10653F0" ->  "x
+0x10654B0" [label = "L[0]", fontsize = 14] 
  "*
-0x153B018" 
+0x1065430" 
  "*
-0x153B018" ->  "2
-0x153B098" [label = "L[0]", fontsize = 14] 
+0x1065430" ->  "2
+0x1065530" [label = "L[0]", fontsize = 14] 
  "*
-0x153B018" ->  "x
-0x15410B8" [label = "L[1]", fontsize = 14] 
+0x1065430" ->  "sqrt
+0x10653F0" [label = "L[1]", fontsize = 14] 
+ "/
+0x1061890" 
+ "/
+0x1061890" ->  "1
+0x1065330" [label = "L[0]", fontsize = 14] 
+ "/
+0x1061890" ->  "*
+0x1065430" [label = "L[1]", fontsize = 14] 
+"1
+0x1061510" [shape = "ellipse", fillcolor = "lightgreen"] 
 "x
-0x15414B8" [shape = "ellipse", fillcolor = "lightgreen"] 
-"10
-0x1541278" [shape = "ellipse", fillcolor = "lightgreen"] 
+0x10612D0" [shape = "ellipse", fillcolor = "lightgreen"] 
+"2
+0x10615D0" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "^
+0x1061850" 
+ "^
+0x1061850" ->  "x
+0x10612D0" [label = "L[0]", fontsize = 14] 
+ "^
+0x1061850" ->  "2
+0x10615D0" [label = "L[1]", fontsize = 14] 
  "+
-0x15417F8" 
+0x10610A8" 
  "+
-0x15417F8" ->  "x
-0x15414B8" [label = "L[0]", fontsize = 14] 
+0x10610A8" ->  "1
+0x1061510" [label = "L[0]", fontsize = 14] 
  "+
-0x15417F8" ->  "10
-0x1541278" [label = "L[1]", fontsize = 14] 
-"7.500
-0x1541478" [shape = "ellipse", fillcolor = "lightgreen"] 
- "+
-0x1541778" 
- "+
-0x1541778" ->  "+
-0x15417F8" [label = "L[0]", fontsize = 14] 
- "+
-0x1541778" ->  "7.500
-0x1541478" [label = "L[1]", fontsize = 14] 
- "sin
-0x1541138" 
- "sin
-0x1541138" ->  "+
-0x1541778" [label = "L[0]", fontsize = 14] 
- "+
-0x1535880" 
- "+
-0x1535880" ->  "*
-0x153B018" [label = "L[0]", fontsize = 14] 
- "+
-0x1535880" ->  "sin
-0x1541138" [label = "L[1]", fontsize = 14] 
-"-1.811
-0x1541D48" [shape = "ellipse", fillcolor = "lightgreen"] 
+0x10610A8" ->  "^
+0x1061850" [label = "L[1]", fontsize = 14] 
+ "*
+0x1065870" 
+ "*
+0x1065870" ->  "/
+0x1061890" [label = "L[0]", fontsize = 14] 
+ "*
+0x1065870" ->  "+
+0x10610A8" [label = "L[1]", fontsize = 14] 
 "x
-0x1541C08" [shape = "ellipse", fillcolor = "lightgreen"] 
- "/
-0x15411B8" 
- "/
-0x15411B8" ->  "-1.811
-0x1541D48" [label = "L[0]", fontsize = 14] 
- "/
-0x15411B8" ->  "x
-0x1541C08" [label = "L[1]", fontsize = 14] 
+0x1061028" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "sqrt
+0x105EF60" 
+ "sqrt
+0x105EF60" ->  "x
+0x1061028" [label = "L[0]", fontsize = 14] 
+"2
+0x1065670" [shape = "ellipse", fillcolor = "lightgreen"] 
+"x
+0x1065170" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "*
+0x1065830" 
+ "*
+0x1065830" ->  "2
+0x1065670" [label = "L[0]", fontsize = 14] 
+ "*
+0x1065830" ->  "x
+0x1065170" [label = "L[1]", fontsize = 14] 
+ "*
+0x10657B0" 
+ "*
+0x10657B0" ->  "sqrt
+0x105EF60" [label = "L[0]", fontsize = 14] 
+ "*
+0x10657B0" ->  "*
+0x1065830" [label = "L[1]", fontsize = 14] 
+ "-
+0x10651F0" 
+ "-
+0x10651F0" ->  "*
+0x1065870" [label = "L[0]", fontsize = 14] 
+ "-
+0x10651F0" ->  "*
+0x10657B0" [label = "L[1]", fontsize = 14] 
+"1
+0x1061610" [shape = "ellipse", fillcolor = "lightgreen"] 
+"x
+0x1061350" [shape = "ellipse", fillcolor = "lightgreen"] 
+"2
+0x1061650" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "^
+0x1061210" 
+ "^
+0x1061210" ->  "x
+0x1061350" [label = "L[0]", fontsize = 14] 
+ "^
+0x1061210" ->  "2
+0x1061650" [label = "L[1]", fontsize = 14] 
  "+
-0x1535740" 
+0x1061310" 
  "+
-0x1535740" ->  "+
-0x1535880" [label = "L[0]", fontsize = 14] 
+0x1061310" ->  "1
+0x1061610" [label = "L[0]", fontsize = 14] 
  "+
-0x1535740" ->  "/
-0x15411B8" [label = "L[1]", fontsize = 14] 
+0x1061310" ->  "^
+0x1061210" [label = "L[1]", fontsize = 14] 
+"2
+0x10652F0" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "^
+0x1065BB0" 
+ "^
+0x1065BB0" ->  "+
+0x1061310" [label = "L[0]", fontsize = 14] 
+ "^
+0x1065BB0" ->  "2
+0x10652F0" [label = "L[1]", fontsize = 14] 
+ "/
+0x1055780" 
+ "/
+0x1055780" ->  "-
+0x10651F0" [label = "L[0]", fontsize = 14] 
+ "/
+0x1055780" ->  "^
+0x1065BB0" [label = "L[1]", fontsize = 14] 
 }

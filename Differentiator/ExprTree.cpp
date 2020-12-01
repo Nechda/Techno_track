@@ -72,6 +72,17 @@ Expression::Expression(const C_string filename) : Tree(filename)
 };
 
 
+//===============================================================================================================================
+//|                                                                                                                             |
+//|                                                                                                                             |
+//|                           распечатка дерева в инфиксную запись + генерация dot файла                                        |
+//|                                                                                                                             |
+//|_____________________________________________________________________________________________________________________________|
+//|                                                                                                                             |
+
+/*
+    \brief Функция генерации dot файла для graphviz
+*/
 void Expression::printNodeInDotFile(TNode* node, Stream stream)
 {$
     Assert_c(stream);
@@ -107,8 +118,10 @@ void Expression::printNodeInDotFile(TNode* node, Stream stream)
     $$
 }
 
-
-void printInteration(const Expression::TNode* root, int level, Stream stream)
+/*
+    \brief Реализация распечатки дерева в файл (инфиксная запись)
+*/
+static void printInteration(const Expression::TNode* root, int level, Stream stream)
 {
     $
     Assert_c(stream);
@@ -161,7 +174,7 @@ void Expression::writeTreeInFile(TNode* node, ui32 level, Stream stream)
 }
 
 /*
-!!! эта функция не умеет парсить функции sin,cos, ... !!!
+    \brief Реализация чтения дерева из файл (инфиксная запись)
 */
 NodeInfo* getData(C_string str, ui32 len)
 {$
@@ -208,7 +221,7 @@ NodeInfo* getData(C_string str, ui32 len)
     return ptr;
 }
 
-void readInteration(Expression::TNode* node, C_string& str, Expression::TNode* TREEROOT)
+static void readInteration_Infix(Expression::TNode* node, C_string& str, Expression::TNode* TREEROOT)
 {$
     ui8 linkIndex = 0;
     C_string c = NULL;
@@ -219,7 +232,7 @@ void readInteration(Expression::TNode* node, C_string& str, Expression::TNode* T
             node->link[linkIndex] = (Expression::TNode*)calloc(1, sizeof(Expression::TNode));
             node->link[linkIndex]->parent = node;
             str++;
-            readInteration(node->link[linkIndex], str, TREEROOT);
+            readInteration_Infix(node->link[linkIndex], str, TREEROOT);
             linkIndex++;
         }
         if (str[0] == ')')
@@ -251,7 +264,7 @@ void readInteration(Expression::TNode* node, C_string& str, Expression::TNode* T
 void Expression::readTreeFromFile(const C_string filename)
 {$
     Assert_c(filename);
-    if (!filename || !isValid)
+    if (!filename || isValid)
     {
         $$$("invalid tree structure or filename is NULL");
         return;
@@ -268,7 +281,7 @@ void Expression::readTreeFromFile(const C_string filename)
         return;
     }
 
-    errorCode = removeExtraChar(&buffer, "(+-*/)");
+    errorCode = removeExtraChar(&buffer, "(+-*/^.)");
     if (errorCode == STANDART_ERROR_CODE)
     {
         free(getRoot());
@@ -278,17 +291,31 @@ void Expression::readTreeFromFile(const C_string filename)
     }
 
     C_string str = buffer;
-    readInteration(getRoot(), str, getRoot());
+    Parser pr;
+    genTreeByRoot(pr.parse(str));
+    isValid = 1;
     $$
 }
+//|_____________________________________________________________________________________________________________________________|
+//===============================================================================================================================
 
+
+
+//===============================================================================================================================
+//|                                                                                                                             |
+//|                                                                                                                             |
+//|                                  реализация алгоритмов упрощения дерева                                                     |
+//|                                                                                                                             |
+//|                                                                                                                             |
+//|_____________________________________________________________________________________________________________________________|
+//|                                                                                                                             |
 typedef double(*FuncionType)(double, double);
 
 
 #define OP_DEFINE(symbol, name, enumName, priority, implentation,texPrintImplemenation)\
-    double runEvaluate##name(double left, double right) implentation
+    static double runEvaluate##name(double left, double right) implentation
 #define FUNC_DEFINE(name, enumName, implentation, texPrintImplemenation)\
-    double runEvaluate##name(double left, double right) implentation
+    static double runEvaluate##name(double left, double right) implentation
 #include "FUNCTIONS.h"
 #undef OP_DEFINE(symbol, name, enumName, priority, implentation,texPrintImplemenation)
 #undef FUNC_DEFINE(name, enumName, implentation, texPrintImplemenation)
@@ -407,9 +434,10 @@ static void identitySimplify(Expression::TNode* node, bool& isChangedTree)
                 if (isZeroNumber(node->link[j]))
                 {
                     parent = node->parent;
-                    createNode(newLink, NODE_TYPE_NUMBER);
-                    newLink->ptrToData->data.number = 0;
-                    newLink->parent = parent;
+                    newLink = createNode(NULL, NULL, NODE_TYPE_NUMBER, 0.0, parent);
+                    //createNode(newLink, NODE_TYPE_NUMBER);
+                    //newLink->ptrToData->data.number = 0;
+                    //newLink->parent = parent;
                     replaceLink(parent, node, newLink);
 
                     rCleanUp(node);
@@ -475,9 +503,10 @@ static void identitySimplify(Expression::TNode* node, bool& isChangedTree)
             if (isZeroNumber(node->link[1]))
             {
                 parent = node->parent;
-                createNode(newLink, NODE_TYPE_NUMBER);
-                newLink->ptrToData->data.number = 1;
-                newLink->parent = parent;
+                newLink = createNode(NULL, NULL, NODE_TYPE_NUMBER, 1.0, parent);
+                //createNode(newLink, NODE_TYPE_NUMBER);
+                //newLink->ptrToData->data.number = 1;
+                //newLink->parent = parent;
                 replaceLink(parent, node, newLink);
 
                 rCleanUp(node);
@@ -490,9 +519,10 @@ static void identitySimplify(Expression::TNode* node, bool& isChangedTree)
             if (isOneNumber(node->link[0]))
             {
                 parent = node->parent;
-                createNode(newLink, NODE_TYPE_NUMBER);
-                newLink->ptrToData->data.number = 1;
-                newLink->parent = parent;
+                newLink = createNode(NULL, NULL, NODE_TYPE_NUMBER, 1.0, parent);
+                //createNode(newLink, NODE_TYPE_NUMBER);
+                //newLink->ptrToData->data.number = 1;
+                //newLink->parent = parent;
                 replaceLink(parent, node, newLink);
 
                 rCleanUp(node);
@@ -506,9 +536,10 @@ static void identitySimplify(Expression::TNode* node, bool& isChangedTree)
             if (isZeroNumber(node->link[0]))
             {
                 parent = node->parent;
-                createNode(newLink, NODE_TYPE_NUMBER);
-                newLink->ptrToData->data.number = 0;
-                newLink->parent = parent;
+                newLink = createNode(NULL, NULL, NODE_TYPE_NUMBER, 0.0, parent);
+                //createNode(newLink, NODE_TYPE_NUMBER);
+                //newLink->ptrToData->data.number = 0;
+                //newLink->parent = parent;
                 replaceLink(parent, node, newLink);
 
                 rCleanUp(node);
@@ -541,7 +572,18 @@ void Expression::simplify()
     } while (isChangedTree);
     $$
 }
+//|_____________________________________________________________________________________________________________________________|
+//===============================================================================================================================
 
+
+//===============================================================================================================================
+//|                                                                                                                             |
+//|                                                                                                                             |
+//|                                                 вычисление дерева                                                           |
+//|                                                                                                                             |
+//|                                                                                                                             |
+//|_____________________________________________________________________________________________________________________________|
+//|                                                                                                                             |
 static double treeEvaluate(Expression::TNode* node,const double variable)
 {
     if (!node)
@@ -568,7 +610,18 @@ double Expression::evaluate(double variable)
 {
     return treeEvaluate(getRoot(), variable);
 }
+//|_____________________________________________________________________________________________________________________________|
+//===============================================================================================================================
 
+
+//===============================================================================================================================
+//|                                                                                                                             |
+//|                                                                                                                             |
+//|                                                 генерация теха                                                              |
+//|                                                                                                                             |
+//|                                                                                                                             |
+//|_____________________________________________________________________________________________________________________________|
+//|                                                                                                                             |
 static ui8 getPriority(const Expression::TNode* node)
 {
     if (!node)
@@ -648,7 +701,6 @@ void genTexInteration(const Expression::TNode* root, int level, Stream stream)
     return;
 }
 
-
 static inline void printTex_OP_DIV(const Expression::TNode* root, int level, Stream stream)
 {
     fprintf(stream, "\\frac{");
@@ -677,6 +729,11 @@ static inline void printTex_OP_MUL(const Expression::TNode* root, int level, Str
     ui8 mainPriority = getPriority(root);
     ui8 linkPriority = 0;
     bool isNeg = 0;
+    #define isNumberNode(p) ( (p) ? (p)->ptrToData->type == NODE_TYPE_NUMBER : 0)
+    #define isDivNode(p) ( (p) ? (p)->ptrToData->type == NODE_TYPE_OPERATION && (p)->ptrToData->data.opNumber == OP_DIV : 0)
+
+    bool useStar = isNumberNode(root->link[0]) && isNumberNode(root->link[1]);
+    useStar |= isNumberNode(root->link[0]) && isDivNode(root->link[1]) || isNumberNode(root->link[1]) && isDivNode(root->link[0]);
     for (ui8 i = 0; i < 2; i++)
     {
         isNeg = root->link[i]->ptrToData->type == NODE_TYPE_FUNCTION 
@@ -691,11 +748,12 @@ static inline void printTex_OP_MUL(const Expression::TNode* root, int level, Str
         if (linkPriority > mainPriority || isNeg)
             fprintf(stream, "\\right)");
 
-        if (i < 1)
+        if (i < 1 && useStar)
             fprintf(stream, "\\cdot ");
     }
+    #undef isNumberNode
+    #undef isDivNode
 }
-
 
 static inline void printTex_OP_STANDART(const Expression::TNode* root, int level, Stream stream)
 {
@@ -716,6 +774,8 @@ static inline void printTex_OP_STANDART(const Expression::TNode* root, int level
     }
 }
 
+
+
 static inline void printTex_FUNC_SQRT(const Expression::TNode* root, int level, Stream stream)
 {
     fprintf(stream, "\\%s{", FUNCTION_NAMES_TABLE[root->ptrToData->data.opNumber]);
@@ -735,15 +795,12 @@ static inline void printTex_FUNC_NEG(const Expression::TNode* root, int level, S
         fprintf(stream, "\\right)");
 }
 
-
 static inline void printTex_FUNC_STANDART(const Expression::TNode* root, int level, Stream stream)
 {
     fprintf(stream, "\\%s\\left(", FUNCTION_NAMES_TABLE[root->ptrToData->data.opNumber]);
     genTexInteration(root->link[0], level + 1, stream);
     fprintf(stream, "\\right)");
 }
-
-
 
 void Expression::genTex(Stream stream)
 {$
@@ -753,18 +810,210 @@ void Expression::genTex(Stream stream)
     $$
 }
 
+void Expression::genTexFile(const C_string outFilename)
+{
+    char buffer[256];
+    Assert_c(outFilename);
+    if (!outFilename)
+    {
+        $$$("NULL ptr in C_string outFilename")
+            return;
+    }
+    sprintf(buffer, "%s.tex", outFilename);
+    FILE* file = fopen(buffer, "w");
+    Assert_c(file);
+    if (!file)
+    {
+        $$$("NULL ptr in FILE* file");
+        return;
+    }
+
+    fprintf(file,
+        "\\documentclass[preview]{standalone}\n"
+        "\\begin{document}\n"
+        "$"
+    );
+    genTex(file);
+    fprintf(file,
+        "$\n"
+        "\\end{document}\n"
+    );
+        
+
+    fclose(file);
+
+    sprintf(buffer, "pdflatex.exe -quiet -interaction=nonstopmode %s.tex", outFilename);
+    system(buffer);
+    
+}
+//|_____________________________________________________________________________________________________________________________|
+//===============================================================================================================================
+
+
+//===============================================================================================================================
+//|                                                                                                                             |
+//|                                                                                                                             |
+//|                                                 дифференцирование выражений                                                 |
+//|                                                                                                                             |
+//|                                                                                                                             |
+//|_____________________________________________________________________________________________________________________________|
+//|                                                                                                                             |
+Expression::TNode* createNode(Expression::TNode* left, Expression::TNode* right, NodeType typeNode, double value, Expression::TNode* parent)
+{
+    Expression::TNode* result = (Expression::TNode*)calloc(1, sizeof(Expression::TNode));
+    result->ptrToData = (NodeInfo*)calloc(1, sizeof(NodeInfo));
+    
+    if(typeNode == NODE_TYPE_NUMBER)
+        result->ptrToData->data.number = value;
+    else
+        result->ptrToData->data.opNumber = static_cast<ui32>(value);
+
+    result->ptrToData->type = typeNode;
+
+    result->link[0] = left;
+    result->link[1] = right;
+
+    result->parent = parent;
+    return result;
+}
+
+
+#define c(r) rCopy(r)
+#define d(r) differentiateInteration(r)
+#define setLinkParent(node_)\
+    if ( (node_)->link[0] ) (node_)->link[0]->parent = (node_);\
+    if ( (node_)->link[1] ) (node_)->link[1]->parent = (node_);
+
+
+static void differentiateInteration(Expression::TNode* root);
+
+static void diff_MUL(Expression::TNode* node)
+{
+    Expression::TNode *f, *g, *df, *dg;
+    f = node->link[0];
+    g = node->link[1];
+    df = c(f);
+    dg = c(g);
+    d(df);
+    d(dg);
+
+    node->ptrToData->data.opNumber = OP_SUM;
+    
+    node->link[0] = createNode(f, dg, NODE_TYPE_OPERATION, OP_MUL, node);
+    node->link[1] = createNode(df, g, NODE_TYPE_OPERATION, OP_MUL, node);
+
+    setLinkParent(node);
+    setLinkParent(node->link[0]);
+    setLinkParent(node->link[1]);
+}
+
+static void diff_DIV(Expression::TNode* node)
+{
+    Expression::TNode *f, *g, *df, *dg, *g2;
+    f = node->link[0];
+    g = node->link[1];
+    g2 = c(g);
+    df = c(f);
+    dg = c(g);
+    d(df);
+    d(dg);
+
+    node->link[0] = createNode(
+        createNode(df,g, NODE_TYPE_OPERATION, OP_MUL,NULL),
+        createNode(f, dg, NODE_TYPE_OPERATION, OP_MUL, NULL),
+        NODE_TYPE_OPERATION, OP_SUB, node);
+
+    node->link[1] = createNode(
+        g2,
+        createNode(NULL, NULL, NODE_TYPE_NUMBER, 2.0, NULL),
+        NODE_TYPE_OPERATION, OP_POW, node);
+
+    Expression::TNode* up = node->link[0];
+    setLinkParent(up);
+    setLinkParent(up->link[0]);
+    setLinkParent(up->link[1]);
+
+    Expression::TNode* down = node->link[1];
+    setLinkParent(down);
+}
+
+static void diff_POW(Expression::TNode* node)
+{
+    NodeType lType = node->link[0]->ptrToData->type;
+    NodeType rType = node->link[1]->ptrToData->type;
+
+    Expression::TNode *f, *g, *y;
+
+    if (lType == NODE_TYPE_VARIABLE && rType == NODE_TYPE_NUMBER)
+    {
+        //тупо степенная функция
+        y = c(node->link[1]);
+        node->link[1]->ptrToData->data.number--;
+
+        node->link[1] = c(node);
+        node->ptrToData->data.opNumber = OP_MUL;
+        node->link[0] = y;
+
+        setLinkParent(node);
+        setLinkParent(node->link[1]);
+        return;
+    }
+
+    if (lType == NODE_TYPE_NUMBER && rType == NODE_TYPE_VARIABLE)
+    {
+        node->link[1] = c(node);
+        node->link[0] = createNode(node->link[0], NULL, NODE_TYPE_FUNCTION, FUNC_LN, node); // делаем логарифм
+        node->ptrToData->data.opNumber = OP_MUL;
+
+        setLinkParent(node);
+        setLinkParent(node->link[1]);
+        return;
+    }
+
+    //y = f^g -> y' = y (g ln f)'
+
+    y = c(node);
+    f = c(node->link[0]);
+    g = c(node->link[1]);
+    
+    rCleanUp(node->link[0]);
+    rCleanUp(node->link[1]);
+
+    node->ptrToData->data.opNumber = OP_MUL;
+    node->link[0] = y;
+    node->link[1] = createNode(
+        g,
+        createNode(
+            f,
+            NULL,
+            NODE_TYPE_FUNCTION,
+            FUNC_LN,
+            NULL
+        ),
+        NODE_TYPE_OPERATION, OP_MUL, NULL);
+
+    setLinkParent(node);
+    setLinkParent(node->link[1]);
+
+    Expression::TNode* lnNode = node->link[1]->link[1];
+    lnNode->link[0]->parent = lnNode;
+
+    d(node->link[1]);
+}
+
+
+#define OP_DEFINE(symbol, name, enumName, priority, implentation, diffImplementation) 
+#define FUNC_DEFINE(name, enumName, implentation, diffImplementation)\
+    static void diff_##name(Expression::TNode* node) diffImplementation
+#include "FUNCTIONS.h"
+#undef OP_DEFINE
+#undef FUNC_DEFINE
 
 static void differentiateInteration(Expression::TNode* root)
-{
-    if (!root)
-        return;
+{$
+    if (!root) { $$; return; }                
 
-    #define replaceLink(node_, oldLink_, newLink_)              \
-        for (ui8 i = 0; i < 2; i++)                             \
-            if ((node_)->link[i] == (oldLink_) && (node_))      \
-                (node_)->link[i] = (newLink_);                    
-
-    NodeInfo nodeInfo = *root->ptrToData;
+    NodeInfo& nodeInfo = *root->ptrToData;
     if (nodeInfo.type == NODE_TYPE_NUMBER)
     {
         nodeInfo.data.number = 0;
@@ -778,25 +1027,54 @@ static void differentiateInteration(Expression::TNode* root)
         return;
     }
 
-    Expression::TNode* newLink[2] = { NULL, NULL };
+    Expression::TNode* newNode = NULL;
 
     if (nodeInfo.type == NODE_TYPE_OPERATION)
-        switch (nodeInfo.data.opNumber)
-        {
+    switch (nodeInfo.data.opNumber)
+    {
         case OP_SUM:
         case OP_SUB:
-            differentiateInteration(root->link[0]);
-            differentiateInteration(root->link[1]);
-            break;
+            d(root->link[0]);
+            d(root->link[1]);
+            $$; return;
         case OP_MUL:
-            newLink[0] = rCopy(root->link[0]);
-            newLink[1] = rCopy(root->link[1]);
+            diff_MUL(root);
+            $$; return;
+        case OP_DIV:
+            diff_DIV(root);
+            $$; return;
+        case OP_POW:
+            diff_POW(root);
+            $$; return;
+        default:
             break;
-        }
+    }
 
+
+    if (nodeInfo.type == NODE_TYPE_FUNCTION)
+        switch (nodeInfo.data.opNumber)
+        {
+            #define OP_DEFINE(symbol, name, enumName, priority, implentation,texPrintImplemenation)
+            #define FUNC_DEFINE(name, enumName, implentation, texPrintImplemenation)\
+                case enumName:\
+                    diff_##name(root);\
+                    break;
+            #include "FUNCTIONS.h"
+            #undef OP_DEFINE
+            #undef FUNC_DEFINE
+        default:
+            printf("____________Undefined function__________\n");
+            $$$("We try to diff undefined function");
+            return;
+        }
+    $$
 }
 
 void Expression::differentiate()
-{
+{$
+    simplify();
     differentiateInteration(getRoot());
+    $$
 }
+//|_____________________________________________________________________________________________________________________________|
+//===============================================================================================================================

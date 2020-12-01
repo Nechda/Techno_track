@@ -52,10 +52,6 @@ struct NodeInfo
     }data;
 };
 
-#define createNode(node_, type_)\
-    (node_) = (Expression::TNode*)calloc(1, sizeof(Expression::TNode));\
-    (node_)->ptrToData = (NodeInfo*)calloc(1, sizeof(NodeInfo));\
-    (node_)->ptrToData->type = (type_);
 
 class Expression : public Tree<NodeInfo>
 {
@@ -71,5 +67,8 @@ class Expression : public Tree<NodeInfo>
         void simplify();
         double evaluate(double variable);
         void genTex(Stream stream = stdout);
+        void genTexFile(const C_string outFilename);
         void differentiate();
 };
+
+Expression::TNode* createNode(Expression::TNode* left, Expression::TNode* right, NodeType typeNode, double value, Expression::TNode* parent);
