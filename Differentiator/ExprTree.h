@@ -69,6 +69,7 @@ class Expression : public Tree<NodeInfo>
         void genTex(Stream stream = stdout);
         void genTexFile(const C_string outFilename);
         void differentiate();
+        bool isValidStruct();
 };
 
 Expression::TNode* createNode(Expression::TNode* left, Expression::TNode* right, NodeType typeNode, double value, Expression::TNode* parent);

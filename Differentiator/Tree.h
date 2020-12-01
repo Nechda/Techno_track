@@ -75,6 +75,7 @@ class Tree
             $
             if (isValid)
                 return;
+            isValid = node ? 1 : 0;
             ground.link[0] = node;
             node->parent = &ground;
             $$

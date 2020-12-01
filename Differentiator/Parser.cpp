@@ -215,8 +215,11 @@ Parser::Token Parser::getNextToken(C_string& str)
 
     ui32 offset = 0;
     sscanf(str, "%lf%n", &result.ptrToData.value, &offset);
+    if (!offset)
+        result.type = LEX_UNDEFINED;
+    else
+        result.type = LEX_NUMBER;
     str += offset;
-    result.type = LEX_NUMBER;
     $$
     return result;
 }
@@ -228,7 +231,111 @@ Expression::TNode* Parser::parse(C_string expression)
     tokens.clear();
 
     while (*expression)
+    {
         tokens.push_back(getNextToken(expression));
+        if (tokens.back().type == LEX_UNDEFINED)
+        {
+            Assert_c(!"Error occur: find undefinded token.");
+            return NULL;
+        }
+    }
+
+    //stage 1: checking bracket sequence
+    {
+        ui16 brackets = 0;
+        bool isInvalidBracketSequence = 0;
+        for (std::vector<Token>::iterator it = tokens.begin(); it != tokens.end() && !isInvalidBracketSequence; it++)
+        {
+            if (it->type == LEX_BRACKET && it->ptrToData.symbol == '(') brackets++;
+            if (it->type == LEX_BRACKET && it->ptrToData.symbol == ')') brackets--;
+            if (brackets < 0)
+                isInvalidBracketSequence |= 1;
+        }
+        isInvalidBracketSequence |= brackets;
+        if (isInvalidBracketSequence)
+        {
+            Assert_c(!"Error occur: incorrect placement of brackets");
+            return NULL;
+        }
+    }
+
+    //stage 2: сhecking lexema sequence
+    {
+        bool canNext = 0;
+        bool canPrev = 0;
+        bool isInvalidTokenSequence = 0;
+        ui32 nTokens = tokens.size();
+        for (ui32 i = 0; i < nTokens; i++)
+        {
+            isInvalidTokenSequence = 0;
+            canNext = i < nTokens - 1;
+            canPrev = i > 0;
+            switch (tokens[i].type)
+            {
+                case LEX_VARIABLE:
+                case LEX_NUMBER:
+                    if (canNext)
+                        isInvalidTokenSequence |= !strchr("-+*/^)", tokens[i + 1].ptrToData.symbol);
+                    if (canPrev)
+                        isInvalidTokenSequence |= !strchr("-+*/^(", tokens[i - 1].ptrToData.symbol);
+                    break;
+                case LEX_BRACKET:
+                    if (tokens[i].ptrToData.symbol == '(')
+                    {
+                        if (canNext)
+                            isInvalidTokenSequence |= !(
+                                tokens[i + 1].ptrToData.symbol == '-' 
+                              || tokens[i + 1].type == LEX_NUMBER 
+                              || tokens[i + 1].type == LEX_VARIABLE 
+                              || tokens[i + 1].type == LEX_FUNCTION
+                            );
+                        if(canPrev)
+                            isInvalidTokenSequence |= !strchr("-+*/^(", tokens[i - 1].ptrToData.symbol);
+                    }
+                    else
+                    {
+                        if (canNext)
+                            isInvalidTokenSequence |= !strchr("-+*/^)", tokens[i + 1].ptrToData.symbol);
+                        if (canPrev)
+                            isInvalidTokenSequence |= !(
+                                   tokens[i - 1].ptrToData.symbol == ')'
+                                || tokens[i - 1].type == LEX_NUMBER
+                                || tokens[i - 1].type == LEX_VARIABLE
+                                );
+                    }
+                    break;
+                case LEX_FUNCTION:
+                    if(canNext)
+                        isInvalidTokenSequence |= tokens[i + 1].ptrToData.symbol != '(';
+                    if(canPrev)
+                        isInvalidTokenSequence |= !strchr("-+*/^(", tokens[i - 1].ptrToData.symbol);
+                    break;
+                case LEX_OPERATION:
+                    if (canNext)
+                        isInvalidTokenSequence |= !(
+                               tokens[i + 1].ptrToData.symbol == '('
+                            || tokens[i + 1].type == LEX_NUMBER
+                            || tokens[i + 1].type == LEX_VARIABLE
+                            || tokens[i + 1].type == LEX_FUNCTION
+                        );
+                    if(canPrev)
+                        isInvalidTokenSequence |= !(
+                            tokens[i - 1].ptrToData.symbol == ')'
+                            || tokens[i - 1].type == LEX_NUMBER
+                            || tokens[i - 1].type == LEX_VARIABLE
+                            );
+                    break;
+                default:
+                    isInvalidTokenSequence |= 1;
+                    break;
+            }
+            if(isInvalidTokenSequence)
+            {
+                Assert_c(!"Error occur: incorrect placement of lexems");
+                return NULL;
+            }
+        }
+    }
 
     bool wasSpaceOrBracket = 1;
     for (std::vector<Token>::iterator it = tokens.begin(); it != tokens.end(); it++)
@@ -242,7 +349,7 @@ Expression::TNode* Parser::parse(C_string expression)
     }
 
 
-    #ifndef NDEBUG
+    #ifdef PARSER_DEBUG
     ui32 counter = 0;
     for (std::vector<Token>::iterator it = tokens.begin(); it != tokens.end(); it++)
     {

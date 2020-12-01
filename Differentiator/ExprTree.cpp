@@ -14,7 +14,10 @@
 #define isZero(a) fabs((a)) < ACCURACY
 #define isInteger(a) isZero( (a) - ceil(a) )
 
-
+bool Expression::isValidStruct()
+{
+    return isValid;
+}
 
 C_string expInfoToStr(NodeInfo* exp, bool printAddr = false)
 {
@@ -292,8 +295,14 @@ void Expression::readTreeFromFile(const C_string filename)
 
     C_string str = buffer;
     Parser pr;
-    genTreeByRoot(pr.parse(str));
-    isValid = 1;
+    Expression::TNode* newRoot = pr.parse(str);
+    if (newRoot)
+    {
+        genTreeByRoot(newRoot);
+        isValid = 1;
+    }
+    else
+        isValid = 0;
     $$
 }
 //|_____________________________________________________________________________________________________________________________|
@@ -563,6 +572,12 @@ static void identitySimplify(Expression::TNode* node, bool& isChangedTree)
 
 void Expression::simplify()
 {$
+    Assert_c(isValid);
+    if (!isValid)
+    {
+        $$$("Invalid structure");
+        return;
+    }
     bool isChangedTree = 0;
     do
     {
@@ -607,7 +622,14 @@ static double treeEvaluate(Expression::TNode* node,const double variable)
 }
 
 double Expression::evaluate(double variable)
-{
+{$
+    Assert_c(isValid);
+    if (!isValid)
+    {
+        $$$("Invalid structure");
+        return 0;
+    }
+    $$
     return treeEvaluate(getRoot(), variable);
 }
 //|_____________________________________________________________________________________________________________________________|
@@ -804,6 +826,12 @@ static inline void printTex_FUNC_STANDART(const Expression::TNode* root, int lev
 
 void Expression::genTex(Stream stream)
 {$
+    Assert_c(isValid);
+    if (!isValid)
+    {
+        $$$("Invalid structure");
+        return;
+    }
     genTexInteration(getRoot(), 0, stream);
     if (stream == stdout)
         printf("\n");
@@ -811,13 +839,19 @@ void Expression::genTex(Stream stream)
 }
 
 void Expression::genTexFile(const C_string outFilename)
-{
+{$
+    Assert_c(isValid);
+    if (!isValid)
+    {
+        $$$("Invalid structure");
+        return;
+    }
     char buffer[256];
     Assert_c(outFilename);
     if (!outFilename)
     {
         $$$("NULL ptr in C_string outFilename")
-            return;
+        return;
     }
     sprintf(buffer, "%s.tex", outFilename);
     FILE* file = fopen(buffer, "w");
@@ -844,7 +878,7 @@ void Expression::genTexFile(const C_string outFilename)
 
     sprintf(buffer, "pdflatex.exe -quiet -interaction=nonstopmode %s.tex", outFilename);
     system(buffer);
-    
+    $$
 }
 //|_____________________________________________________________________________________________________________________________|
 //===============================================================================================================================
@@ -1072,6 +1106,12 @@ static void differentiateInteration(Expression::TNode* root)
 
 void Expression::differentiate()
 {$
+    Assert_c(isValid);
+    if (!isValid)
+    {
+        $$$("Invalid structure");
+        return;
+    }
     simplify();
     differentiateInteration(getRoot());
     $$
