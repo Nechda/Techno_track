@@ -9,145 +9,112 @@ $$
 }
 
 /*
-    E -> E + E | E - E | T
-    T -> T * T | T / T | T ^ T | F
+    E -> T + E | T - E | T
+    T -> F * T | F / F | F ^ T | F
     F -> N     | (E)   | -(E)  | -F
 */
 
+void Parser::parse_expr(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
+{
+    $
+    static const i8* operations = "+-";
+    Expression::TNode* link = NULL;
 
-
-ui32 Parser::isOperation(ui8 opType, ui32 start, ui32 end)
-{$
-    ui32 p = end;
-    ui32 brackets = 0;
-    while (start <= p && p<= end)
+    parse_term(&link, p, parent);
+    if (tokens.size() <= p)
     {
-
-        if (tokens[p].ptrToData.symbol == ')')
-            do
-            {
-                if (tokens[p].ptrToData.symbol == ')') brackets++;
-                if (tokens[p].ptrToData.symbol == '(') brackets--;
-                p--;
-            } while (brackets && p<end && p >start);
-
-        if (p > end || p < start) break;
-
-        if (tokens[p].type != LEX_OPERATION)
-        {
-            p--;
-            continue;
-        }
-        if (tokens[p].ptrToData.symbol == opType)
-        {
-            $$
-            return p;
-        }
-        p--;
-    }
-    $$
-    return -1;
-}
-
-void Parser::parse_expr(Expression::TNode** ptrNode,ui32 start, ui32 end, Expression::TNode* parent)
-{$
-    ui32 opPos = 0;
-    static const ui8 operations[2] = { '+', '-' };
-
-    for (ui8 i = 0; i < 2; i++)
-    {
-        opPos = isOperation(operations[i], start, end);
-        if (opPos != -1)
-        {
-            *ptrNode = createNode(NULL, NULL, NODE_TYPE_OPERATION, OP_SUM + i, parent);
-            parse_expr(&(*ptrNode)->link[0], start, opPos - 1, *ptrNode);
-            parse_expr(&(*ptrNode)->link[1], opPos + 1, end,   *ptrNode);
-            $$
-            return;
-        }
-    }
-
-    parse_term(ptrNode, start, end, parent);
-    $$
-}
-
-void Parser::parse_term(Expression::TNode** ptrNode, ui32 start, ui32 end, Expression::TNode* parent)
-{$
-    ui32 opPos = 0;
-    static const ui8 operations[3] = { '*', '/', '^' };
-
-    for (ui8 i = 0; i < 3; i++)
-    {
-        opPos = isOperation(operations[i], start, end);
-        if (opPos != -1)
-        {
-            *ptrNode = createNode(NULL, NULL, NODE_TYPE_OPERATION, OP_MUL + i, parent);
-            parse_term(&(*ptrNode)->link[0], start, opPos - 1, *ptrNode);
-            parse_term(&(*ptrNode)->link[1], opPos + 1, end, *ptrNode);
-            $$
-            return;
-        }
-    }
-
-    parse_fact(ptrNode, start, end, parent);
-   $$
-}
-
-void Parser::parse_fact(Expression::TNode** ptrNode, ui32 start, ui32 end, Expression::TNode* parent)
-{$
-    ui32 brackets = 0;
-    ui32 p = start;
-    switch (tokens[start].type)
-    {
-    case LEX_BRACKET:
-        do
-        {
-            if (tokens[p].ptrToData.symbol == '(') brackets++;
-            if (tokens[p].ptrToData.symbol == ')') brackets--;
-            p++;
-        } while (brackets && p<end);
-        p--;
-        parse_expr(ptrNode, start + 1, p - 1, parent);
-        break;
-    case LEX_VARIABLE:
-        *ptrNode = createNode(NULL, NULL, NODE_TYPE_VARIABLE, 0, parent);
-        break;
-    case LEX_NUMBER:
-        *ptrNode = createNode(NULL, NULL, NODE_TYPE_NUMBER, tokens[start].ptrToData.value, parent);
-        break;
-    case LEX_FUNCTION:
-        *ptrNode = createNode(NULL, NULL, NODE_TYPE_FUNCTION, tokens[start].ptrToData.value, parent);
-        start++;
-        p = start;
-        do
-        {
-            if (tokens[p].ptrToData.symbol == '(') brackets++;
-            if (tokens[p].ptrToData.symbol == ')') brackets--;
-            p++;
-        } while (brackets && p<=end);
-        p--;
-        if (start != p)
-        {
-            parse_expr(&(*ptrNode)->link[0], start + 1, p-1, *ptrNode);
-            break;
-        }
-
-        //мы наткнулись на функцию, без скобок, т.е унарный минус
-        brackets = 0;
-        do
-        {
-            if (tokens[p].ptrToData.symbol == '(') brackets++;
-            if (tokens[p].ptrToData.symbol == ')') brackets--;
-            p++;
-            //if (p > end) break;
-        } while ((tokens[p].type != LEX_OPERATION || brackets) && p <= end);
-        parse_fact(&(*ptrNode)->link[0], start, p, *ptrNode);
-
-        break;
-    default:
-        Assert_c("Undefined token type.");
-        $$$("Undefined token type.");
+        (*ptrNode) = link;
+        $$
         return;
+    }
+
+    ui32 op = (ui32)strchr(operations, tokens[p].ptrToData.symbol);
+    op = op ? op - (ui32)operations : -1;
+
+    if (op!=-1)
+    {
+        p++;
+        *ptrNode = createNode(NULL, NULL, NODE_TYPE_OPERATION, OP_SUM + op, parent);
+        (*ptrNode)->link[0] = link;
+        link->parent = (*ptrNode);
+        parse_expr(&(*ptrNode)->link[1], p, *ptrNode);
+        
+    }
+    else
+        (*ptrNode) = link;
+
+    $$
+    return;
+}
+
+void Parser::parse_term(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
+{
+    $
+    static const i8* operations = "*/^";
+    Expression::TNode* link = NULL;
+
+    parse_fact(&link, p, parent);
+    if (tokens.size() <= p)
+    {
+        (*ptrNode) = link;
+        $$
+        return;
+    }
+
+    ui32 op = (ui32)strchr(operations, tokens[p].ptrToData.symbol);
+    op = op ? op - (ui32)operations : -1;
+
+    if (op != -1)
+    {
+        p++;
+        *ptrNode = createNode(NULL, NULL, NODE_TYPE_OPERATION, OP_MUL + op, parent);
+        (*ptrNode)->link[0] = link;
+        link->parent = (*ptrNode);
+        if(OP_MUL + op == OP_DIV)
+            parse_fact(&(*ptrNode)->link[1], p, *ptrNode);
+        else
+            parse_term(&(*ptrNode)->link[1], p, *ptrNode);
+    }
+    else
+        (*ptrNode) = link;
+
+    $$
+    return;
+}
+
+void Parser::parse_fact(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
+{
+    $
+    switch (tokens[p].type)
+    {
+        case LEX_BRACKET:
+            p++;
+            parse_expr(ptrNode, p, parent);
+            p++;
+            break;
+        case LEX_VARIABLE:
+            *ptrNode = createNode(NULL, NULL, NODE_TYPE_VARIABLE, 0, parent);
+            p++;
+            break;
+        case LEX_NUMBER:
+            *ptrNode = createNode(NULL, NULL, NODE_TYPE_NUMBER, tokens[p].ptrToData.value, parent);
+            p++;
+            break;
+        case LEX_FUNCTION:
+            *ptrNode = createNode(NULL, NULL, NODE_TYPE_FUNCTION, tokens[p].ptrToData.value, parent);
+            if (tokens[p + 1].type == LEX_BRACKET)
+            {
+                p+=2;
+                parse_expr(&(*ptrNode)->link[0], p, *ptrNode);
+                p++;
+                break;
+            }
+            parse_fact(&(*ptrNode)->link[0], p, *ptrNode);
+            break;
+        default:
+            Assert_c("Undefined token type.");
+            $$$("Undefined token type.");
+            return;
     }
     $$
 }
@@ -332,6 +299,7 @@ Expression::TNode* Parser::parse(C_string expression)
             if(isInvalidTokenSequence)
             {
                 Assert_c(!"Error occur: incorrect placement of lexems");
+                printf("Error occur: incorrect placement of lexems\n");
                 return NULL;
             }
         }
@@ -364,8 +332,8 @@ Expression::TNode* Parser::parse(C_string expression)
         counter++;
     }
     #endif
-
-    parse_expr(&root, 0, tokens.size() - 1, NULL);
+    ui32  p = 0;
+    parse_expr(&root, p, NULL);
 
     $$
     return root;
