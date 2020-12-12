@@ -4,6 +4,7 @@
 #include "ExprTree.h"
 #include "Parser.h"
 #include "CallStack.h"
+#include "Allocator.h"
 
 #include <ctype.h>
 #include <vector>
@@ -40,11 +41,12 @@ TODO:
     [x] прописать везде макросы, для отслеживания стека вызовов
     [x] дописать Assert'ы где только можно
     [x] конструктор копирования для класса Expression
+    [x] написать генерацию пошагового упрощения производной
 */
 
 
-//#define TEST_EVALUATE
-//#define TEST_DIFFERENTIATE
+#define TEST_EVALUATE
+#define TEST_DIFFERENTIATE
 #define TEST_PARSER
 
 #ifdef TEST_EVALUATE
@@ -188,24 +190,27 @@ void start_test()
     $$
 }
 
+
+
 int main()
 {
     initCallStack();
     loggerInit("log.log");
     $
 
-    bool isTestingMode = 1;
+    bool isTestingMode = 0;
     if(isTestingMode)
         start_test();
     else
     {
         Expression exprTree("expr.txt");
         exprTree.drawGraph("originalTree");
-        exprTree.differentiate();
-        exprTree.simplify();
+        exprTree.getStepByStepSimplificationTex("how_to_simplify", 2, 2);
+        //exprTree.differentiate();
+        //exprTree.simplify();
         exprTree.drawGraph("simplifiedTree");
-        exprTree.genTex();
-        exprTree.genTexFile("pretty_function");
+        //exprTree.genTex();
+        //exprTree.genTexFile("pretty_function");
     }
     system("pause");
     $$

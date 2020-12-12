@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include <clocale>
 #include "Parser.h"
 #include "CallStack.h"
 
@@ -13,6 +14,11 @@
 #define ACCURACY 1E-3
 #define isZero(a) fabs((a)) < ACCURACY
 #define isInteger(a) isZero( (a) - ceil(a) )
+#define setLinkParent(node_)\
+    if ( (node_)->link[0] ) (node_)->link[0]->parent = (node_);\
+    if ( (node_)->link[1] ) (node_)->link[1]->parent = (node_);
+
+
 
 bool Expression::isValidStruct()
 {
@@ -406,6 +412,7 @@ static void identitySimplify(Expression::TNode* node, bool& isChangedTree)
     #define isOneNumber(p)  isZero(p->ptrToData->data.number - 1) && p->ptrToData->type == NODE_TYPE_NUMBER
 
     #define replaceLink(node_, oldLink_, newLink_)              \
+        if((node_))                                             \
         for (ui8 i = 0; i < 2; i++)                             \
             if ((node_)->link[i] == (oldLink_) && (node_))      \
                 (node_)->link[i] = (newLink_);                    
@@ -414,6 +421,7 @@ static void identitySimplify(Expression::TNode* node, bool& isChangedTree)
     {
         Expression::TNode* parent = NULL;
         Expression::TNode* newLink = NULL;
+        Expression::TNode* tmpLink = NULL;
         switch (node->ptrToData->data.opNumber)
         {
         case OP_SUM:
@@ -434,8 +442,37 @@ static void identitySimplify(Expression::TNode* node, bool& isChangedTree)
                     return;
                 }
             break;
-        //case OP_SUB:
-        //    break;
+        case OP_SUB:
+            
+            // x - 0 = x
+            if (isZeroNumber(node->link[1]))
+            {
+                parent = node->parent;
+                newLink = node->link[0];
+                newLink->parent = parent;
+                replaceLink(parent, node, newLink);
+
+                rCleanUp(node->link[1]);
+                free(node->ptrToData);
+                free(node);
+                isChangedTree |= 1;
+                $$
+                    return;
+            }
+
+            // 0 - x = -x
+            if (isZeroNumber(node->link[0]))
+            {
+                rCleanUp(node->link[0]);
+                node->link[0] = node->link[1];
+                node->link[1] = NULL;
+                node->ptrToData->type = NODE_TYPE_FUNCTION;
+                node->ptrToData->data.opNumber = FUNC_NEG;
+                isChangedTree |= 1;
+                $$
+                return;
+            }
+            break;
         case OP_MUL:
 
             // x * 0 = 0 * x = 0
@@ -552,6 +589,30 @@ static void identitySimplify(Expression::TNode* node, bool& isChangedTree)
                 replaceLink(parent, node, newLink);
 
                 rCleanUp(node);
+                isChangedTree |= 1;
+                $$
+                    return;
+            }
+
+
+            // (E^a)^b = E^(a+b)
+            if (node->link[0]->ptrToData->type == NODE_TYPE_OPERATION
+            &&  node->link[0]->ptrToData->data.opNumber == OP_POW
+                )
+            {
+                parent = node->parent;
+                newLink = createNode(node->link[0]->link[1], node->link[1], NODE_TYPE_OPERATION, OP_SUM, node);
+                tmpLink = node->link[0]->link[0];
+                free(node->link[0]->ptrToData);
+                free(node->link[0]);
+
+                node->link[0] = tmpLink;
+                node->link[1] = newLink;
+
+                setLinkParent(node);
+                setLinkParent(node->link[0]);
+                setLinkParent(node->link[1]);
+
                 isChangedTree |= 1;
                 $$
                     return;
@@ -752,27 +813,32 @@ static inline void printTex_OP_MUL(const Expression::TNode* root, int level, Str
     ui8 linkPriority = 0;
     bool isNeg = 0;
     #define isNumberNode(p) ( (p) ? (p)->ptrToData->type == NODE_TYPE_NUMBER : 0)
-    #define isDivNode(p) ( (p) ? (p)->ptrToData->type == NODE_TYPE_OPERATION && (p)->ptrToData->data.opNumber == OP_DIV : 0)
+    #define isDivOrMulNode(p) ( (p) ? (p)->ptrToData->type == NODE_TYPE_OPERATION && (p)->ptrToData->data.opNumber == OP_DIV || (p)->ptrToData->data.opNumber == OP_MUL : 0)
 
     bool useStar = isNumberNode(root->link[0]) && isNumberNode(root->link[1]);
-    useStar |= isNumberNode(root->link[0]) && isDivNode(root->link[1]) || isNumberNode(root->link[1]) && isDivNode(root->link[0]);
+    useStar |= isNumberNode(root->link[0]) && isDivOrMulNode(root->link[1]) || isNumberNode(root->link[1]) && isDivOrMulNode(root->link[0]);
+
+    bool needInverseOrder = isNumberNode(root->link[1]);
+
     for (ui8 i = 0; i < 2; i++)
     {
-        isNeg = root->link[i]->ptrToData->type == NODE_TYPE_FUNCTION 
-             && root->link[i]->ptrToData->data.opNumber == FUNC_NEG 
-             || root->link[i]->ptrToData->type == NODE_TYPE_NUMBER
-             && root->link[i]->ptrToData->data.number < 0;
-        linkPriority = getPriority(root->link[i]);
+        ui8 index = needInverseOrder ? 1-i : i;
+        isNeg = root->link[index]->ptrToData->type == NODE_TYPE_FUNCTION
+             && root->link[index]->ptrToData->data.opNumber == FUNC_NEG
+             || root->link[index]->ptrToData->type == NODE_TYPE_NUMBER
+             && root->link[index]->ptrToData->data.number < 0;
+        linkPriority = getPriority(root->link[index]);
         if (linkPriority > mainPriority || isNeg)
             fprintf(stream, "\\left(");
 
-        genTexInteration(root->link[i], level + 1, stream);
+        genTexInteration(root->link[index], level + 1, stream);
         if (linkPriority > mainPriority || isNeg)
             fprintf(stream, "\\right)");
 
         if (i < 1 && useStar)
             fprintf(stream, "\\cdot ");
     }
+    #undef order
     #undef isNumberNode
     #undef isDivNode
 }
@@ -853,6 +919,7 @@ void Expression::genTexFile(const C_string outFilename)
         $$$("NULL ptr in C_string outFilename")
         return;
     }
+
     sprintf(buffer, "%s.tex", outFilename);
     FILE* file = fopen(buffer, "w");
     Assert_c(file);
@@ -880,6 +947,148 @@ void Expression::genTexFile(const C_string outFilename)
     system(buffer);
     $$
 }
+
+
+
+void Expression::getStepByStepSimplificationTex(const C_string outFilename, i16 derivativeOrder, ui8 paperType)
+{$
+    Assert_c(isValid);
+    if (!isValid)
+    {
+        $$$("Invalid structure");
+        return;
+    }
+    char buffer[256];
+    Assert_c(outFilename);
+    if (!outFilename)
+    {
+        $$$("NULL ptr in C_string outFilename")
+        return;
+    }
+
+    sprintf(buffer, "%s.tex", outFilename);
+    FILE* file = fopen(buffer, "w");
+    Assert_c(file);
+    if (!file)
+    {
+        $$$("NULL ptr in FILE* file");
+        return;
+    }
+
+    fprintf(file,
+        "\\documentclass[12pt]{article}\n"
+        "\\usepackage[T1,T2A]{fontenc}\n"
+        "\\usepackage[utf8x]{inputenc}\n"
+        "\\usepackage[russian]{babel}\n"
+        "\\usepackage[left=1cm,right=1cm,top=1cm,bottom=2cm,a%dpaper,landscape]{geometry}\n"
+        "\\begin{document}\n",
+        paperType
+    );
+
+    wchar_t* constantSimplifyPhrases[] = {
+        L"Подсчитываем все, что можно подсчитать:",
+        L"И еще раз собираем подобные слагаемые:"
+    };
+
+    wchar_t* identitySimplifyPhrases[] = {
+        L"Чтож, теперь избавимся от тривиальных выражений",
+        L"После упрощения тривиальных комбинаций получим:"
+    };
+
+    wchar_t* jokes[] = {
+        L"На это моменте мне надоело техать кажду строчку, поэтому буду писать результаты преобразований.",
+        L"Поэтому я пропущу несколько тривиальных преобразований.",
+        L"А теперь представьте, что где-то я допустил ошибку..."
+    };
+
+    std::setlocale(LC_ALL, "en_US.utf8");
+
+    ui8 indecies[2] = { 0,0 };
+    ui8 jokeIndex = 0;
+    ui32 iteration = 1;
+    bool writeExplanation = 1;
+    bool isChangedTree = 0;
+
+    fprintf(file, "%ls\n", L"Возьмем производную функции:");
+    fprintf(file, "\\[");
+    genTex(file);
+    fprintf(file, "\\]\n");
+    fprintf(file, "%ls\n", 
+        L"Тривиальные вычисления позволяют нам записать общий вид производной,"
+        L"однако в таком виде писать её в лабе неприемлемо, поэтому нам необходимо "
+        L"произвести ряд упрощений."
+    );
+
+    while (derivativeOrder)
+    {
+        differentiate();
+        fprintf(file, "\\[");
+        genTex(file);
+        fprintf(file, "\\]\n");
+        do
+        {
+            isChangedTree = 0;
+            constantSimplify(getRoot(), isChangedTree);
+
+            if (isChangedTree && iteration % 5 == 0)
+            {
+                fprintf(file, "%ls\n", jokes[jokeIndex]);
+                writeExplanation = 1;
+                if (jokeIndex == 0)
+                    writeExplanation = 0;
+                jokeIndex++;
+                jokeIndex %= sizeof(jokes) / sizeof(jokes[0]);
+            }
+
+            if (isChangedTree && writeExplanation)
+            {
+                fprintf(file, "%ls\n", constantSimplifyPhrases[indecies[0]]);
+                indecies[0]++;
+                indecies[0] %= sizeof(constantSimplifyPhrases) / sizeof(constantSimplifyPhrases[0]);
+                fprintf(file, "\\[");
+                genTex(file);
+                fprintf(file, "\\]\n");
+                iteration++;
+                continue;
+            }
+            identitySimplify(getRoot(), isChangedTree);
+            if (isChangedTree && writeExplanation)
+            {
+                fprintf(file, "%ls\n", identitySimplifyPhrases[indecies[1]]);
+                indecies[1]++;
+                indecies[1] %= sizeof(identitySimplifyPhrases) / sizeof(identitySimplifyPhrases[0]);
+                fprintf(file, "\\[");
+                genTex(file);
+                fprintf(file, "\\]\n");
+                iteration++;
+                continue;
+            }
+        } while (isChangedTree);
+
+        fprintf(file, "%ls\n", L"Хватит упрощать!");
+        fprintf(file, "\\[");
+        genTex(file);
+        fprintf(file, "\\]\n");
+        derivativeOrder--;
+        if(derivativeOrder)
+            fprintf(file, "%ls\n", L"Продифференцируем еще раз:");
+    }
+
+    fprintf(file,
+        "\\end{document}\n"
+    );
+        
+
+    fclose(file);
+
+    sprintf(buffer, "pdflatex.exe -quiet -interaction=nonstopmode %s.tex", outFilename);
+    system(buffer);
+
+    $$
+}
+
+
+
 //|_____________________________________________________________________________________________________________________________|
 //===============================================================================================================================
 
@@ -914,9 +1123,6 @@ Expression::TNode* createNode(Expression::TNode* left, Expression::TNode* right,
 
 #define c(r) rCopy(r)
 #define d(r) differentiateInteration(r)
-#define setLinkParent(node_)\
-    if ( (node_)->link[0] ) (node_)->link[0]->parent = (node_);\
-    if ( (node_)->link[1] ) (node_)->link[1]->parent = (node_);
 
 
 static void differentiateInteration(Expression::TNode* root);

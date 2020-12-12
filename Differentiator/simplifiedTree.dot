@@ -1,136 +1,1301 @@
 digraph{
 node [color = "black", fontsize = 24, shape = "box", style = "filled, rounded", fillcolor = "lightgray"]
 edge [color = "black", fontsize = 24]
+"3.250
+0xA68E50" [shape = "ellipse", fillcolor = "lightgreen"] 
+"-1
+0xA6BB68" [shape = "ellipse", fillcolor = "lightgreen"] 
+"2
+0xA6B9A8" [shape = "ellipse", fillcolor = "lightgreen"] 
+"x
+0xA6D1F0" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "*
+0xA6B7A8" 
+ "*
+0xA6B7A8" ->  "2
+0xA6B9A8" [label = "L[0]", fontsize = 14] 
+ "*
+0xA6B7A8" ->  "x
+0xA6D1F0" [label = "L[1]", fontsize = 14] 
+ "*
+0xA6CF70" 
+ "*
+0xA6CF70" ->  "-1
+0xA6BB68" [label = "L[0]", fontsize = 14] 
+ "*
+0xA6CF70" ->  "*
+0xA6B7A8" [label = "L[1]", fontsize = 14] 
+ "neg
+0xA6D470" 
+ "neg
+0xA6D470" ->  "*
+0xA6CF70" [label = "L[0]", fontsize = 14] 
+"x
+0xA6BD28" [shape = "ellipse", fillcolor = "lightgreen"] 
+"4
+0xA729D8" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "^
+0xA6D170" 
+ "^
+0xA6D170" ->  "x
+0xA6BD28" [label = "L[0]", fontsize = 14] 
+ "^
+0xA6D170" ->  "4
+0xA729D8" [label = "L[1]", fontsize = 14] 
+ "/
+0xA6B6E8" 
+ "/
+0xA6B6E8" ->  "neg
+0xA6D470" [label = "L[0]", fontsize = 14] 
+ "/
+0xA6B6E8" ->  "^
+0xA6D170" [label = "L[1]", fontsize = 14] 
+ "*
+0xA6CEF0" 
+ "*
+0xA6CEF0" ->  "3.250
+0xA68E50" [label = "L[0]", fontsize = 14] 
+ "*
+0xA6CEF0" ->  "/
+0xA6B6E8" [label = "L[1]", fontsize = 14] 
+"10
+0xA6AEE0" [shape = "ellipse", fillcolor = "lightgreen"] 
+"9
+0xA6D430" [shape = "ellipse", fillcolor = "lightgreen"] 
+"x
+0xA6C930" [shape = "ellipse", fillcolor = "lightgreen"] 
+"8
+0xA6C830" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "^
+0xA6D0F0" 
+ "^
+0xA6D0F0" ->  "x
+0xA6C930" [label = "L[0]", fontsize = 14] 
+ "^
+0xA6D0F0" ->  "8
+0xA6C830" [label = "L[1]", fontsize = 14] 
+ "*
+0xA6D570" 
+ "*
+0xA6D570" ->  "9
+0xA6D430" [label = "L[0]", fontsize = 14] 
+ "*
+0xA6D570" ->  "^
+0xA6D0F0" [label = "L[1]", fontsize = 14] 
+ "*
+0xA6CA70" 
+ "*
+0xA6CA70" ->  "10
+0xA6AEE0" [label = "L[0]", fontsize = 14] 
+ "*
+0xA6CA70" ->  "*
+0xA6D570" [label = "L[1]", fontsize = 14] 
+"2
+0xA6DC38" [shape = "ellipse", fillcolor = "lightgreen"] 
+"x
+0xA6B320" [shape = "ellipse", fillcolor = "lightgreen"] 
+"2
+0xA6A8A0" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "^
+0xA6B260" 
+ "^
+0xA6B260" ->  "x
+0xA6B320" [label = "L[0]", fontsize = 14] 
+ "^
+0xA6B260" ->  "2
+0xA6A8A0" [label = "L[1]", fontsize = 14] 
+"x
+0xA6AC60" [shape = "ellipse", fillcolor = "lightgreen"] 
+"2
+0xA6ACA0" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "*
+0xA6A6E0" 
+ "*
+0xA6A6E0" ->  "x
+0xA6AC60" [label = "L[0]", fontsize = 14] 
+ "*
+0xA6A6E0" ->  "2
+0xA6ACA0" [label = "L[1]", fontsize = 14] 
 "1
-0x1065330" [shape = "ellipse", fillcolor = "lightgreen"] 
+0xA6A720" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "-
+0xA6AB20" 
+ "-
+0xA6AB20" ->  "*
+0xA6A6E0" [label = "L[0]", fontsize = 14] 
+ "-
+0xA6AB20" ->  "1
+0xA6A720" [label = "L[1]", fontsize = 14] 
+ "+
+0xA6B1A0" 
+ "+
+0xA6B1A0" ->  "^
+0xA6B260" [label = "L[0]", fontsize = 14] 
+ "+
+0xA6B1A0" ->  "-
+0xA6AB20" [label = "L[1]", fontsize = 14] 
+ "*
+0xA6DFF8" 
+ "*
+0xA6DFF8" ->  "2
+0xA6DC38" [label = "L[0]", fontsize = 14] 
+ "*
+0xA6DFF8" ->  "+
+0xA6B1A0" [label = "L[1]", fontsize = 14] 
 "2
-0x1065530" [shape = "ellipse", fillcolor = "lightgreen"] 
+0xA6AFE0" [shape = "ellipse", fillcolor = "lightgreen"] 
 "x
-0x10654B0" [shape = "ellipse", fillcolor = "lightgreen"] 
- "sqrt
-0x10653F0" 
- "sqrt
-0x10653F0" ->  "x
-0x10654B0" [label = "L[0]", fontsize = 14] 
+0xA6B020" [shape = "ellipse", fillcolor = "lightgreen"] 
  "*
-0x1065430" 
+0xA6B1E0" 
  "*
-0x1065430" ->  "2
-0x1065530" [label = "L[0]", fontsize = 14] 
+0xA6B1E0" ->  "2
+0xA6AFE0" [label = "L[0]", fontsize = 14] 
  "*
-0x1065430" ->  "sqrt
-0x10653F0" [label = "L[1]", fontsize = 14] 
- "/
-0x1061890" 
- "/
-0x1061890" ->  "1
-0x1065330" [label = "L[0]", fontsize = 14] 
- "/
-0x1061890" ->  "*
-0x1065430" [label = "L[1]", fontsize = 14] 
+0xA6B1E0" ->  "x
+0xA6B020" [label = "L[1]", fontsize = 14] 
+"2
+0xA6B2E0" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "+
+0xA6B620" 
+ "+
+0xA6B620" ->  "*
+0xA6B1E0" [label = "L[0]", fontsize = 14] 
+ "+
+0xA6B620" ->  "2
+0xA6B2E0" [label = "L[1]", fontsize = 14] 
+"2
+0xA6D778" [shape = "ellipse", fillcolor = "lightgreen"] 
+"x
+0xA6E5F8" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "*
+0xA6D838" 
+ "*
+0xA6D838" ->  "2
+0xA6D778" [label = "L[0]", fontsize = 14] 
+ "*
+0xA6D838" ->  "x
+0xA6E5F8" [label = "L[1]", fontsize = 14] 
+"2
+0xA6DF78" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "+
+0xA6DB78" 
+ "+
+0xA6DB78" ->  "*
+0xA6D838" [label = "L[0]", fontsize = 14] 
+ "+
+0xA6DB78" ->  "2
+0xA6DF78" [label = "L[1]", fontsize = 14] 
+ "*
+0xA6E1B8" 
+ "*
+0xA6E1B8" ->  "+
+0xA6B620" [label = "L[0]", fontsize = 14] 
+ "*
+0xA6E1B8" ->  "+
+0xA6DB78" [label = "L[1]", fontsize = 14] 
+ "-
+0xA6E0B8" 
+ "-
+0xA6E0B8" ->  "*
+0xA6DFF8" [label = "L[0]", fontsize = 14] 
+ "-
+0xA6E0B8" ->  "*
+0xA6E1B8" [label = "L[1]", fontsize = 14] 
+"x
+0xA6C870" [shape = "ellipse", fillcolor = "lightgreen"] 
+"2
+0xA6CCB0" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "^
+0xA6C7F0" 
+ "^
+0xA6C7F0" ->  "x
+0xA6C870" [label = "L[0]", fontsize = 14] 
+ "^
+0xA6C7F0" ->  "2
+0xA6CCB0" [label = "L[1]", fontsize = 14] 
+"x
+0xA6C6F0" [shape = "ellipse", fillcolor = "lightgreen"] 
+"2
+0xA6C9F0" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "*
+0xA6C8B0" 
+ "*
+0xA6C8B0" ->  "x
+0xA6C6F0" [label = "L[0]", fontsize = 14] 
+ "*
+0xA6C8B0" ->  "2
+0xA6C9F0" [label = "L[1]", fontsize = 14] 
 "1
-0x1061510" [shape = "ellipse", fillcolor = "lightgreen"] 
-"x
-0x10612D0" [shape = "ellipse", fillcolor = "lightgreen"] 
+0xA6CE70" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "-
+0xA6CDF0" 
+ "-
+0xA6CDF0" ->  "*
+0xA6C8B0" [label = "L[0]", fontsize = 14] 
+ "-
+0xA6CDF0" ->  "1
+0xA6CE70" [label = "L[1]", fontsize = 14] 
+ "+
+0xA6CEB0" 
+ "+
+0xA6CEB0" ->  "^
+0xA6C7F0" [label = "L[0]", fontsize = 14] 
+ "+
+0xA6CEB0" ->  "-
+0xA6CDF0" [label = "L[1]", fontsize = 14] 
 "2
-0x10615D0" [shape = "ellipse", fillcolor = "lightgreen"] 
+0xA6E138" [shape = "ellipse", fillcolor = "lightgreen"] 
  "^
-0x1061850" 
+0xA6E238" 
  "^
-0x1061850" ->  "x
-0x10612D0" [label = "L[0]", fontsize = 14] 
+0xA6E238" ->  "+
+0xA6CEB0" [label = "L[0]", fontsize = 14] 
  "^
-0x1061850" ->  "2
-0x10615D0" [label = "L[1]", fontsize = 14] 
+0xA6E238" ->  "2
+0xA6E138" [label = "L[1]", fontsize = 14] 
+ "/
+0xA6B420" 
+ "/
+0xA6B420" ->  "-
+0xA6E0B8" [label = "L[0]", fontsize = 14] 
+ "/
+0xA6B420" ->  "^
+0xA6E238" [label = "L[1]", fontsize = 14] 
  "+
-0x10610A8" 
+0xA6AF60" 
  "+
-0x10610A8" ->  "1
-0x1061510" [label = "L[0]", fontsize = 14] 
+0xA6AF60" ->  "*
+0xA6CA70" [label = "L[0]", fontsize = 14] 
  "+
-0x10610A8" ->  "^
-0x1061850" [label = "L[1]", fontsize = 14] 
- "*
-0x1065870" 
- "*
-0x1065870" ->  "/
-0x1061890" [label = "L[0]", fontsize = 14] 
- "*
-0x1065870" ->  "+
-0x10610A8" [label = "L[1]", fontsize = 14] 
+0xA6AF60" ->  "/
+0xA6B420" [label = "L[1]", fontsize = 14] 
+ "+
+0xA68950" 
+ "+
+0xA68950" ->  "*
+0xA6CEF0" [label = "L[0]", fontsize = 14] 
+ "+
+0xA68950" ->  "+
+0xA6AF60" [label = "L[1]", fontsize = 14] 
+ "neg
+0xA68750" 
+ "neg
+0xA68750" ->  "+
+0xA68950" [label = "L[0]", fontsize = 14] 
+"10
+0xA51950" [shape = "ellipse", fillcolor = "lightgreen"] 
 "x
-0x1061028" [shape = "ellipse", fillcolor = "lightgreen"] 
- "sqrt
-0x105EF60" 
- "sqrt
-0x105EF60" ->  "x
-0x1061028" [label = "L[0]", fontsize = 14] 
-"2
-0x1065670" [shape = "ellipse", fillcolor = "lightgreen"] 
-"x
-0x1065170" [shape = "ellipse", fillcolor = "lightgreen"] 
+0xA51810" [shape = "ellipse", fillcolor = "lightgreen"] 
  "*
-0x1065830" 
+0xA514D0" 
  "*
-0x1065830" ->  "2
-0x1065670" [label = "L[0]", fontsize = 14] 
+0xA514D0" ->  "10
+0xA51950" [label = "L[0]", fontsize = 14] 
  "*
-0x1065830" ->  "x
-0x1065170" [label = "L[1]", fontsize = 14] 
- "*
-0x10657B0" 
- "*
-0x10657B0" ->  "sqrt
-0x105EF60" [label = "L[0]", fontsize = 14] 
- "*
-0x10657B0" ->  "*
-0x1065830" [label = "L[1]", fontsize = 14] 
- "-
-0x10651F0" 
- "-
-0x10651F0" ->  "*
-0x1065870" [label = "L[0]", fontsize = 14] 
- "-
-0x10651F0" ->  "*
-0x10657B0" [label = "L[1]", fontsize = 14] 
+0xA514D0" ->  "x
+0xA51810" [label = "L[1]", fontsize = 14] 
+"3.250
+0xA517D0" [shape = "ellipse", fillcolor = "lightgreen"] 
 "1
-0x1061610" [shape = "ellipse", fillcolor = "lightgreen"] 
+0xA518D0" [shape = "ellipse", fillcolor = "lightgreen"] 
 "x
-0x1061350" [shape = "ellipse", fillcolor = "lightgreen"] 
+0xA51250" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "/
+0xA51450" 
+ "/
+0xA51450" ->  "1
+0xA518D0" [label = "L[0]", fontsize = 14] 
+ "/
+0xA51450" ->  "x
+0xA51250" [label = "L[1]", fontsize = 14] 
+ "*
+0xA51790" 
+ "*
+0xA51790" ->  "3.250
+0xA517D0" [label = "L[0]", fontsize = 14] 
+ "*
+0xA51790" ->  "/
+0xA51450" [label = "L[1]", fontsize = 14] 
+"x
+0xA50900" [shape = "ellipse", fillcolor = "lightgreen"] 
+"10
+0xA504C0" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "^
+0xA51890" 
+ "^
+0xA51890" ->  "x
+0xA50900" [label = "L[0]", fontsize = 14] 
+ "^
+0xA51890" ->  "10
+0xA504C0" [label = "L[1]", fontsize = 14] 
+"x
+0xA68F90" [shape = "ellipse", fillcolor = "lightgreen"] 
 "2
-0x1061650" [shape = "ellipse", fillcolor = "lightgreen"] 
+0xA68F10" [shape = "ellipse", fillcolor = "lightgreen"] 
  "^
-0x1061210" 
+0xA69210" 
  "^
-0x1061210" ->  "x
-0x1061350" [label = "L[0]", fontsize = 14] 
+0xA69210" ->  "x
+0xA68F90" [label = "L[0]", fontsize = 14] 
  "^
-0x1061210" ->  "2
-0x1061650" [label = "L[1]", fontsize = 14] 
- "+
-0x1061310" 
- "+
-0x1061310" ->  "1
-0x1061610" [label = "L[0]", fontsize = 14] 
- "+
-0x1061310" ->  "^
-0x1061210" [label = "L[1]", fontsize = 14] 
+0xA69210" ->  "2
+0xA68F10" [label = "L[1]", fontsize = 14] 
+"x
+0xA68D50" [shape = "ellipse", fillcolor = "lightgreen"] 
 "2
-0x10652F0" [shape = "ellipse", fillcolor = "lightgreen"] 
+0xA68AD0" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "*
+0xA68DD0" 
+ "*
+0xA68DD0" ->  "x
+0xA68D50" [label = "L[0]", fontsize = 14] 
+ "*
+0xA68DD0" ->  "2
+0xA68AD0" [label = "L[1]", fontsize = 14] 
+"1
+0xA68B10" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "-
+0xA69010" 
+ "-
+0xA69010" ->  "*
+0xA68DD0" [label = "L[0]", fontsize = 14] 
+ "-
+0xA69010" ->  "1
+0xA68B10" [label = "L[1]", fontsize = 14] 
+ "+
+0xA68FD0" 
+ "+
+0xA68FD0" ->  "^
+0xA69210" [label = "L[0]", fontsize = 14] 
+ "+
+0xA68FD0" ->  "-
+0xA69010" [label = "L[1]", fontsize = 14] 
+ "ln
+0xA69190" 
+ "ln
+0xA69190" ->  "+
+0xA68FD0" [label = "L[0]", fontsize = 14] 
+ "+
+0xA515D0" 
+ "+
+0xA515D0" ->  "^
+0xA51890" [label = "L[0]", fontsize = 14] 
+ "+
+0xA515D0" ->  "ln
+0xA69190" [label = "L[1]", fontsize = 14] 
+ "+
+0xA51210" 
+ "+
+0xA51210" ->  "*
+0xA51790" [label = "L[0]", fontsize = 14] 
+ "+
+0xA51210" ->  "+
+0xA515D0" [label = "L[1]", fontsize = 14] 
+ "-
+0xA51390" 
+ "-
+0xA51390" ->  "*
+0xA514D0" [label = "L[0]", fontsize = 14] 
+ "-
+0xA51390" ->  "+
+0xA51210" [label = "L[1]", fontsize = 14] 
+ "cos
+0xA69050" 
+ "cos
+0xA69050" ->  "-
+0xA51390" [label = "L[0]", fontsize = 14] 
+"2
+0xA68D90" [shape = "ellipse", fillcolor = "lightgreen"] 
  "^
-0x1065BB0" 
+0xA691D0" 
  "^
-0x1065BB0" ->  "+
-0x1061310" [label = "L[0]", fontsize = 14] 
+0xA691D0" ->  "cos
+0xA69050" [label = "L[0]", fontsize = 14] 
  "^
-0x1065BB0" ->  "2
-0x10652F0" [label = "L[1]", fontsize = 14] 
+0xA691D0" ->  "2
+0xA68D90" [label = "L[1]", fontsize = 14] 
+ "*
+0xA73298" 
+ "*
+0xA73298" ->  "neg
+0xA68750" [label = "L[0]", fontsize = 14] 
+ "*
+0xA73298" ->  "^
+0xA691D0" [label = "L[1]", fontsize = 14] 
+"10
+0xA68C50" [shape = "ellipse", fillcolor = "lightgreen"] 
+"3.250
+0xA50780" [shape = "ellipse", fillcolor = "lightgreen"] 
+"-1
+0xA682D0" [shape = "ellipse", fillcolor = "lightgreen"] 
+"x
+0xA683D0" [shape = "ellipse", fillcolor = "lightgreen"] 
+"2
+0xA685D0" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "^
+0xA68A50" 
+ "^
+0xA68A50" ->  "x
+0xA683D0" [label = "L[0]", fontsize = 14] 
+ "^
+0xA68A50" ->  "2
+0xA685D0" [label = "L[1]", fontsize = 14] 
  "/
-0x1055780" 
+0xA68650" 
  "/
-0x1055780" ->  "-
-0x10651F0" [label = "L[0]", fontsize = 14] 
+0xA68650" ->  "-1
+0xA682D0" [label = "L[0]", fontsize = 14] 
  "/
-0x1055780" ->  "^
-0x1065BB0" [label = "L[1]", fontsize = 14] 
+0xA68650" ->  "^
+0xA68A50" [label = "L[1]", fontsize = 14] 
+ "*
+0xA686D0" 
+ "*
+0xA686D0" ->  "3.250
+0xA50780" [label = "L[0]", fontsize = 14] 
+ "*
+0xA686D0" ->  "/
+0xA68650" [label = "L[1]", fontsize = 14] 
+"10
+0xA68810" [shape = "ellipse", fillcolor = "lightgreen"] 
+"x
+0xA6A2D8" [shape = "ellipse", fillcolor = "lightgreen"] 
+"9
+0xA6A318" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "^
+0xA6A1D8" 
+ "^
+0xA6A1D8" ->  "x
+0xA6A2D8" [label = "L[0]", fontsize = 14] 
+ "^
+0xA6A1D8" ->  "9
+0xA6A318" [label = "L[1]", fontsize = 14] 
+ "*
+0xA503C0" 
+ "*
+0xA503C0" ->  "10
+0xA68810" [label = "L[0]", fontsize = 14] 
+ "*
+0xA503C0" ->  "^
+0xA6A1D8" [label = "L[1]", fontsize = 14] 
+"2
+0xA6A3D8" [shape = "ellipse", fillcolor = "lightgreen"] 
+"x
+0xA69F58" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "*
+0xA6A058" 
+ "*
+0xA6A058" ->  "2
+0xA6A3D8" [label = "L[0]", fontsize = 14] 
+ "*
+0xA6A058" ->  "x
+0xA69F58" [label = "L[1]", fontsize = 14] 
+"2
+0xA69A98" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "+
+0xA6A018" 
+ "+
+0xA6A018" ->  "*
+0xA6A058" [label = "L[0]", fontsize = 14] 
+ "+
+0xA6A018" ->  "2
+0xA69A98" [label = "L[1]", fontsize = 14] 
+"x
+0xA50580" [shape = "ellipse", fillcolor = "lightgreen"] 
+"2
+0xA50BD0" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "^
+0xA509D0" 
+ "^
+0xA509D0" ->  "x
+0xA50580" [label = "L[0]", fontsize = 14] 
+ "^
+0xA509D0" ->  "2
+0xA50BD0" [label = "L[1]", fontsize = 14] 
+"x
+0xA50A10" [shape = "ellipse", fillcolor = "lightgreen"] 
+"2
+0xA51050" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "*
+0xA50A50" 
+ "*
+0xA50A50" ->  "x
+0xA50A10" [label = "L[0]", fontsize = 14] 
+ "*
+0xA50A50" ->  "2
+0xA51050" [label = "L[1]", fontsize = 14] 
+"1
+0xA50B10" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "-
+0xA50D50" 
+ "-
+0xA50D50" ->  "*
+0xA50A50" [label = "L[0]", fontsize = 14] 
+ "-
+0xA50D50" ->  "1
+0xA50B10" [label = "L[1]", fontsize = 14] 
+ "+
+0xA51110" 
+ "+
+0xA51110" ->  "^
+0xA509D0" [label = "L[0]", fontsize = 14] 
+ "+
+0xA51110" ->  "-
+0xA50D50" [label = "L[1]", fontsize = 14] 
+ "/
+0xA50840" 
+ "/
+0xA50840" ->  "+
+0xA6A018" [label = "L[0]", fontsize = 14] 
+ "/
+0xA50840" ->  "+
+0xA51110" [label = "L[1]", fontsize = 14] 
+ "+
+0xA508C0" 
+ "+
+0xA508C0" ->  "*
+0xA503C0" [label = "L[0]", fontsize = 14] 
+ "+
+0xA508C0" ->  "/
+0xA50840" [label = "L[1]", fontsize = 14] 
+ "+
+0xA50600" 
+ "+
+0xA50600" ->  "*
+0xA686D0" [label = "L[0]", fontsize = 14] 
+ "+
+0xA50600" ->  "+
+0xA508C0" [label = "L[1]", fontsize = 14] 
+ "-
+0xA50700" 
+ "-
+0xA50700" ->  "10
+0xA68C50" [label = "L[0]", fontsize = 14] 
+ "-
+0xA50700" ->  "+
+0xA50600" [label = "L[1]", fontsize = 14] 
+"10
+0xA6EEC0" [shape = "ellipse", fillcolor = "lightgreen"] 
+"x
+0xA6E700" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "*
+0xA6E4F8" 
+ "*
+0xA6E4F8" ->  "10
+0xA6EEC0" [label = "L[0]", fontsize = 14] 
+ "*
+0xA6E4F8" ->  "x
+0xA6E700" [label = "L[1]", fontsize = 14] 
+"3.250
+0xA6EC80" [shape = "ellipse", fillcolor = "lightgreen"] 
+"1
+0xA6E800" [shape = "ellipse", fillcolor = "lightgreen"] 
+"x
+0xA6E9C0" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "/
+0xA6E980" 
+ "/
+0xA6E980" ->  "1
+0xA6E800" [label = "L[0]", fontsize = 14] 
+ "/
+0xA6E980" ->  "x
+0xA6E9C0" [label = "L[1]", fontsize = 14] 
+ "*
+0xA6EA40" 
+ "*
+0xA6EA40" ->  "3.250
+0xA6EC80" [label = "L[0]", fontsize = 14] 
+ "*
+0xA6EA40" ->  "/
+0xA6E980" [label = "L[1]", fontsize = 14] 
+"x
+0xA6E880" [shape = "ellipse", fillcolor = "lightgreen"] 
+"10
+0xA6ED40" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "^
+0xA6E900" 
+ "^
+0xA6E900" ->  "x
+0xA6E880" [label = "L[0]", fontsize = 14] 
+ "^
+0xA6E900" ->  "10
+0xA6ED40" [label = "L[1]", fontsize = 14] 
+"x
+0xA6EE80" [shape = "ellipse", fillcolor = "lightgreen"] 
+"2
+0xA6F340" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "^
+0xA6EE00" 
+ "^
+0xA6EE00" ->  "x
+0xA6EE80" [label = "L[0]", fontsize = 14] 
+ "^
+0xA6EE00" ->  "2
+0xA6F340" [label = "L[1]", fontsize = 14] 
+"x
+0xA6F200" [shape = "ellipse", fillcolor = "lightgreen"] 
+"2
+0xA6F680" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "*
+0xA6F0C0" 
+ "*
+0xA6F0C0" ->  "x
+0xA6F200" [label = "L[0]", fontsize = 14] 
+ "*
+0xA6F0C0" ->  "2
+0xA6F680" [label = "L[1]", fontsize = 14] 
+"1
+0xA6F540" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "-
+0xA6F440" 
+ "-
+0xA6F440" ->  "*
+0xA6F0C0" [label = "L[0]", fontsize = 14] 
+ "-
+0xA6F440" ->  "1
+0xA6F540" [label = "L[1]", fontsize = 14] 
+ "+
+0xA6EA80" 
+ "+
+0xA6EA80" ->  "^
+0xA6EE00" [label = "L[0]", fontsize = 14] 
+ "+
+0xA6EA80" ->  "-
+0xA6F440" [label = "L[1]", fontsize = 14] 
+ "ln
+0xA6E8C0" 
+ "ln
+0xA6E8C0" ->  "+
+0xA6EA80" [label = "L[0]", fontsize = 14] 
+ "+
+0xA6EA00" 
+ "+
+0xA6EA00" ->  "^
+0xA6E900" [label = "L[0]", fontsize = 14] 
+ "+
+0xA6EA00" ->  "ln
+0xA6E8C0" [label = "L[1]", fontsize = 14] 
+ "+
+0xA6E740" 
+ "+
+0xA6E740" ->  "*
+0xA6EA40" [label = "L[0]", fontsize = 14] 
+ "+
+0xA6E740" ->  "+
+0xA6EA00" [label = "L[1]", fontsize = 14] 
+ "-
+0xA6E438" 
+ "-
+0xA6E438" ->  "*
+0xA6E4F8" [label = "L[0]", fontsize = 14] 
+ "-
+0xA6E438" ->  "+
+0xA6E740" [label = "L[1]", fontsize = 14] 
+ "cos
+0xA6E3F8" 
+ "cos
+0xA6E3F8" ->  "-
+0xA6E438" [label = "L[0]", fontsize = 14] 
+"2
+0xA6EF40" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "^
+0xA6E2B8" 
+ "^
+0xA6E2B8" ->  "cos
+0xA6E3F8" [label = "L[0]", fontsize = 14] 
+ "^
+0xA6E2B8" ->  "2
+0xA6EF40" [label = "L[1]", fontsize = 14] 
+"2
+0xA70590" [shape = "ellipse", fillcolor = "lightgreen"] 
+"10
+0xA71958" [shape = "ellipse", fillcolor = "lightgreen"] 
+"3.250
+0xA71250" [shape = "ellipse", fillcolor = "lightgreen"] 
+"-1
+0xA72518" [shape = "ellipse", fillcolor = "lightgreen"] 
+"x
+0xA723D8" [shape = "ellipse", fillcolor = "lightgreen"] 
+"2
+0xA72318" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "^
+0xA72358" 
+ "^
+0xA72358" ->  "x
+0xA723D8" [label = "L[0]", fontsize = 14] 
+ "^
+0xA72358" ->  "2
+0xA72318" [label = "L[1]", fontsize = 14] 
+ "/
+0xA71A98" 
+ "/
+0xA71A98" ->  "-1
+0xA72518" [label = "L[0]", fontsize = 14] 
+ "/
+0xA71A98" ->  "^
+0xA72358" [label = "L[1]", fontsize = 14] 
+ "*
+0xA72118" 
+ "*
+0xA72118" ->  "3.250
+0xA71250" [label = "L[0]", fontsize = 14] 
+ "*
+0xA72118" ->  "/
+0xA71A98" [label = "L[1]", fontsize = 14] 
+"10
+0xA72218" [shape = "ellipse", fillcolor = "lightgreen"] 
+"x
+0xA72498" [shape = "ellipse", fillcolor = "lightgreen"] 
+"9
+0xA71F98" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "^
+0xA71F18" 
+ "^
+0xA71F18" ->  "x
+0xA72498" [label = "L[0]", fontsize = 14] 
+ "^
+0xA71F18" ->  "9
+0xA71F98" [label = "L[1]", fontsize = 14] 
+ "*
+0xA71490" 
+ "*
+0xA71490" ->  "10
+0xA72218" [label = "L[0]", fontsize = 14] 
+ "*
+0xA71490" ->  "^
+0xA71F18" [label = "L[1]", fontsize = 14] 
+"2
+0xA72D58" [shape = "ellipse", fillcolor = "lightgreen"] 
+"x
+0xA72BD8" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "*
+0xA722D8" 
+ "*
+0xA722D8" ->  "2
+0xA72D58" [label = "L[0]", fontsize = 14] 
+ "*
+0xA722D8" ->  "x
+0xA72BD8" [label = "L[1]", fontsize = 14] 
+"2
+0xA72858" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "+
+0xA72198" 
+ "+
+0xA72198" ->  "*
+0xA722D8" [label = "L[0]", fontsize = 14] 
+ "+
+0xA72198" ->  "2
+0xA72858" [label = "L[1]", fontsize = 14] 
+"x
+0xA6C528" [shape = "ellipse", fillcolor = "lightgreen"] 
+"2
+0xA6BFE8" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "^
+0xA6BC68" 
+ "^
+0xA6BC68" ->  "x
+0xA6C528" [label = "L[0]", fontsize = 14] 
+ "^
+0xA6BC68" ->  "2
+0xA6BFE8" [label = "L[1]", fontsize = 14] 
+"x
+0xA6C328" [shape = "ellipse", fillcolor = "lightgreen"] 
+"2
+0xA6C568" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "*
+0xA6C468" 
+ "*
+0xA6C468" ->  "x
+0xA6C328" [label = "L[0]", fontsize = 14] 
+ "*
+0xA6C468" ->  "2
+0xA6C568" [label = "L[1]", fontsize = 14] 
+"1
+0xA6BF28" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "-
+0xA6C268" 
+ "-
+0xA6C268" ->  "*
+0xA6C468" [label = "L[0]", fontsize = 14] 
+ "-
+0xA6C268" ->  "1
+0xA6BF28" [label = "L[1]", fontsize = 14] 
+ "+
+0xA70FD0" 
+ "+
+0xA70FD0" ->  "^
+0xA6BC68" [label = "L[0]", fontsize = 14] 
+ "+
+0xA70FD0" ->  "-
+0xA6C268" [label = "L[1]", fontsize = 14] 
+ "/
+0xA71610" 
+ "/
+0xA71610" ->  "+
+0xA72198" [label = "L[0]", fontsize = 14] 
+ "/
+0xA71610" ->  "+
+0xA70FD0" [label = "L[1]", fontsize = 14] 
+ "+
+0xA71210" 
+ "+
+0xA71210" ->  "*
+0xA71490" [label = "L[0]", fontsize = 14] 
+ "+
+0xA71210" ->  "/
+0xA71610" [label = "L[1]", fontsize = 14] 
+ "+
+0xA71450" 
+ "+
+0xA71450" ->  "*
+0xA72118" [label = "L[0]", fontsize = 14] 
+ "+
+0xA71450" ->  "+
+0xA71210" [label = "L[1]", fontsize = 14] 
+ "-
+0xA71650" 
+ "-
+0xA71650" ->  "10
+0xA71958" [label = "L[0]", fontsize = 14] 
+ "-
+0xA71650" ->  "+
+0xA71450" [label = "L[1]", fontsize = 14] 
+"10
+0xA6C028" [shape = "ellipse", fillcolor = "lightgreen"] 
+"x
+0xA6C128" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "*
+0xA6C0E8" 
+ "*
+0xA6C0E8" ->  "10
+0xA6C028" [label = "L[0]", fontsize = 14] 
+ "*
+0xA6C0E8" ->  "x
+0xA6C128" [label = "L[1]", fontsize = 14] 
+"3.250
+0xA6C5A8" [shape = "ellipse", fillcolor = "lightgreen"] 
+"1
+0xA6A9A0" [shape = "ellipse", fillcolor = "lightgreen"] 
+"x
+0xA6A7A0" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "/
+0xA6A960" 
+ "/
+0xA6A960" ->  "1
+0xA6A9A0" [label = "L[0]", fontsize = 14] 
+ "/
+0xA6A960" ->  "x
+0xA6A7A0" [label = "L[1]", fontsize = 14] 
+ "*
+0xA6C228" 
+ "*
+0xA6C228" ->  "3.250
+0xA6C5A8" [label = "L[0]", fontsize = 14] 
+ "*
+0xA6C228" ->  "/
+0xA6A960" [label = "L[1]", fontsize = 14] 
+"x
+0xA6AEA0" [shape = "ellipse", fillcolor = "lightgreen"] 
+"10
+0xA6A860" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "^
+0xA6AE20" 
+ "^
+0xA6AE20" ->  "x
+0xA6AEA0" [label = "L[0]", fontsize = 14] 
+ "^
+0xA6AE20" ->  "10
+0xA6A860" [label = "L[1]", fontsize = 14] 
+"x
+0xA71758" [shape = "ellipse", fillcolor = "lightgreen"] 
+"2
+0xA71D18" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "^
+0xA6AE60" 
+ "^
+0xA6AE60" ->  "x
+0xA71758" [label = "L[0]", fontsize = 14] 
+ "^
+0xA6AE60" ->  "2
+0xA71D18" [label = "L[1]", fontsize = 14] 
+"x
+0xA71BD8" [shape = "ellipse", fillcolor = "lightgreen"] 
+"2
+0xA71CD8" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "*
+0xA71D98" 
+ "*
+0xA71D98" ->  "x
+0xA71BD8" [label = "L[0]", fontsize = 14] 
+ "*
+0xA71D98" ->  "2
+0xA71CD8" [label = "L[1]", fontsize = 14] 
+"1
+0xA71B18" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "-
+0xA71798" 
+ "-
+0xA71798" ->  "*
+0xA71D98" [label = "L[0]", fontsize = 14] 
+ "-
+0xA71798" ->  "1
+0xA71B18" [label = "L[1]", fontsize = 14] 
+ "+
+0xA6ADA0" 
+ "+
+0xA6ADA0" ->  "^
+0xA6AE60" [label = "L[0]", fontsize = 14] 
+ "+
+0xA6ADA0" ->  "-
+0xA71798" [label = "L[1]", fontsize = 14] 
+ "ln
+0xA6ABE0" 
+ "ln
+0xA6ABE0" ->  "+
+0xA6ADA0" [label = "L[0]", fontsize = 14] 
+ "+
+0xA6AA20" 
+ "+
+0xA6AA20" ->  "^
+0xA6AE20" [label = "L[0]", fontsize = 14] 
+ "+
+0xA6AA20" ->  "ln
+0xA6ABE0" [label = "L[1]", fontsize = 14] 
+ "+
+0xA6C3E8" 
+ "+
+0xA6C3E8" ->  "*
+0xA6C228" [label = "L[0]", fontsize = 14] 
+ "+
+0xA6C3E8" ->  "+
+0xA6AA20" [label = "L[1]", fontsize = 14] 
+ "-
+0xA6C1A8" 
+ "-
+0xA6C1A8" ->  "*
+0xA6C0E8" [label = "L[0]", fontsize = 14] 
+ "-
+0xA6C1A8" ->  "+
+0xA6C3E8" [label = "L[1]", fontsize = 14] 
+ "sin
+0xA6C668" 
+ "sin
+0xA6C668" ->  "-
+0xA6C1A8" [label = "L[0]", fontsize = 14] 
+ "neg
+0xA717D8" 
+ "neg
+0xA717D8" ->  "sin
+0xA6C668" [label = "L[0]", fontsize = 14] 
+ "*
+0xA70B90" 
+ "*
+0xA70B90" ->  "-
+0xA71650" [label = "L[0]", fontsize = 14] 
+ "*
+0xA70B90" ->  "neg
+0xA717D8" [label = "L[1]", fontsize = 14] 
+"10
+0xA705D0" [shape = "ellipse", fillcolor = "lightgreen"] 
+"x
+0xA70210" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "*
+0xA70310" 
+ "*
+0xA70310" ->  "10
+0xA705D0" [label = "L[0]", fontsize = 14] 
+ "*
+0xA70310" ->  "x
+0xA70210" [label = "L[1]", fontsize = 14] 
+"3.250
+0xA702D0" [shape = "ellipse", fillcolor = "lightgreen"] 
+"1
+0xA70450" [shape = "ellipse", fillcolor = "lightgreen"] 
+"x
+0xA70C50" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "/
+0xA703D0" 
+ "/
+0xA703D0" ->  "1
+0xA70450" [label = "L[0]", fontsize = 14] 
+ "/
+0xA703D0" ->  "x
+0xA70C50" [label = "L[1]", fontsize = 14] 
+ "*
+0xA700D0" 
+ "*
+0xA700D0" ->  "3.250
+0xA702D0" [label = "L[0]", fontsize = 14] 
+ "*
+0xA700D0" ->  "/
+0xA703D0" [label = "L[1]", fontsize = 14] 
+"x
+0xA70D10" [shape = "ellipse", fillcolor = "lightgreen"] 
+"10
+0xA70950" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "^
+0xA70A50" 
+ "^
+0xA70A50" ->  "x
+0xA70D10" [label = "L[0]", fontsize = 14] 
+ "^
+0xA70A50" ->  "10
+0xA70950" [label = "L[1]", fontsize = 14] 
+"x
+0xA70ED0" [shape = "ellipse", fillcolor = "lightgreen"] 
+"2
+0xA70810" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "^
+0xA70DD0" 
+ "^
+0xA70DD0" ->  "x
+0xA70ED0" [label = "L[0]", fontsize = 14] 
+ "^
+0xA70DD0" ->  "2
+0xA70810" [label = "L[1]", fontsize = 14] 
+"x
+0xA70E90" [shape = "ellipse", fillcolor = "lightgreen"] 
+"2
+0xA70B50" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "*
+0xA70E10" 
+ "*
+0xA70E10" ->  "x
+0xA70E90" [label = "L[0]", fontsize = 14] 
+ "*
+0xA70E10" ->  "2
+0xA70B50" [label = "L[1]", fontsize = 14] 
+"1
+0xA70710" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "-
+0xA709D0" 
+ "-
+0xA709D0" ->  "*
+0xA70E10" [label = "L[0]", fontsize = 14] 
+ "-
+0xA709D0" ->  "1
+0xA70710" [label = "L[1]", fontsize = 14] 
+ "+
+0xA70AD0" 
+ "+
+0xA70AD0" ->  "^
+0xA70DD0" [label = "L[0]", fontsize = 14] 
+ "+
+0xA70AD0" ->  "-
+0xA709D0" [label = "L[1]", fontsize = 14] 
+ "ln
+0xA708D0" 
+ "ln
+0xA708D0" ->  "+
+0xA70AD0" [label = "L[0]", fontsize = 14] 
+ "+
+0xA70A90" 
+ "+
+0xA70A90" ->  "^
+0xA70A50" [label = "L[0]", fontsize = 14] 
+ "+
+0xA70A90" ->  "ln
+0xA708D0" [label = "L[1]", fontsize = 14] 
+ "+
+0xA701D0" 
+ "+
+0xA701D0" ->  "*
+0xA700D0" [label = "L[0]", fontsize = 14] 
+ "+
+0xA701D0" ->  "+
+0xA70A90" [label = "L[1]", fontsize = 14] 
+ "-
+0xA6FFD0" 
+ "-
+0xA6FFD0" ->  "*
+0xA70310" [label = "L[0]", fontsize = 14] 
+ "-
+0xA6FFD0" ->  "+
+0xA701D0" [label = "L[1]", fontsize = 14] 
+ "cos
+0xA70610" 
+ "cos
+0xA70610" ->  "-
+0xA6FFD0" [label = "L[0]", fontsize = 14] 
+ "/
+0xA70250" 
+ "/
+0xA70250" ->  "*
+0xA70B90" [label = "L[0]", fontsize = 14] 
+ "/
+0xA70250" ->  "cos
+0xA70610" [label = "L[1]", fontsize = 14] 
+ "*
+0xA72AD8" 
+ "*
+0xA72AD8" ->  "2
+0xA70590" [label = "L[0]", fontsize = 14] 
+ "*
+0xA72AD8" ->  "/
+0xA70250" [label = "L[1]", fontsize = 14] 
+ "*
+0xA6A920" 
+ "*
+0xA6A920" ->  "^
+0xA6E2B8" [label = "L[0]", fontsize = 14] 
+ "*
+0xA6A920" ->  "*
+0xA72AD8" [label = "L[1]", fontsize = 14] 
+ "*
+0xA73018" 
+ "*
+0xA73018" ->  "-
+0xA50700" [label = "L[0]", fontsize = 14] 
+ "*
+0xA73018" ->  "*
+0xA6A920" [label = "L[1]", fontsize = 14] 
+ "-
+0xA73498" 
+ "-
+0xA73498" ->  "*
+0xA73298" [label = "L[0]", fontsize = 14] 
+ "-
+0xA73498" ->  "*
+0xA73018" [label = "L[1]", fontsize = 14] 
+"10
+0xA6A398" [shape = "ellipse", fillcolor = "lightgreen"] 
+"x
+0xA6A458" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "*
+0xA69F98" 
+ "*
+0xA69F98" ->  "10
+0xA6A398" [label = "L[0]", fontsize = 14] 
+ "*
+0xA69F98" ->  "x
+0xA6A458" [label = "L[1]", fontsize = 14] 
+"3.250
+0xA69A58" [shape = "ellipse", fillcolor = "lightgreen"] 
+"1
+0xA69C18" [shape = "ellipse", fillcolor = "lightgreen"] 
+"x
+0xA69BD8" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "/
+0xA69818" 
+ "/
+0xA69818" ->  "1
+0xA69C18" [label = "L[0]", fontsize = 14] 
+ "/
+0xA69818" ->  "x
+0xA69BD8" [label = "L[1]", fontsize = 14] 
+ "*
+0xA69B58" 
+ "*
+0xA69B58" ->  "3.250
+0xA69A58" [label = "L[0]", fontsize = 14] 
+ "*
+0xA69B58" ->  "/
+0xA69818" [label = "L[1]", fontsize = 14] 
+"x
+0xA69898" [shape = "ellipse", fillcolor = "lightgreen"] 
+"10
+0xA69E18" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "^
+0xA69858" 
+ "^
+0xA69858" ->  "x
+0xA69898" [label = "L[0]", fontsize = 14] 
+ "^
+0xA69858" ->  "10
+0xA69E18" [label = "L[1]", fontsize = 14] 
+"x
+0xA69D18" [shape = "ellipse", fillcolor = "lightgreen"] 
+"2
+0xA69B18" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "^
+0xA69B98" 
+ "^
+0xA69B98" ->  "x
+0xA69D18" [label = "L[0]", fontsize = 14] 
+ "^
+0xA69B98" ->  "2
+0xA69B18" [label = "L[1]", fontsize = 14] 
+"x
+0xA68590" [shape = "ellipse", fillcolor = "lightgreen"] 
+"2
+0xA684D0" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "*
+0xA68490" 
+ "*
+0xA68490" ->  "x
+0xA68590" [label = "L[0]", fontsize = 14] 
+ "*
+0xA68490" ->  "2
+0xA684D0" [label = "L[1]", fontsize = 14] 
+"1
+0xA68A10" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "-
+0xA68350" 
+ "-
+0xA68350" ->  "*
+0xA68490" [label = "L[0]", fontsize = 14] 
+ "-
+0xA68350" ->  "1
+0xA68A10" [label = "L[1]", fontsize = 14] 
+ "+
+0xA69D98" 
+ "+
+0xA69D98" ->  "^
+0xA69B98" [label = "L[0]", fontsize = 14] 
+ "+
+0xA69D98" ->  "-
+0xA68350" [label = "L[1]", fontsize = 14] 
+ "ln
+0xA69CD8" 
+ "ln
+0xA69CD8" ->  "+
+0xA69D98" [label = "L[0]", fontsize = 14] 
+ "+
+0xA69D58" 
+ "+
+0xA69D58" ->  "^
+0xA69858" [label = "L[0]", fontsize = 14] 
+ "+
+0xA69D58" ->  "ln
+0xA69CD8" [label = "L[1]", fontsize = 14] 
+ "+
+0xA69E98" 
+ "+
+0xA69E98" ->  "*
+0xA69B58" [label = "L[0]", fontsize = 14] 
+ "+
+0xA69E98" ->  "+
+0xA69D58" [label = "L[1]", fontsize = 14] 
+ "-
+0xA69ED8" 
+ "-
+0xA69ED8" ->  "*
+0xA69F98" [label = "L[0]", fontsize = 14] 
+ "-
+0xA69ED8" ->  "+
+0xA69E98" [label = "L[1]", fontsize = 14] 
+ "cos
+0xA69F18" 
+ "cos
+0xA69F18" ->  "-
+0xA69ED8" [label = "L[0]", fontsize = 14] 
+"4
+0xA72758" [shape = "ellipse", fillcolor = "lightgreen"] 
+ "^
+0xA73598" 
+ "^
+0xA73598" ->  "cos
+0xA69F18" [label = "L[0]", fontsize = 14] 
+ "^
+0xA73598" ->  "4
+0xA72758" [label = "L[1]", fontsize = 14] 
+ "/
+0xA45A58" 
+ "/
+0xA45A58" ->  "-
+0xA73498" [label = "L[0]", fontsize = 14] 
+ "/
+0xA45A58" ->  "^
+0xA73598" [label = "L[1]", fontsize = 14] 
 }

@@ -59,6 +59,7 @@ class Expression : public Tree<NodeInfo>
         void printNodeInDotFile(TNode* node, Stream stream);
         void writeTreeInFile(TNode* node, ui32 level, Stream stream);
         void readTreeFromFile(const C_string filename);
+        bool useCustomAllocators = 0;
     public:
         Expression() {};
         Expression(const Expression& exp);
@@ -68,6 +69,7 @@ class Expression : public Tree<NodeInfo>
         double evaluate(double variable);
         void genTex(Stream stream = stdout);
         void genTexFile(const C_string outFilename);
+        void getStepByStepSimplificationTex(const C_string outFilename, i16 derivativeOrder = 1, ui8 paperType = 4);
         void differentiate();
         bool isValidStruct();
 };

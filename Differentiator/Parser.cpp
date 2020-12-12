@@ -10,7 +10,8 @@ $$
 
 /*
     E -> T + E | T - E | T
-    T -> F * T | F / F | F ^ T | F
+    T -> D * T | D ^ T | D
+    D -> F / F | F
     F -> N     | (E)   | -(E)  | -F
 */
 
@@ -50,10 +51,10 @@ void Parser::parse_expr(Expression::TNode** ptrNode, ui32& p, Expression::TNode*
 void Parser::parse_term(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
 {
     $
-    static const i8* operations = "*/^";
+    static const i8* operations = "* ^";
     Expression::TNode* link = NULL;
 
-    parse_fact(&link, p, parent);
+    parse_divider(&link, p, parent);
     if (tokens.size() <= p)
     {
         (*ptrNode) = link;
@@ -70,10 +71,39 @@ void Parser::parse_term(Expression::TNode** ptrNode, ui32& p, Expression::TNode*
         *ptrNode = createNode(NULL, NULL, NODE_TYPE_OPERATION, OP_MUL + op, parent);
         (*ptrNode)->link[0] = link;
         link->parent = (*ptrNode);
-        if(OP_MUL + op == OP_DIV)
-            parse_fact(&(*ptrNode)->link[1], p, *ptrNode);
-        else
-            parse_term(&(*ptrNode)->link[1], p, *ptrNode);
+        parse_term(&(*ptrNode)->link[1], p, *ptrNode);
+    }
+    else
+        (*ptrNode) = link;
+
+    $$
+    return;
+}
+
+void Parser::parse_divider(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
+{
+    $
+    static const i8* operations = "/";
+    Expression::TNode* link = NULL;
+
+    parse_fact(&link, p, parent);
+    if (tokens.size() <= p)
+    {
+        (*ptrNode) = link;
+        $$
+            return;
+    }
+
+    ui32 op = (ui32)strchr(operations, tokens[p].ptrToData.symbol);
+    op = op ? op - (ui32)operations : -1;
+
+    if (op != -1)
+    {
+        p++;
+        *ptrNode = createNode(NULL, NULL, NODE_TYPE_OPERATION, OP_DIV, parent);
+        (*ptrNode)->link[0] = link;
+        link->parent = (*ptrNode);
+        parse_fact(&(*ptrNode)->link[1], p, *ptrNode);
     }
     else
         (*ptrNode) = link;
@@ -191,6 +221,7 @@ Parser::Token Parser::getNextToken(C_string& str)
     return result;
 }
 
+
 Expression::TNode* Parser::parse(C_string expression)
 {
     $
@@ -299,7 +330,7 @@ Expression::TNode* Parser::parse(C_string expression)
             if(isInvalidTokenSequence)
             {
                 Assert_c(!"Error occur: incorrect placement of lexems");
-                printf("Error occur: incorrect placement of lexems\n");
+                //printf("Error occur: incorrect placement of lexems\n");
                 return NULL;
             }
         }
