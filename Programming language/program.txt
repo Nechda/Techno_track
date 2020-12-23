@@ -1,0 +1,11 @@
+var x = 1;
+var y = 2;
+
+if (x^2 > y)
+{
+	print(1);
+}
+else
+{
+	print(2);
+}
