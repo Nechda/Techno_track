@@ -33,7 +33,9 @@ class Parser
             TOKEN_ELSE,
             TOKEN_OR,
             TOKEN_AND,
-            TOKEN_LOGIC_OPERATION
+            TOKEN_LOGIC_OPERATION,
+            TOKEN_DEF,
+            TOKEN_COMMA
         };
 
         static const triple<C_string, LexemaType, OpType> tokensTable[];
@@ -48,6 +50,9 @@ class Parser
 
         std::vector<Token> tokens;
 
+        void parse_file(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent);
+        void parse_function(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent);
+        void parse_arguments(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent);
         void parse_general(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent);
         void parse_line(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent);
         void parse_branch(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent);

@@ -173,7 +173,7 @@ void Expression::readTreeFromFile(const C_string filename)
         return;
     }
 
-    errorCode = removeExtraChar(&buffer, "(+-*/^.) =;{}&|<>!?");
+    errorCode = removeExtraChar(&buffer, "(+-*/^.,) =;{}&|<>!?");
     if (errorCode == STANDART_ERROR_CODE)
     {
         free(getRoot());
@@ -705,6 +705,8 @@ Expression::TNode* createNode(Expression::TNode* left, Expression::TNode* right,
     result->link[0] = left;
     result->link[1] = right;
     result->parent = parent;
+    if (result->link[0]) result->link[0]->parent = result;
+    if (result->link[1]) result->link[1]->parent = result;
 
     return result;
 }

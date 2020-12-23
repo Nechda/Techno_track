@@ -1,11 +1,11 @@
-var x = 1;
-var y = 2;
 
-if (x^2 > y)
+
+def foo(var a, var b)
 {
-	print(1);
+	var s = a + b - ln(a);
 }
-else
+
+def main()
 {
-	print(2);
+	print(0.5);
 }

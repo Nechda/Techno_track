@@ -5,7 +5,7 @@
 
 
 FILE* fptr = NULL;
-unsigned level = 0;
+int level = 0;
 
 void initCallStack()
 {

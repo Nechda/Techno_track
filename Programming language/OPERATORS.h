@@ -42,3 +42,9 @@ OP_DEFINE("<=", loreq_impl, OP_LESS_OR_EQUAL, 3, { return left <= right; }, true
 OP_DEFINE("==", equal_impl, OP_EQUAL,         3, { return left == right; }, true)
 
 OP_DEFINE("!=", neq_impl,   OP_NEQUAL,        3, { return left != right; }, true)
+
+OP_DEFINE("def", def_impl,   OP_DEF,          3, { return 0; }, false)
+
+OP_DEFINE(",", comma_impl,   OP_COMMA,        3, { return 0;}, false)
+
+OP_DEFINE("$", dollar_impl,  OP_DOLLAR,       3, { return 0;}, false)

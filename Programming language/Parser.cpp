@@ -27,6 +27,9 @@ const triple<C_string, Parser::LexemaType, OpType> Parser::tokensTable[] =
     { "==",   TOKEN_LOGIC_OPERATION,        OP_EQUAL},
     { "!=",   TOKEN_LOGIC_OPERATION,        OP_NEQUAL},
     { "=",    TOKEN_ASSIGMENT,              OP_ASSIGMENT},
+    { "def",  TOKEN_DEF,                    OP_DEF},
+    { ",",    TOKEN_COMMA,                  OP_COMMA},
+    { "$",    TOKEN_UNDEFINED,              OP_DOLLAR} /// <--- этот токен только для объеднинения функций
 
 };
 const ui8 Parser::TOKENS_TABLE_SIZE = sizeof(Parser::tokensTable) / sizeof(Parser::tokensTable[0]);
@@ -49,6 +52,10 @@ $$
 
 
 /*
+    Fl - File
+    Fu - Function
+    fN - Function name
+    Ar - Arguments of function
     G  - General (base block of code)
     L  - Line
     B  - Branch
@@ -62,10 +69,13 @@ $$
     F  - Factor
     N  - Can be function, number or variable
 
-    G -> L ; G | B G
-    B -> if(E){G}else{G} | if(E){G}
-    L -> V = LE1 | LE1
-    V -> vT vN | vN
+    Fl -> Fu Fl | Fu
+    Fu -> def fN(Ar){G}
+    Ar -> vT vN , Ar | vT vN |
+    G  -> L ; G | B G
+    B  -> if(LE1){G}else{G} | if(LE1){G}
+    L  -> V = LE1 | LE1
+    V  -> vT vN | vN
 
     LE1 -> LE2 || LE2 | LE2
     LE2 -> LE3 && LE3 | LE3
@@ -89,9 +99,117 @@ static i32 findOperation(const ui8* arr, ui8 value)
     return -1;
 }
 
+
+void Parser::parse_file(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
+{$
+    Expression::TNode* link = NULL;
+    parse_function(&link, p, parent);
+
+    if(!link)
+    {
+        $$$("Invalid function definition");
+        return;
+    }
+
+    if (p >= tokens.size())
+    {
+        *ptrNode = link;
+        $$
+        return;
+    }
+   
+    UnionData unionData;
+
+    unionData.ivalue = OP_DOLLAR;
+    *ptrNode = createNode(link, NULL, NODE_TYPE_OPERATION, unionData, parent);
+    parse_file(&(*ptrNode)->link[1], p, *ptrNode);
+
+    $$
+    return;
+}
+
+void Parser::parse_function(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
+{$
+    ui32 maxSize = tokens.size();
+    #define checkErrors()\
+     if(isErrorOccur)\
+     {\
+        $$$("Invalid sequence of lexemas.");\
+        if (*ptrNode) rCleanUp(*ptrNode);\
+        *ptrNode = NULL;\
+        return;\
+     } 
+    #define safeINC(x) (x)++; if((x) >= maxSize) {$$$("Out of range");return;}
+    UnionData unionData;
+
+    unionData.ivalue = OP_DEF;
+    bool isErrorOccur = 0;
+    isErrorOccur |= !(tokens[p].type == TOKEN_DEF);
+    checkErrors();
+    safeINC(p);
+
+    isErrorOccur |= !(tokens[p].type == TOKEN_VARIABLE);
+    checkErrors();
+    safeINC(p);
+    *ptrNode = createNode(NULL, NULL, NODE_TYPE_OPERATION, unionData, parent);
+    unionData = tokens[p].dataUnion;
+    (*ptrNode)->link[0] = createNode(NULL, NULL, NODE_TYPE_VARIABLE, unionData, *ptrNode);
+    
+    isErrorOccur |= !(tokens[p].type == TOKEN_BRACKET);
+    checkErrors();
+    safeINC(p);
+    parse_arguments(&(*ptrNode)->link[1], p, *ptrNode);
+    isErrorOccur |= !(tokens[p].type == TOKEN_BRACKET);
+    checkErrors();
+    safeINC(p);
+
+    isErrorOccur |= !(tokens[p].type == TOKEN_CURLY_BACKET);
+    checkErrors();
+    safeINC(p);
+    parse_general(&(*ptrNode)->link[2], p, *ptrNode);
+    isErrorOccur |= !(tokens[p].type == TOKEN_CURLY_BACKET);
+    checkErrors();
+    safeINC(p);
+}
+
+void Parser::parse_arguments(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
+{$
+    Expression::TNode* link = NULL;
+    UnionData unionData;
+
+    switch (tokens[p].type)
+    {
+    case TOKEN_VARIABLE_TYPE:
+        link = createNode(NULL, NULL, NODE_TYPE_VARIABLE_SPECIFICALOR, tokens[p].dataUnion, parent);
+        p++;
+        parse_fact(&link->link[0], p, link);
+        break;
+    default:
+        $$
+        return;
+    }
+    if (p >= tokens.size())
+    {
+        $$$("Out of range tokens array");
+        return;
+    }
+
+    if (tokens[p].type == TOKEN_COMMA)
+    {
+        unionData.ivalue = OP_COMMA;
+        *ptrNode = createNode(link, NULL, NODE_TYPE_OPERATION, unionData, parent);
+        p++;
+        parse_arguments(&(*ptrNode)->link[1], p, *ptrNode);
+    }
+    else
+        *ptrNode = link;
+    $$
+    return;
+}
+
+
 void Parser::parse_general(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
-{
-    $
+{$
     static const ui8 operations[] = { getTokenIndexByString(";"), -1};
     Expression::TNode* link = NULL;
 
@@ -145,8 +263,7 @@ void Parser::parse_general(Expression::TNode** ptrNode, ui32& p, Expression::TNo
 }
 
 void Parser::parse_line(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
-{
-    $
+{$
     static const ui8 operations[] = { getTokenIndexByString("="), -1 };
     Expression::TNode* link = NULL;
 
@@ -180,9 +297,16 @@ void Parser::parse_line(Expression::TNode** ptrNode, ui32& p, Expression::TNode*
 }
 
 void Parser::parse_branch(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
-{
+{$
     ui32 maxSize = tokens.size();
-    #define checkErrors() if(isErrorOccur){$$$("Invalid sequence of lexemas.");return;} 
+    #define checkErrors()\
+     if(isErrorOccur)\
+     {\
+        $$$("Invalid sequence of lexemas.");\
+        if (*ptrNode) rCleanUp(*ptrNode);\
+        *ptrNode = NULL;\
+        return;\
+     } 
     #define safeINC(x) (x)++; if((x) >= maxSize) {$$$("Out of range");return;}
     UnionData unionData;
 
@@ -235,8 +359,7 @@ void Parser::parse_branch(Expression::TNode** ptrNode, ui32& p, Expression::TNod
 }
 
 void Parser::parse_var(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
-{
-    $
+{$
     switch (tokens[p].type)
     {
     case TOKEN_VARIABLE_TYPE:
@@ -258,8 +381,7 @@ void Parser::parse_var(Expression::TNode** ptrNode, ui32& p, Expression::TNode* 
 
 
 void Parser::parse_logicExpr1(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
-{
-    $
+{$
     static const ui8 operations[] = { getTokenIndexByString("||"), -1};
     Expression::TNode* link = NULL;
 
@@ -290,8 +412,7 @@ void Parser::parse_logicExpr1(Expression::TNode** ptrNode, ui32& p, Expression::
 }
 
 void Parser::parse_logicExpr2(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
-{
-    $
+{$
     static const ui8 operations[] = { getTokenIndexByString("&&"), -1};
     Expression::TNode* link = NULL;
 
@@ -322,8 +443,7 @@ void Parser::parse_logicExpr2(Expression::TNode** ptrNode, ui32& p, Expression::
 }
 
 void Parser::parse_logicExpr3(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
-{
-    $
+{$
     static const ui8 operations[] = {
         getTokenIndexByString(">"),getTokenIndexByString("<"),
         getTokenIndexByString(">="),getTokenIndexByString(">="),
@@ -359,8 +479,7 @@ void Parser::parse_logicExpr3(Expression::TNode** ptrNode, ui32& p, Expression::
 
 
 void Parser::parse_expr(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
-{
-    $
+{$
     static const ui8 operations[] = { getTokenIndexByString("+"), getTokenIndexByString("-"), -1 };
     Expression::TNode* link = NULL;
 
@@ -392,8 +511,7 @@ void Parser::parse_expr(Expression::TNode** ptrNode, ui32& p, Expression::TNode*
 }
 
 void Parser::parse_term(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
-{
-    $
+{$
     static const ui8 operations[] = {getTokenIndexByString("*"), getTokenIndexByString("^"), -1};
     Expression::TNode* link = NULL;
 
@@ -424,8 +542,7 @@ void Parser::parse_term(Expression::TNode** ptrNode, ui32& p, Expression::TNode*
 }
 
 void Parser::parse_divider(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
-{
-    $
+{$
     static const ui8 operations[] = {getTokenIndexByString("/"), -1};
     Expression::TNode* link = NULL;
 
@@ -456,8 +573,7 @@ void Parser::parse_divider(Expression::TNode** ptrNode, ui32& p, Expression::TNo
 }
 
 void Parser::parse_fact(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
-{
-    $
+{$
     switch (tokens[p].type)
     {
         case TOKEN_BRACKET:
@@ -591,7 +707,7 @@ Parser::Token Parser::getNextToken(C_string& str)
     }
     
 
-    sscanf(str, "%[^ ;=+-*\\/()^{}]%*c", buff);
+    sscanf(str, "%[^ ;=+-*\\/()^{},!<>]%*c", buff);
     bool isNumber = 1;
     ui8 index = 0;
     while (buff[index] && index < 32 && isNumber)
@@ -676,10 +792,11 @@ Expression::TNode* Parser::parse(C_string expression)
         }
         printf("\n");
         counter++;
+
     }
     #endif
     ui32  p = 0;
-    parse_general(&root, p, NULL);
+    parse_file(&root, p, NULL);
     $$
     return root;
 }

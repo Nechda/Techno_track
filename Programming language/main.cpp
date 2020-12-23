@@ -15,6 +15,8 @@ TODO:
     [x] переписать функцию рисования дерева
     [x] переписать функции из ExprTree.cpp с учетом того, что детей может быть TREE_CHILD_NUMBER штук
      \-->[x] переписана функция рисования дерева из ExprTree.cpp
+    [ ] оператор "," и функции в языке
+    [ ] оператор цикла for
 */
 
 
@@ -28,9 +30,9 @@ int main()
 
     Expression exprTree("program.txt");
     exprTree.drawGraph("originalTree");
-    exprTree.simplify();
-    exprTree.drawGraph("simplifiedTree");
-    exprTree.evaluate();
+    //exprTree.simplify();
+    //exprTree.drawGraph("simplifiedTree");
+    //exprTree.evaluate();
     system("pause");
     $$
     loggerDestr();
