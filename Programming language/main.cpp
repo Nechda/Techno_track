@@ -9,15 +9,6 @@
 #include <vector>
 #include <stack>
 
-/*
-TODO:
-    [ ] реализовать облась видимости для переменных
-    [ ] оператор цикла
-    [ ] массивы фиксированной длины
-    [ ] передача в функцию по ссылке
-*/
-
-
 
 
 int main()
@@ -28,7 +19,8 @@ int main()
     printf("Start parsing program...\n");
     Expression exprTree("program.pr");
     printf("Done!\n");
-
+    //printf("Start draw tree\n");
+    //exprTree.drawGraph("originalTree");
     printf("Start evaluate...\n");
     exprTree.evaluate();
     exprTree.getEvaluateStatus();

@@ -36,7 +36,8 @@ class Parser
             TOKEN_LOGIC_OPERATION,
             TOKEN_DEF,
             TOKEN_COMMA,
-            TOKEN_RETURN
+            TOKEN_RETURN,
+            TOKEN_WHILE
         };
 
         static const triple<C_string, LexemaType, OpType> tokensTable[];
@@ -58,12 +59,12 @@ class Parser
         void parse_general(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent);
         void parse_line(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent);
         void parse_branch(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent);
+        void parse_loop(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent);
         void parse_var(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent);
         
         void parse_logicExpr1(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent);
         void parse_logicExpr2(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent);
         void parse_logicExpr3(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent);
-        
         void parse_expr(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent);
         void parse_term(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent);
         void parse_divider(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent);
