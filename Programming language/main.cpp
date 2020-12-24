@@ -11,12 +11,10 @@
 
 /*
 TODO:
-    [x] void Parser::parse_fact(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent) -> createNode(...) переделать аргумент так, чтобы можно было передавать юнион
-    [x] переписать функцию рисования дерева
-    [x] переписать функции из ExprTree.cpp с учетом того, что детей может быть TREE_CHILD_NUMBER штук
-     \-->[x] переписана функция рисования дерева из ExprTree.cpp
-    [ ] оператор "," и функции в языке
-    [ ] оператор цикла for
+    [ ] реализовать облась видимости для переменных
+    [ ] оператор цикла
+    [ ] массивы фиксированной длины
+    [ ] передача в функцию по ссылке
 */
 
 
@@ -27,12 +25,13 @@ int main()
     initCallStack();
     loggerInit("log.log");
     $
+    printf("Start parsing program...\n");
+    Expression exprTree("program.pr");
+    printf("Done!\n");
 
-    Expression exprTree("program.txt");
-    exprTree.drawGraph("originalTree");
-    //exprTree.simplify();
-    //exprTree.drawGraph("simplifiedTree");
-    //exprTree.evaluate();
+    printf("Start evaluate...\n");
+    exprTree.evaluate();
+    exprTree.getEvaluateStatus();
     system("pause");
     $$
     loggerDestr();

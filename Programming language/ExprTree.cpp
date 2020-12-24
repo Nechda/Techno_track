@@ -6,10 +6,24 @@
 #include <string.h>
 #include <math.h>
 #include <clocale>
+#include <stack>
 #include "Parser.h"
 #include "CallStack.h"
 
-
+const Hash Expression::entryPointHash = getHash("main", 4);
+const pair<EvaluationErrors, const C_string> Expression::errorExplanationTable[] =
+{
+    {STATUS_OK,                                 "Status Ok"},
+    {ERR_INVALID_TREE_STRUCTURE,                "Tree structure is invalid"},
+    {ERR_ATTEMPT_REDEFINE_FUNCTION_TABLE,       "Try to redefine function table"},
+    {ERR_UNDEFINED_VARIABLE,                    "Try to access to undefined variable"},
+    {ERR_REDIFINITION_VARIABLE,                 "Try to redefine already existed variable"},
+    {ERR_UNDEFINED_FUNCTION,                    "Try to access to undefined function"},
+    {ERR_REDIFINITION_FUNCTION,                 "Try to redefine already existed function"},
+    {ERR_FUNCTION_PARAM_REDEFINITION,           "Function param redefinition"},
+    {ERR_INVALID_NUMBER_OF_FUNCTION_ARGUMENTS,  "Invalid number of function params"},
+    {ERR_FORGOTTEN_RETURN_OPERATOR,             "The ret operator was expected, but there is not"}
+};
 
 #define ACCURACY 1E-3
 #define isZero(a) fabs((a)) < ACCURACY
@@ -20,9 +34,9 @@
 
 
 /*
-    \brief Функция, отвечающая за преобразование узла дерева в строку
-    \note  При добавлении нового элемента в язык, требуется переписать данную функцию
-           в противном случае выводить дерево в файл не получится
+    \brief Р¤СѓРЅРєС†РёСЏ, РѕС‚РІРµС‡Р°СЋС‰Р°СЏ Р·Р° РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ СѓР·Р»Р° РґРµСЂРµРІР° РІ СЃС‚СЂРѕРєСѓ
+    \note  РџСЂРё РґРѕР±Р°РІР»РµРЅРёРё РЅРѕРІРѕРіРѕ СЌР»РµРјРµРЅС‚Р° РІ СЏР·С‹Рє, С‚СЂРµР±СѓРµС‚СЃСЏ РїРµСЂРµРїРёСЃР°С‚СЊ РґР°РЅРЅСѓСЋ С„СѓРЅРєС†РёСЋ
+           РІ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ РІС‹РІРѕРґРёС‚СЊ РґРµСЂРµРІРѕ РІ С„Р°Р№Р» РЅРµ РїРѕР»СѓС‡РёС‚СЃСЏ
 */
 C_string expInfoToStr(NodeInfo* exp, bool printAddr = false)
 {
@@ -50,8 +64,11 @@ C_string expInfoToStr(NodeInfo* exp, bool printAddr = false)
         case NODE_TYPE_OPERATION:
             sprintf(buffer, "%s", opDict[exp->dataUnion.ivalue]);
             break;
-        case NODE_TYPE_VARIABLE:
-            sprintf(buffer, "var[0x%X]", exp->dataUnion.ivalue);
+        case NODE_TYPE_NAME:
+            sprintf(buffer, "Hash(name):\n 0x%X", exp->dataUnion.ivalue);
+            break;
+        case NODE_TYPE_CUSTOM_FUNCTION:
+            sprintf(buffer, "func");
             break;
         case NODE_TYPE_VARIABLE_SPECIFICALOR:
             sprintf(buffer, "int");
@@ -82,43 +99,51 @@ bool Expression::isValidStruct()
     return isValid;
 }
 
+void Expression::getEvaluateStatus()
+{
+    printf("%s\n", errorExplanationTable[static_cast<ui32>(errorCode)].second);
+}
+
 Expression::Expression(const Expression& exp)
 {$
     setRoot(rCopy<NodeInfo>(exp.ground.link[0]));
-    $$
+    $$ return;
 }
 
 Expression::Expression(const C_string filename) : Tree(filename)
 {$
     readTreeFromFile(filename);
-    $$
+    $$ return;
 };
 
 
 //===============================================================================================================================
 //|                                                                                                                             |
 //|                                                                                                                             |
-//|                                 чтение дерева из файла + генерация дерева в dot файл                                        |
+//|                                 С‡С‚РµРЅРёРµ РґРµСЂРµРІР° РёР· С„Р°Р№Р»Р° + РіРµРЅРµСЂР°С†РёСЏ РґРµСЂРµРІР° РІ dot С„Р°Р№Р»                                        |
 //|                                                                                                                             |
 //|_____________________________________________________________________________________________________________________________|
 //|                                                                                                                             |
 
 /*
-    \brief Функция генерации dot файла для graphviz
+    \brief Р¤СѓРЅРєС†РёСЏ РіРµРЅРµСЂР°С†РёРё dot С„Р°Р№Р»Р° РґР»СЏ graphviz
 */
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~/-----------------|
 //************************************************************************************************************|                 |
-//~~~~~~~~~~~~~~~~~~~~~Переписать с учетом количества детей TREE_CHILD_NUMBER~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|      Done       |
+//~~~~~~~~~~~~~~~~~~~~~РџРµСЂРµРїРёСЃР°С‚СЊ СЃ СѓС‡РµС‚РѕРј РєРѕР»РёС‡РµСЃС‚РІР° РґРµС‚РµР№ TREE_CHILD_NUMBER~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|      Done       |
 //************************************************************************************************************|                 |
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\-----------------|
 void Expression::printNodeInDotFile(TNode* node, Stream stream)
 {$
     Assert_c(stream);
-    Assert_c(node);
-    if (!stream || !node)
+    if (!stream)
     {
         $$$("NULL ptr in node or stream structure");
         return;
+    }
+    if (!node)
+    {
+        $$ return;
     }
 
     bool isLeaf = 1;
@@ -149,9 +174,9 @@ void Expression::printNodeInDotFile(TNode* node, Stream stream)
 }
 
 /*
-    \brief Функция генерирует дерево из файла
-    \detail Функция считывает файл, затем содержимое
-            отправляет парсеру, который строит дерево.
+    \brief Р¤СѓРЅРєС†РёСЏ РіРµРЅРµСЂРёСЂСѓРµС‚ РґРµСЂРµРІРѕ РёР· С„Р°Р№Р»Р°
+    \detail Р¤СѓРЅРєС†РёСЏ СЃС‡РёС‚С‹РІР°РµС‚ С„Р°Р№Р», Р·Р°С‚РµРј СЃРѕРґРµСЂР¶РёРјРѕРµ
+            РѕС‚РїСЂР°РІР»СЏРµС‚ РїР°СЂСЃРµСЂСѓ, РєРѕС‚РѕСЂС‹Р№ СЃС‚СЂРѕРёС‚ РґРµСЂРµРІРѕ.
 */
 void Expression::readTreeFromFile(const C_string filename)
 {$
@@ -202,7 +227,7 @@ void Expression::readTreeFromFile(const C_string filename)
 //===============================================================================================================================
 //|                                                                                                                             |
 //|                                                                                                                             |
-//|                                  реализация алгоритмов упрощения дерева                                                     |
+//|                                  СЂРµР°Р»РёР·Р°С†РёСЏ Р°Р»РіРѕСЂРёС‚РјРѕРІ СѓРїСЂРѕС‰РµРЅРёСЏ РґРµСЂРµРІР°                                                     |
 //|                                                                                                                             |
 //|                                                                                                                             |
 //|_____________________________________________________________________________________________________________________________|
@@ -255,7 +280,7 @@ bool evaluateStandartFunctionsPreprocessor[] =
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~/-----------------|
 //************************************************************************************************************|                 |
-//~~~~~~~~~~~~~~~~~~~~~Переписать с учетом количества детей TREE_CHILD_NUMBER~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|      Done       |
+//~~~~~~~~~~~~~~~~~~~~~РџРµСЂРµРїРёСЃР°С‚СЊ СЃ СѓС‡РµС‚РѕРј РєРѕР»РёС‡РµСЃС‚РІР° РґРµС‚РµР№ TREE_CHILD_NUMBER~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|      Done       |
 //************************************************************************************************************|                 |
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\-----------------|
 static bool constantSimplify(Expression::TNode* node, bool& isChangedTree)
@@ -290,7 +315,7 @@ static bool constantSimplify(Expression::TNode* node, bool& isChangedTree)
     FuncionType* evauateFunction = nodeInfo.type == NODE_TYPE_OPERATION ? evaluateFunctions : evaluateStandartFunctions;
     bool canChangeTree = nodeInfo.type == NODE_TYPE_OPERATION ? evaluateFunctionsPreprocessor[nodeInfo.dataUnion.ivalue] : evaluateStandartFunctionsPreprocessor[nodeInfo.dataUnion.ivalue];
 
-    //может ли данная функция изменять дерево на этапе препроцессора?
+    //РјРѕР¶РµС‚ Р»Рё РґР°РЅРЅР°СЏ С„СѓРЅРєС†РёСЏ РёР·РјРµРЅСЏС‚СЊ РґРµСЂРµРІРѕ РЅР° СЌС‚Р°РїРµ РїСЂРµРїСЂРѕС†РµСЃСЃРѕСЂР°?
     if (!canChangeTree)
         return false;
 
@@ -312,7 +337,7 @@ static bool constantSimplify(Expression::TNode* node, bool& isChangedTree)
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~/-----------------|
 //************************************************************************************************************|                 |
-//~~~~~~~~~~~~~~~~~~~~~Переписать с учетом количества детей TREE_CHILD_NUMBER~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|      Done       |
+//~~~~~~~~~~~~~~~~~~~~~РџРµСЂРµРїРёСЃР°С‚СЊ СЃ СѓС‡РµС‚РѕРј РєРѕР»РёС‡РµСЃС‚РІР° РґРµС‚РµР№ TREE_CHILD_NUMBER~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|      Done       |
 //************************************************************************************************************|                 |
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\-----------------|
 static void identitySimplify(Expression::TNode* node, bool& isChangedTree)
@@ -572,7 +597,7 @@ void Expression::simplify()
 //===============================================================================================================================
 //|                                                                                                                             |
 //|                                                                                                                             |
-//|                                                 вычисление дерева                                                           |
+//|                                                 РІС‹С‡РёСЃР»РµРЅРёРµ РґРµСЂРµРІР°                                                           |
 //|                                                                                                                             |
 //|                                                                                                                             |
 //|_____________________________________________________________________________________________________________________________|
@@ -580,30 +605,29 @@ void Expression::simplify()
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~/-----------------|
 //************************************************************************************************************|                 |
-//~~~~~~~~~~~~~~~~~~~~~Переписать с учетом количества детей TREE_CHILD_NUMBER~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|      Done       |
+//~~~~~~~~~~~~~~~~~~~~~РџРµСЂРµРїРёСЃР°С‚СЊ СЃ СѓС‡РµС‚РѕРј РєРѕР»РёС‡РµСЃС‚РІР° РґРµС‚РµР№ TREE_CHILD_NUMBER~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|      Done       |
 //************************************************************************************************************|                 |
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\-----------------|
-static double treeEvaluate(Expression::TNode* node, std::map<ui64, double>& variables)
+double Expression::treeEvaluate(Expression::TNode* node, map<Hash, pair<double,ui32>>& variables)
 {
-    if (!node)
+    if (!node || isCurrentFunctionCalledReturn || errorCode)
         return 0;
     $
     bool isLeaf = 1;
     for (ui8 i = 0; i < TREE_CHILD_NUMBER; i++)
         isLeaf &= !node->link[i];
 
+    isLeaf &= !(node->ptrToData->type == NODE_TYPE_FUNCTION || node->ptrToData->type == NODE_TYPE_CUSTOM_FUNCTION);
+
     ui64 variableHash = 0;
-    if (isLeaf)
-    {
+    if (isLeaf){
         variableHash = node->ptrToData->dataUnion.ivalue;
-        if (!variables.count(variableHash) && node->ptrToData->type != NODE_TYPE_NUMBER)
-        {
+        if (!variables.count(variableHash) && node->ptrToData->type != NODE_TYPE_NUMBER){
+            errorCode = ERR_UNDEFINED_VARIABLE;
             $$$("Undefined variable!");
             return 0;
         }
-
-        $$
-        return node->ptrToData->type == NODE_TYPE_NUMBER ? node->ptrToData->dataUnion.dvalue : variables[variableHash];
+        $$ return node->ptrToData->type == NODE_TYPE_NUMBER ? node->ptrToData->dataUnion.dvalue : variables[variableHash].first;
     }
 
     FuncionType* evauateFunction;
@@ -611,35 +635,32 @@ static double treeEvaluate(Expression::TNode* node, std::map<ui64, double>& vari
     double result = 0;
     double num[2] = {};
     if(nodeType == NODE_TYPE_OPERATION)
-        switch (node->ptrToData->dataUnion.ivalue)
-        {
+        switch (node->ptrToData->dataUnion.ivalue){
             case OP_SEMICOLON:
                 treeEvaluate(node->link[0], variables);
                 treeEvaluate(node->link[1], variables);
                 break;
             case OP_ASSIGMENT:
-                //проверка, что link[0] --- переменная
-                if (node->link[0]->ptrToData->type == NODE_TYPE_VARIABLE)
-                {
+                //РїСЂРѕРІРµСЂРєР°, С‡С‚Рѕ link[0] --- РїРµСЂРµРјРµРЅРЅР°СЏ
+                if (node->link[0]->ptrToData->type == NODE_TYPE_NAME){
                     variableHash = node->link[0]->ptrToData->dataUnion.ivalue;
-                    if (!variables.count(variableHash))
-                    {
+                    if (!variables.count(variableHash)){
+                        errorCode = ERR_UNDEFINED_VARIABLE;
                         $$$("Undefined variable!");
                         return 0;
                     }
                 }
-                else if (node->link[0]->ptrToData->type == NODE_TYPE_VARIABLE_SPECIFICALOR)
-                {
+                else if (node->link[0]->ptrToData->type == NODE_TYPE_VARIABLE_SPECIFICALOR){
                     variableHash = node->link[0]->link[0]->ptrToData->dataUnion.ivalue;
-                    if (variables.count(variableHash))
-                    {
+                    if (variables.count(variableHash)){
+                        errorCode = ERR_REDIFINITION_VARIABLE;
                         $$$("Redefinition variable!");
                         return 0;
                     }
-                    variables[variableHash] = 0;
+                    variables[variableHash].first = 0;
                 }
                 result = treeEvaluate(node->link[1], variables);
-                variables[variableHash] = result;
+                variables[variableHash].first = result;
                 break;
             case OP_BRANCH:
                 result = treeEvaluate(node->link[0], variables);
@@ -648,34 +669,174 @@ static double treeEvaluate(Expression::TNode* node, std::map<ui64, double>& vari
                 else
                     treeEvaluate(node->link[2], variables);
                 break;
+            case OP_RETURN:
+                programStack.push(treeEvaluate(node->link[0], variables));
+                isCurrentFunctionCalledReturn |= 1;
+                break;
             default:
                 num[0] = treeEvaluate(node->link[0], variables);
                 num[1] = treeEvaluate(node->link[1], variables);
                 result = evaluateFunctions[node->ptrToData->dataUnion.ivalue](num[0], num[1]);
                 break;
         }
-    if (nodeType == NODE_TYPE_FUNCTION)
-    {
+    if (nodeType == NODE_TYPE_FUNCTION){
         num[0] = treeEvaluate(node->link[0], variables);
         num[1] = treeEvaluate(node->link[1], variables);
         result = evaluateStandartFunctions[node->ptrToData->dataUnion.ivalue](num[0], num[1]);
     }
 
-    $$
-    return result;
+    if (nodeType == NODE_TYPE_CUSTOM_FUNCTION){
+        Hash functionNameHash = node->link[0]->ptrToData->dataUnion.ivalue;
+        //РїСЂРѕРёР·РІРѕРґРёРј РІС‹С‡РёСЃР»РµРЅРёРµ Р°СЂРіСѓРјРµРЅС‚РѕРІ, Р° СЂРµР·СѓР»СЊС‚Р°С‚ Р·Р°РїРёС…РёРІР°РµРј РІ СЃС‚РµРє РїСЂРѕРіСЂР°РјРјС‹
+        stack<double>& arguments = programStack;
+        TNode* argNode = node->link[1];
+        #define isNotEnd() argNode->ptrToData->type == NODE_TYPE_OPERATION && argNode->ptrToData->dataUnion.ivalue == OP_COMMA
+        if (argNode)
+        {
+            while (isNotEnd())
+            {
+                arguments.push(treeEvaluate(argNode->link[0], variables));
+                argNode = argNode->link[1];
+            } 
+            arguments.push(treeEvaluate(argNode, variables));
+        }
+        #undef isNotEnd()
+        //Р·Р°РїСѓСЃРєР°РµРј РІС‹РїРѕР»РЅРµРЅРёРµ С„СѓРЅРєС†РёРё
+        customFunctionEvaluate(functionNameHash, arguments);
+        if(programStack.empty()){
+            errorCode = ERR_FORGOTTEN_RETURN_OPERATOR;
+            $$$("Program stack is empty, you forgotten ret operator.");
+            return 0;
+        }
+        result = programStack.top();
+        programStack.pop();
+    }
+
+    $$ return result;
 }
 
-double Expression::evaluate()
+static EvaluationErrors genFuncTableInteration(Expression::TNode* node, map<Hash, Expression::TNode*>& functionsTable)
+{$
+    if(!node){
+        $$ return STATUS_OK;
+    }
+
+    bool isFunctionUnification = 0;
+    isFunctionUnification = node->ptrToData->type == NODE_TYPE_OPERATION 
+                         && node->ptrToData->dataUnion.ivalue == OP_DOLLAR;
+    EvaluationErrors errorCode = STATUS_OK;
+
+    if (isFunctionUnification){
+        errorCode = genFuncTableInteration(node->link[1], functionsTable);
+        node = node->link[0];
+    }
+    if (errorCode){
+        $$ return errorCode;
+    }
+
+
+    if (functionsTable.count(node->link[0]->ptrToData->dataUnion.ivalue)){
+        $$$("Function redefinition!");
+        return ERR_REDIFINITION_FUNCTION;
+    }
+    functionsTable[node->link[0]->ptrToData->dataUnion.ivalue] = node;
+
+
+    $$ return errorCode;
+}
+
+EvaluationErrors Expression::genFunctionTable()
+{$
+    Assert_c(isValid);
+    if (!isValid){
+        $$$("Invalid structure.");
+        return ERR_INVALID_TREE_STRUCTURE;
+    }
+
+    if (functionsTable.size()){
+        $$$("The table has generated already.");
+        return ERR_ATTEMPT_REDEFINE_FUNCTION_TABLE;
+    }
+
+    TNode* node = getRoot();
+    $$ return genFuncTableInteration(node, functionsTable);
+}
+
+static EvaluationErrors genVarTableInteration(Expression::TNode* node, map<Hash, pair<double, ui32>>& varablesTable, stack<double>& argc)
+{$
+    if (!node){
+        $$ return STATUS_OK;
+    }
+
+    bool isVariableUnification = 0;
+    isVariableUnification = node->ptrToData->type == NODE_TYPE_OPERATION
+        && node->ptrToData->dataUnion.ivalue == OP_COMMA;
+    EvaluationErrors errorCode = STATUS_OK;
+
+    if (isVariableUnification){
+        errorCode = genVarTableInteration(node->link[1], varablesTable, argc);
+        node = node->link[0];
+    }
+
+    node = node->link[0];
+    if (varablesTable.count(node->ptrToData->dataUnion.ivalue)){
+        $$$("Function param redefinition!");
+        return ERR_FUNCTION_PARAM_REDEFINITION;
+    }
+    if (!argc.empty()){
+        varablesTable[node->ptrToData->dataUnion.ivalue] = pair<double, ui32>(argc.top(), 0);
+        argc.pop();
+    }else{
+        $$$("Invalid number of arguments!");
+        return ERR_INVALID_NUMBER_OF_FUNCTION_ARGUMENTS;
+    }
+
+    $$ return errorCode;
+}
+
+void Expression::customFunctionEvaluate(Hash functionHash, stack<double>& argc)
+{$
+    if (!functionsTable.count(functionHash)){
+        errorCode = ERR_UNDEFINED_FUNCTION;
+        printf("Undefined function hash: 0x%X\n", functionHash);
+        $$$("Undefined function.");
+        return;
+    }
+
+    TNode* node = functionsTable[functionHash];
+    map<Hash, pair<double, ui32>> varablesTable;
+    errorCode = genVarTableInteration(node->link[1], varablesTable, argc);
+    if (errorCode) {
+        $$ return;
+    }
+    treeEvaluate(node->link[2], varablesTable);
+    isCurrentFunctionCalledReturn = 0;
+    $$ return;
+}
+
+void Expression::evaluate()
 {$
     Assert_c(isValid);
     if (!isValid)
     {
+        errorCode = ERR_INVALID_TREE_STRUCTURE;
         $$$("Invalid structure");
-        return 0;
+        return;
     }
-    varables.clear();
-    $$
-    return treeEvaluate(getRoot(), varables);
+
+    errorCode = genFunctionTable();
+    if (errorCode) {
+        $$$("Problems with generating function table");
+        return;
+    }
+    isCurrentFunctionCalledReturn = 0;
+    if (functionsTable.count(entryPointHash))
+        customFunctionEvaluate(entryPointHash, programStack);
+    else{
+        $$$("There is no entry point. By default use main().");
+        return;
+    }
+    $$ return;
 }
 //|_____________________________________________________________________________________________________________________________|
 //===============================================================================================================================
@@ -684,7 +845,7 @@ double Expression::evaluate()
 //===============================================================================================================================
 //|                                                                                                                             |
 //|                                                                                                                             |
-//|                                  это самая вызываемая функция из всех написанных                                            |
+//|                                  СЌС‚Рѕ СЃР°РјР°СЏ РІС‹Р·С‹РІР°РµРјР°СЏ С„СѓРЅРєС†РёСЏ РёР· РІСЃРµС… РЅР°РїРёСЃР°РЅРЅС‹С…                                            |
 //|                                                                                                                             |
 //|                                                                                                                             |
 //|_____________________________________________________________________________________________________________________________|
@@ -692,7 +853,7 @@ double Expression::evaluate()
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //************************************************************************************************************
-//~~~~~~~~~~~~~~~~~~~~~Переписать с учетом количества детей TREE_CHILD_NUMBER~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//~~~~~~~~~~~~~~~~~~~~~РџРµСЂРµРїРёСЃР°С‚СЊ СЃ СѓС‡РµС‚РѕРј РєРѕР»РёС‡РµСЃС‚РІР° РґРµС‚РµР№ TREE_CHILD_NUMBER~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //************************************************************************************************************
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Expression::TNode* createNode(Expression::TNode* left, Expression::TNode* right, NodeType typeNode, UnionData unionData, Expression::TNode* parent)

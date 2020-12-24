@@ -1,5 +1,6 @@
 #include "Parser.h"
 #include "CallStack.h"
+#include "Hash.h"
 
 
 //табличка со всеми токенами языка
@@ -29,7 +30,8 @@ const triple<C_string, Parser::LexemaType, OpType> Parser::tokensTable[] =
     { "=",    TOKEN_ASSIGMENT,              OP_ASSIGMENT},
     { "def",  TOKEN_DEF,                    OP_DEF},
     { ",",    TOKEN_COMMA,                  OP_COMMA},
-    { "$",    TOKEN_UNDEFINED,              OP_DOLLAR} /// <--- этот токен только для объеднинения функций
+    { "$",    TOKEN_UNDEFINED,              OP_DOLLAR}, /// <--- этот токен только для объеднинения функций
+    { "ret",  TOKEN_RETURN,                 OP_RETURN},
 
 };
 const ui8 Parser::TOKENS_TABLE_SIZE = sizeof(Parser::tokensTable) / sizeof(Parser::tokensTable[0]);
@@ -56,6 +58,7 @@ $$
     Fu - Function
     fN - Function name
     Ar - Arguments of function
+    Av - Portable arguments
     G  - General (base block of code)
     L  - Line
     B  - Branch
@@ -77,14 +80,23 @@ $$
     L  -> V = LE1 | LE1
     V  -> vT vN | vN
 
-    LE1 -> LE2 || LE2 | LE2
-    LE2 -> LE3 && LE3 | LE3
+    LE1 -> LE2 || LE1 | LE2
+    LE2 -> LE3 && LE2 | LE3
     LE3 -> E < E | E > E | E <= E | E >= E | E == E | E != E | E = E
 
     E -> T + E | T - E | T
     T -> D * T | D ^ T | D
     D -> F / F | F
     F -> N     | (LE1)   | -(LE1)  | -F
+*/
+
+/*
+    tokens[] содержит 2 поля:
+        type --- тип токена, т.е. enum, описанный в таблице выше.
+                 может быть, например, TOKEN_OR, TOKEN_DEF, ...
+        dataUnion --- объединение double и ui32, при записи числа в узел дерева
+            считывается поле dvalue, в противном случае необходимо работать с ivalue
+            причем ivalue хранит в себе ИНДЕКС в таблице токенов, а не enum операции!!!
 */
 
 static i32 findOperation(const ui8* arr, ui8 value)
@@ -148,12 +160,13 @@ void Parser::parse_function(Expression::TNode** ptrNode, ui32& p, Expression::TN
     checkErrors();
     safeINC(p);
 
-    isErrorOccur |= !(tokens[p].type == TOKEN_VARIABLE);
+    *ptrNode = createNode(NULL, NULL, NODE_TYPE_OPERATION, unionData, parent);
+
+    isErrorOccur |= !(tokens[p].type == TOKEN_NAME);
+    unionData = tokens[p].dataUnion;
     checkErrors();
     safeINC(p);
-    *ptrNode = createNode(NULL, NULL, NODE_TYPE_OPERATION, unionData, parent);
-    unionData = tokens[p].dataUnion;
-    (*ptrNode)->link[0] = createNode(NULL, NULL, NODE_TYPE_VARIABLE, unionData, *ptrNode);
+    (*ptrNode)->link[0] = createNode(NULL, NULL, NODE_TYPE_NAME, unionData, *ptrNode);
     
     isErrorOccur |= !(tokens[p].type == TOKEN_BRACKET);
     checkErrors();
@@ -177,14 +190,14 @@ void Parser::parse_arguments(Expression::TNode** ptrNode, ui32& p, Expression::T
     Expression::TNode* link = NULL;
     UnionData unionData;
 
-    switch (tokens[p].type)
+    if (tokens[p].type == TOKEN_VARIABLE_TYPE)
     {
-    case TOKEN_VARIABLE_TYPE:
         link = createNode(NULL, NULL, NODE_TYPE_VARIABLE_SPECIFICALOR, tokens[p].dataUnion, parent);
         p++;
         parse_fact(&link->link[0], p, link);
-        break;
-    default:
+    }
+    else
+    {
         $$
         return;
     }
@@ -207,6 +220,31 @@ void Parser::parse_arguments(Expression::TNode** ptrNode, ui32& p, Expression::T
     return;
 }
 
+void Parser::parse_argumentsValue(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
+{$
+    Expression::TNode* link = NULL;
+    UnionData unionData;
+
+    parse_logicExpr1(&link, p, link);
+
+    if (p >= tokens.size())
+    {
+        $$$("Out of range tokens array");
+        return;
+    }
+
+    if (tokens[p].type == TOKEN_COMMA)
+    {
+        unionData.ivalue = OP_COMMA;
+        *ptrNode = createNode(link, NULL, NODE_TYPE_OPERATION, unionData, parent);
+        p++;
+        parse_argumentsValue(&(*ptrNode)->link[1], p, *ptrNode);
+    }
+    else
+        *ptrNode = link;
+    $$
+    return;
+}
 
 void Parser::parse_general(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
 {$
@@ -276,7 +314,7 @@ void Parser::parse_line(Expression::TNode** ptrNode, ui32& p, Expression::TNode*
     }
 
     i32 op = findOperation(operations, tokens[p].dataUnion.ivalue);
-    if (op != -1)
+    if (op != -1 && link)
     {
         UnionData unionData;
         unionData.ivalue = OP_ASSIGMENT;
@@ -367,9 +405,12 @@ void Parser::parse_var(Expression::TNode** ptrNode, ui32& p, Expression::TNode* 
         p++;
         parse_fact(&(*ptrNode)->link[0], p, *ptrNode);
         break;
-    case TOKEN_VARIABLE:
-        *ptrNode = createNode(NULL, NULL, NODE_TYPE_VARIABLE, tokens[p].dataUnion, parent);
-        p++;
+    case TOKEN_NAME:
+        if (tokens[p + 1].type != TOKEN_BRACKET)
+        {
+            *ptrNode = createNode(NULL, NULL, NODE_TYPE_NAME, tokens[p].dataUnion, parent);
+            p++;
+        }
         break;
     default:
         Assert_c("Undefined token type.");
@@ -402,7 +443,7 @@ void Parser::parse_logicExpr1(Expression::TNode** ptrNode, ui32& p, Expression::
         *ptrNode = createNode(NULL, NULL, NODE_TYPE_OPERATION, unionData, parent);
         (*ptrNode)->link[0] = link;
         link->parent = (*ptrNode);
-        parse_logicExpr2(&(*ptrNode)->link[1], p, *ptrNode);
+        parse_logicExpr1(&(*ptrNode)->link[1], p, *ptrNode);
     }
     else
         (*ptrNode) = link;
@@ -433,7 +474,7 @@ void Parser::parse_logicExpr2(Expression::TNode** ptrNode, ui32& p, Expression::
         *ptrNode = createNode(NULL, NULL, NODE_TYPE_OPERATION, unionData, parent);
         (*ptrNode)->link[0] = link;
         link->parent = (*ptrNode);
-        parse_logicExpr3(&(*ptrNode)->link[1], p, *ptrNode);
+        parse_logicExpr2(&(*ptrNode)->link[1], p, *ptrNode);
     }
     else
         (*ptrNode) = link;
@@ -516,11 +557,10 @@ void Parser::parse_term(Expression::TNode** ptrNode, ui32& p, Expression::TNode*
     Expression::TNode* link = NULL;
 
     parse_divider(&link, p, parent);
-    if (tokens.size() <= p)
+    if (tokens.size() <= p || !link)
     {
         (*ptrNode) = link;
-        $$
-        return;
+        $$ return;
     }
 
     i32 op = findOperation(operations, tokens[p].dataUnion.ivalue);
@@ -537,8 +577,7 @@ void Parser::parse_term(Expression::TNode** ptrNode, ui32& p, Expression::TNode*
     else
         (*ptrNode) = link;
 
-    $$
-    return;
+    $$ return;
 }
 
 void Parser::parse_divider(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
@@ -574,6 +613,8 @@ void Parser::parse_divider(Expression::TNode** ptrNode, ui32& p, Expression::TNo
 
 void Parser::parse_fact(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
 {$
+    Expression::TNode* link = NULL;
+    UnionData dataUnion;
     switch (tokens[p].type)
     {
         case TOKEN_BRACKET:
@@ -585,23 +626,51 @@ void Parser::parse_fact(Expression::TNode** ptrNode, ui32& p, Expression::TNode*
             *ptrNode = createNode(NULL, NULL, NODE_TYPE_VARIABLE_SPECIFICALOR, tokens[p].dataUnion, parent);
             p++;
             break;
-        case TOKEN_VARIABLE:
-            *ptrNode = createNode(NULL, NULL, NODE_TYPE_VARIABLE, tokens[p].dataUnion, parent);
+        case TOKEN_NAME:
+            link = createNode(NULL, NULL, NODE_TYPE_NAME, tokens[p].dataUnion, parent);
             p++;
+            if (tokens[p].type == TOKEN_BRACKET && tokens[p].dataUnion.ivalue == 0) /// открывается скобка
+            {
+                p++;
+                dataUnion.ivalue = 0;
+                *ptrNode = createNode(link, NULL, NODE_TYPE_CUSTOM_FUNCTION, dataUnion, parent);
+                parse_argumentsValue(&(*ptrNode)->link[1], p, *ptrNode);
+                p++;
+            }
+            else
+                *ptrNode = link;
             break;
         case TOKEN_NUMBER:
             *ptrNode = createNode(NULL, NULL, NODE_TYPE_NUMBER, tokens[p].dataUnion, parent);
             p++;
+            break;
+        case TOKEN_RETURN:
+            dataUnion.ivalue = OP_RETURN;
+            *ptrNode = createNode(NULL, NULL, NODE_TYPE_OPERATION, dataUnion, parent);
+            p++;
+            if (tokens[p].type == TOKEN_SEMICOLON)
+            {
+                dataUnion.dvalue = 0.0;
+                (*ptrNode)->link[0] = createNode(NULL, NULL, NODE_TYPE_NUMBER, dataUnion, *ptrNode);
+            }
+            else
+                parse_logicExpr1(&(*ptrNode)->link[0], p, *ptrNode);
             break;
         case TOKEN_FUNCTION:
             *ptrNode = createNode(NULL, NULL, NODE_TYPE_FUNCTION, tokens[p].dataUnion, parent);
             if (tokens[p + 1].type == TOKEN_BRACKET)
             {
                 p+=2;
-                parse_expr(&(*ptrNode)->link[0], p, *ptrNode);
+                if (tokens[p].type == TOKEN_BRACKET) {
+                    p++;
+                    break;
+                }
+                    
+                parse_logicExpr1(&(*ptrNode)->link[0], p, *ptrNode);
                 p++;
                 break;
             }
+            p++;
             parse_fact(&(*ptrNode)->link[0], p, *ptrNode);
             break;
         default:
@@ -612,7 +681,7 @@ void Parser::parse_fact(Expression::TNode** ptrNode, ui32& p, Expression::TNode*
     $$
 }
 
-static bool isEqualTo(C_string str, C_string sub)
+static bool isStrStartFromSubStr(C_string str, C_string sub)
 {
     while (*sub && *str)
     {
@@ -623,54 +692,6 @@ static bool isEqualTo(C_string str, C_string sub)
     }
     return !*sub;
 }
-
-
-/**
-\brief Таблица перестановки 256 энементов для алгоритма хеширования Пирсона
-*/
-static const ui8 T[256] = {
-    249, 232, 89, 20, 244, 97, 50, 114, 220, 107, 86, 150, 67, 233, 42, 226,
-    209, 3, 206, 74, 207, 180, 85, 216, 21, 191, 246, 82, 137, 186, 128, 40,
-    172, 15, 96, 93, 152, 60, 240, 95, 122, 2, 164, 33, 112, 17, 201, 129,
-    22, 248, 225, 132, 76, 163, 127, 139, 118, 57, 136, 8, 37, 245, 195, 16,
-    43, 87, 69, 0, 39, 188, 254, 130, 251, 213, 243, 222, 78, 223, 6, 228,
-    231, 211, 106, 119, 124, 174, 155, 14, 189, 29, 101, 113, 70, 196, 18, 173,
-    35, 167, 229, 92, 239, 157, 83, 28, 25, 212, 215, 237, 203, 62, 10, 156,
-    160, 63, 59, 9, 79, 44, 141, 47, 34, 252, 158, 90, 64, 68, 27, 170,
-    56, 49, 108, 146, 5, 236, 100, 55, 26, 178, 175, 241, 65, 110, 54, 159,
-    147, 205, 135, 224, 198, 61, 120, 1, 154, 208, 7, 126, 138, 32, 161, 53,
-    165, 71, 148, 73, 13, 94, 11, 84, 38, 104, 77, 45, 81, 131, 193, 255,
-    234, 88, 217, 179, 4, 116, 219, 145, 168, 75, 171, 204, 192, 140, 166, 185,
-    30, 218, 151, 48, 24, 176, 80, 143, 149, 153, 51, 210, 121, 58, 235, 200,
-    125, 103, 197, 177, 184, 221, 181, 52, 19, 230, 242, 134, 109, 123, 31, 187,
-    12, 111, 23, 238, 253, 36, 98, 66, 247, 117, 227, 133, 72, 169, 102, 41,
-    105, 46, 190, 214, 194, 250, 199, 91, 202, 162, 142, 182, 183, 99, 144, 115
-};
-
-/**
-\brief   Генерация 64 битного хеша по алгоритму Пирсона
-\param   [in]   data   Указатель на массив, по которому строится хеш
-\param   [in]   len    Размер передаваемого массива
-\return  Возвращается 64 битных хеш, сгенерированный по алгоритму Пирсона
-*/
-static ui64 getHash(const ui8* data, ui32 len)
-{
-    union
-    {
-        ui64 hash;
-        ui8 hPtr[8];
-    }Hash;
-    ui8 h = 0;
-    for (int j = 0; j < 8; j++)
-    {
-        h = T[(data[0] + j) % 256];
-        for (int i = 0; i < len; i++)
-            h = T[h^data[i]];
-        Hash.hPtr[j] = h;
-    }
-    return Hash.hash;
-}
-
 
 Parser::Token Parser::getNextToken(C_string& str)
 {
@@ -683,7 +704,7 @@ Parser::Token Parser::getNextToken(C_string& str)
 
     for (ui8 tokenIndex = 0; tokenIndex < TOKENS_TABLE_SIZE; tokenIndex++)
     {
-        if (isEqualTo(str, tokensTable[tokenIndex].first))
+        if (isStrStartFromSubStr(str, tokensTable[tokenIndex].first))
         {
             result.type = tokensTable[tokenIndex].second;
             result.dataUnion.ivalue = tokenIndex;
@@ -696,7 +717,7 @@ Parser::Token Parser::getNextToken(C_string& str)
 
     for (ui8 funcIndex = 0; funcIndex < FUNCTION_TABLE_SIZE; funcIndex++)
     {
-        if (isEqualTo(str, FUNCTION_NAMES_TABLE[funcIndex]))
+        if (isStrStartFromSubStr(str, FUNCTION_NAMES_TABLE[funcIndex]))
         {
             result.type = TOKEN_FUNCTION;
             result.dataUnion.ivalue = funcIndex;
@@ -707,7 +728,7 @@ Parser::Token Parser::getNextToken(C_string& str)
     }
     
 
-    sscanf(str, "%[^ ;=+-*\\/()^{},!<>]%*c", buff);
+    sscanf(str, "%[^ ;=+--*\\/()^{},!<>]%*c", buff);
     bool isNumber = 1;
     ui8 index = 0;
     while (buff[index] && index < 32 && isNumber)
@@ -729,8 +750,8 @@ Parser::Token Parser::getNextToken(C_string& str)
     else
     {
         //если ничего не найдено, то текущий токен задает переменную
-        result.type = TOKEN_VARIABLE;
-        result.dataUnion.ivalue = getHash((ui8*)buff, strlen(buff));
+        result.type = TOKEN_NAME;
+        result.dataUnion.ivalue = getHash(buff, strlen(buff));
         str += strlen(buff);
     }
 
@@ -760,15 +781,15 @@ Expression::TNode* Parser::parse(C_string expression)
     bool wasSpaceOrBracket = 1;
     for (std::vector<Token>::iterator it = tokens.begin(); it != tokens.end(); it++)
     {
-        if (it->type == TOKEN_ARITHMETIC_OPERATION && it->dataUnion.ivalue == '-' && wasSpaceOrBracket)
+        if (it->type == TOKEN_ARITHMETIC_OPERATION && it->dataUnion.ivalue == 6 && wasSpaceOrBracket)
         {
             it->type = TOKEN_FUNCTION;
             it->dataUnion.ivalue = FUNC_NEG;
         }
-        wasSpaceOrBracket = it->dataUnion.ivalue == '(';
+        wasSpaceOrBracket = ! (it->type == TOKEN_NAME || it->type == TOKEN_NUMBER);
     }
 
-    #define PARSER_DEBUG
+    //#define PARSER_DEBUG
 
     #ifdef PARSER_DEBUG
     ui32 counter = 0;
@@ -780,7 +801,7 @@ Expression::TNode* Parser::parse(C_string expression)
             case TOKEN_NUMBER:
                 printf("%lf",it->dataUnion.dvalue);
                 break;
-            case TOKEN_VARIABLE:
+            case TOKEN_NAME:
                 printf("VARIABLE_HASH = 0x%X",it->dataUnion.ivalue);
                 break;
             case TOKEN_FUNCTION:

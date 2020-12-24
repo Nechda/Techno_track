@@ -1,0 +1,20 @@
+
+
+def factorial(var n)
+{
+	if (n > 1)
+	{
+		ret n*factorial(n-1);
+	}
+	else
+	{
+		ret 1;
+	}
+}
+
+def main()
+{
+	var n = input();
+	n = factorial(n);
+	print(n);
+}

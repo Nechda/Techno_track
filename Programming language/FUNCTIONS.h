@@ -1,10 +1,21 @@
-//============îïðåäåëåíèå ñòàíäàðòíûõ ôóíêöèé===============
+//============Ð¾Ð¿Ñ€ÐµÐ´ÐµÐ»ÐµÐ½Ð¸Ðµ ÑÑ‚Ð°Ð½Ð´Ð°Ñ€Ñ‚Ð½Ñ‹Ñ… Ñ„ÑƒÐ½ÐºÑ†Ð¸Ð¹===============
 FUNC_DEFINE(
     print,
     FUNC_PRINT,
     {
         printf("%lf\n",left);
         return 0;
+    },
+    false
+)
+
+FUNC_DEFINE(
+    input,
+    FUNC_INPUT,
+    {
+        double res = 0;
+        scanf("%lf", &res);
+        return res;
     },
     false
 )
@@ -79,5 +90,14 @@ FUNC_DEFINE(
 	{
 		return exp(left);
 	},
+    true
+)
+
+FUNC_DEFINE(
+    abs,
+    FUNC_ABS,
+    {
+        return left > 0 ? left : -left;
+    },
     true
 )

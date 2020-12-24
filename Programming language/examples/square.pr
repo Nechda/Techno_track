@@ -1,0 +1,64 @@
+
+
+def isZero(var x)
+{
+	if(abs(x) < 0.01)
+	{
+		ret 1;
+	}
+	ret 0;
+}
+
+def solveLinear(var a, var b)
+{
+	ret - b / a;
+}
+
+def solveSquare(var a, var b, var c)
+{
+
+	if(isZero(a) && isZero(b) && isZero(c))
+	{
+		ret;
+	}
+
+	if(isZero(a))
+	{
+		print(solveLinear(b,c));
+		ret;
+	}
+
+	if(isZero(c))
+	{
+		print(solveLinear(a,b));
+		print(0);
+		ret;
+	}
+
+	var D = b^2 - 4*a*c;
+	var t = -b/(2*a);
+	if(D > 0)
+	{
+		D = sqrt(D);
+		D = D / (2*a);
+		print(t + D);
+		print(t - D);
+		ret;
+	}
+	if(isZero(D))
+	{
+		print(t);
+		ret;
+	}
+
+	ret;
+}
+
+def main()
+{
+	var a = input();
+	var b = input();
+	var c = input();
+	solveSquare(a,b,c);
+	ret;
+}
