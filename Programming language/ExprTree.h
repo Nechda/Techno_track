@@ -23,7 +23,7 @@ enum NodeType
 
 enum OpType
 {
-    #define OP_DEFINE(string, name, enumName, enumToken, priority, implentation)\
+    #define OP_DEFINE(string, name, enumName, priority, implentation, canUseInConstantSimplify, asmCodeTranslator)\
         enumName,
         #include "OPERATORS.h"
     #undef OP_DEFINE
@@ -98,6 +98,7 @@ class Expression : public Tree<NodeInfo>
         ~Expression() { functionsTable.clear(); };
         void simplify();
         void evaluate();
+        void compile(const C_string filename);
         bool isValidStruct();
         void getEvaluateStatus();
         

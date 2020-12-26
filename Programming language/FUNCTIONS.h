@@ -6,7 +6,12 @@ FUNC_DEFINE(
         printf("%lf\n",left);
         return 0;
     },
-    false
+    false,
+    {
+        genAsmByTree(node->link[0], asmInfo);
+        pushLine("pop eax");
+        pushLine("out eax");
+    }
 )
 
 FUNC_DEFINE(
@@ -17,7 +22,11 @@ FUNC_DEFINE(
         scanf("%lf", &res);
         return res;
     },
-    false
+    false,
+    {
+        pushLine("in eax");
+        pushLine("push eax");
+    }
 )
 
 FUNC_DEFINE(
@@ -26,7 +35,13 @@ FUNC_DEFINE(
     {
         return -left;
     },
-    true
+    true,
+    {
+        genAsmByTree(node->link[0], asmInfo);
+        pushLine("pop eax");
+        pushLine("mul eax, -1.0");
+        pushLine("push eax");
+    }
 )
 
 FUNC_DEFINE(
@@ -35,7 +50,13 @@ FUNC_DEFINE(
 	{
 		return sinf(left);
     },
-    true
+    true,
+    {
+        genAsmByTree(node->link[0], asmInfo);
+        pushLine("pop eax");
+        pushLine("sin eax");
+        pushLine("push eax");
+    }
 )
 
 
@@ -45,7 +66,13 @@ FUNC_DEFINE(
 	{
 		return cosf(left);
 	},
-    true
+    true,
+    {
+        genAsmByTree(node->link[0], asmInfo);
+        pushLine("pop eax");
+        pushLine("cos eax");
+        pushLine("push eax");
+    }
 )
 
 FUNC_DEFINE(
@@ -54,7 +81,19 @@ FUNC_DEFINE(
 	{
 		return tanf(left);
 	},
-    true
+    true,
+    {
+        genAsmByTree(node->link[0], asmInfo);
+        pushLine("pop eax");
+        pushLine("mov ebx, eax");
+        pushLine("sin eax");
+        pushLine("mov esi, eax");
+        pushLine("cos ebx");
+        pushLine("mov edi, eax");
+        pushLine("div esi, edi");
+        pushLine("mov eax, esi");
+        pushLine("push eax");
+    }
 )
 
 FUNC_DEFINE(
@@ -63,7 +102,19 @@ FUNC_DEFINE(
 	{
 		return 1.0/tanf(left);
 	},
-    true
+    true,
+    {
+        genAsmByTree(node->link[0], asmInfo);
+        pushLine("pop eax");
+        pushLine("mov ebx, eax");
+        pushLine("cos eax");
+        pushLine("mov esi, eax");
+        pushLine("sin ebx");
+        pushLine("mov edi, eax");
+        pushLine("div esi, edi");
+        pushLine("mov eax, esi");
+        pushLine("push eax");
+    }
 )
 
 FUNC_DEFINE(
@@ -72,7 +123,10 @@ FUNC_DEFINE(
 	{
 		return log(left);
 	},
-    true
+    true,
+    {
+
+    }
 )
 
 FUNC_DEFINE(
@@ -81,7 +135,13 @@ FUNC_DEFINE(
 	{
 		return sqrt(left);
 	},
-    true
+    true,
+    {
+        genAsmByTree(node->link[0], asmInfo);
+        pushLine("pop eax");
+        pushLine("sqrt eax");
+        pushLine("push eax");
+    }
 )
 
 FUNC_DEFINE(
@@ -90,7 +150,10 @@ FUNC_DEFINE(
 	{
 		return exp(left);
 	},
-    true
+    true,
+    {
+
+    }
 )
 
 FUNC_DEFINE(
@@ -99,5 +162,11 @@ FUNC_DEFINE(
     {
         return left > 0 ? left : -left;
     },
-    true
+    true,
+    {
+        genAsmByTree(node->link[0], asmInfo);
+        pushLine("pop eax");
+        pushLine("abs eax");
+        pushLine("push eax");
+    }
 )

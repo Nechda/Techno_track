@@ -21,9 +21,10 @@ int main()
     printf("Done!\n");
     //printf("Start draw tree\n");
     //exprTree.drawGraph("originalTree");
-    printf("Start evaluate...\n");
-    exprTree.evaluate();
-    exprTree.getEvaluateStatus();
+    //printf("Start evaluate...\n");
+    //exprTree.evaluate();
+    //exprTree.getEvaluateStatus();
+    exprTree.compile("prog.asm");
     system("pause");
     $$
     loggerDestr();

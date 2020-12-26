@@ -46,7 +46,7 @@ C_string expInfoToStr(NodeInfo* exp, bool printAddr = false)
     static char buffer[64] = {};
     static C_string opDict[] =
     {
-        #define OP_DEFINE(string, name, enumName, enumToken, priority, implentation)\
+        #define OP_DEFINE(string, name, enumName, priority, implentation, canUseInConstantSimplify, asmCodeTranslator)\
                 string,
         #include "OPERATORS.h"
         #undef OP_DEFINE
@@ -230,26 +230,26 @@ void Expression::readTreeFromFile(const C_string filename)
 typedef double(*FuncionType)(double, double);
 
 
-#define OP_DEFINE(symbol, name, enumName, priority, implentation,texPrintImplemenation)\
+#define OP_DEFINE(string, name, enumName, priority, implentation, canUseInConstantSimplify, asmCodeTranslator)\
     static double runEvaluate##name(double left, double right) implentation
 #define FUNC_DEFINE(name, enumName, implentation, texPrintImplemenation)\
     static double runEvaluate##name(double left, double right) implentation
 #include "FUNCTIONS.h"
 #include "OPERATORS.h"
-#undef OP_DEFINE(symbol, name, enumName, priority, implentation,texPrintImplemenation)
-#undef FUNC_DEFINE(name, enumName, implentation, texPrintImplemenation)
+#undef OP_DEFINE
+#undef FUNC_DEFINE
 
 
 
 FuncionType evaluateFunctions[] = {
-    #define OP_DEFINE(symbol, name, enumName, priority, implentation, canUseInConstantSimplify)\
+    #define OP_DEFINE(string, name, enumName, priority, implentation, canUseInConstantSimplify, asmCodeTranslator)\
         runEvaluate##name,
     #include "OPERATORS.h"
     #undef OP_DEFINE
 };
 
 bool evaluateFunctionsPreprocessor[] = {
-    #define OP_DEFINE(symbol, name, enumName, priority, implentation,canUseInConstantSimplify)\
+    #define OP_DEFINE(string, name, enumName, priority, implentation,canUseInConstantSimplify)\
             canUseInConstantSimplify,
     #include "OPERATORS.h"
     #undef OP_DEFINE
@@ -257,7 +257,7 @@ bool evaluateFunctionsPreprocessor[] = {
 
 FuncionType evaluateStandartFunctions[] =
 {
-    #define FUNC_DEFINE(name, enumName, implentation, canUseInConstantSimplify)\
+    #define FUNC_DEFINE(name, enumName, implentation, canUseInConstantSimplify, asmCodeTranslator)\
         runEvaluate##name,
     #include "FUNCTIONS.h"
     #undef FUNC_DEFINE
