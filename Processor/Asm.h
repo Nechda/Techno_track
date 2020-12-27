@@ -11,6 +11,10 @@ typedef unsigned char ui8;
 typedef unsigned short ui16;
 typedef unsigned int  ui32;
 
+typedef char i8;
+typedef short i16;
+typedef int  i32;
+
 typedef ui16 Mcode;
 typedef char* C_string;
 /*
@@ -38,15 +42,24 @@ enum AsmError
 };
 
 
+union OperandUnion
+{
+    ui32 ivalue;
+    float fvalue;
+};
+
 /*
 \brief Посредствам данной стуктуры реализуется "команда" процессора
 */
 struct Command
 {
     Mcode machineCode = 0;
-    ui32 operand[2] = {};
+    OperandUnion operand[2] = {0, 0};
     ui32 nOperands = 0;
 };
+
+
+
 
 /*
 \brief Допустимые типы операндов

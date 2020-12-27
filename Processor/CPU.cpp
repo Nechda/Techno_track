@@ -61,7 +61,7 @@ struct CPUStruct
         ui32 x = 0;
         ui32 y = 0;
     }ChangedPixel;
-    ui32 ramSize = 512;
+    ui32 ramSize = 8;
     struct
     {
         ui32 eax;
@@ -168,7 +168,7 @@ void cupInit(const InputParams inParam)
         logger("CPU error", "I'm not sure that you really want too much memory: %d.", CPU.ramSize);
         return;
     }
-    CPU.ramSize = CPU.ramSize > 512 ? CPU.ramSize : 512;
+    //CPU.ramSize = CPU.ramSize > 512 ? CPU.ramSize : 512;
     CPU.RAM = (ui8*)calloc(CPU.ramSize, sizeof(ui8));
     memset(CPU.RAM, 0, CPU.ramSize * sizeof(ui8));
     Assert_c(CPU.RAM);
@@ -243,7 +243,7 @@ void cpuDump(FILE* outStream)
     fprintf(outStream, "        " #regName ":0x%04X  (int: %d) \t(float: %f)\n", CPU.Register.##regName,CPU.Register.##regName,*((float*)&CPU.Register.##regName))
     printRegInfo(eax);printRegInfo(ebx);printRegInfo(ecx);printRegInfo(edx);
     printRegInfo(esi);printRegInfo(edi);printRegInfo(ebp);printRegInfo(eip);
-    printRegInfo(efl);printRegInfo(ecs);printRegInfo(eds);printRegInfo(ess);
+    printRegInfo(efl);printRegInfo(ecs);printRegInfo(eds);printRegInfo(esp);
     #undef printRegInfo
     fprintf(outStream, "    }\n");
    
@@ -264,8 +264,9 @@ void cpuDump(FILE* outStream)
     #endif
     fprintf(outStream, "}\n");
 
+    #define DUMP_PRINT_STACK
     #ifdef DUMP_PRINT_STACK
-    stackDump(CPU.stack, getLoggerStream());
+    stackDump(CPU.stack, outStream);
     #endif
 }
 
@@ -299,9 +300,9 @@ static inline void setBit(ui32* marchCode, ui8 n, bool value)
 Пример работы: если команда имела вид mov eax,ebx, то в dst и src будут равны:
 dst = &CPU.Register.eax, src = &CPU.Register.ebx
 */
-static inline void getOperandsPointer(Command cmd, ui32** dst, ui32** src)
+static void getOperandsPointer(Command& cmd, OperandUnion** dst, OperandUnion** src)
 {
-    ui32** ptrOperands[2] = { dst, src };
+    ui32** ptrOperands[2] = { (ui32**)dst, (ui32**)src };
     OperandType opType;
     ui32 offset = 0;
     for (ui8 i = 0; i < cmd.nOperands; i++)
@@ -310,13 +311,14 @@ static inline void getOperandsPointer(Command cmd, ui32** dst, ui32** src)
         switch (opType)
         {
         case OPERAND_REGISTER:
-            *ptrOperands[i] = getRegisterPtr(cmd.operand[i]);
+            *ptrOperands[i] = getRegisterPtr(cmd.operand[i].ivalue);
             break;
         case OPERAND_NUMBER:
-            *ptrOperands[i] = &cmd.operand[i];
+            *ptrOperands[i] = &cmd.operand[i].ivalue;
             break;
         case OPERAND_MEMORY:
-            offset = CPU.Register.eds + cmd.operand[i];
+            offset = CPU.Register.eds;
+            offset += CPU.isFloatPointMath ? static_cast<ui32>(cmd.operand[i].fvalue) : cmd.operand[i].ivalue;
             if (offset+sizeof(ui32) >= CPU.ramSize)
             {
                 Assert_c(!"The command tries to access a nonexistent memory area!");
@@ -334,7 +336,7 @@ static inline void getOperandsPointer(Command cmd, ui32** dst, ui32** src)
             *ptrOperands[i] = (ui32*)&CPU.RAM[offset];
             break;
         case OPERAND_MEM_BY_REG:
-            offset = CPU.Register.eds + *getRegisterPtr(cmd.operand[i]);
+            offset = CPU.Register.eds + static_cast<ui32>(*getRegisterPtr(cmd.operand[i].ivalue));
             if (offset+sizeof(ui32)>= CPU.ramSize)
             {
                 Assert_c(!"The command tries to access a nonexistent memory area!");
@@ -420,13 +422,13 @@ static CPUerror cpuRun(bool writeResultInLog = true)
             OperandType opType = getOperandType(cmd.machineCode, index);
             if (opType == OPERAND_REGISTER || opType == OPERAND_MEM_BY_REG)
             {
-                cmd.operand[index] = *((ui8*)ptr);
+                cmd.operand[index].ivalue = *((ui8*)ptr);
                 CPU.Register.eip += sizeof(ui8);
                 ptr += sizeof(ui8);
             }
             if (opType == OPERAND_NUMBER || opType == OPERAND_MEMORY)
             {
-                cmd.operand[index] = *((ui32*)ptr);
+                cmd.operand[index].ivalue = *((ui32*)ptr);
                 CPU.Register.eip += sizeof(ui32);
                 ptr += sizeof(ui32);
             }
@@ -584,12 +586,12 @@ static inline void renderChar(float x, float y, const char c)
 void drawFromVideoMemory()
 {
     ///если раскомментировать этот кусок, то получится красивый эффект
-    /*
+    
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glColor4f(0, 0, 0, 0.01);
     glRectf(0, 0, window.winWidth, window.winHeight);
-    */
+    
 
     
     static const char* string = (char*)&CPU.RAM[VIDEO_MEMORY_PTR];    

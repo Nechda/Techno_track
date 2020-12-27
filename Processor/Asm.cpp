@@ -105,8 +105,6 @@ struct Lexema
 };
 
 
-
-
 /*
 \brief Таблица с описанием всех команд, которые поддерживает компилятор
 */
@@ -349,9 +347,9 @@ struct
         {
             OperandType opType = getOperandType(cmd.machineCode, i);
             if (opType == OPERAND_NUMBER || opType == OPERAND_MEMORY)
-                operandStr[i] = getStrByNumber(cmd.operand[i]);
+                operandStr[i] = getStrByNumber(cmd.operand[i].ivalue);
             if (opType == OPERAND_REGISTER || opType == OPERAND_MEM_BY_REG)
-                operandStr[i] = getRegisterName(cmd.operand[i]);
+                operandStr[i] = getRegisterName(cmd.operand[i].ivalue);
             isInvalidOperands |= !operandStr[i];
         }
 
@@ -425,16 +423,16 @@ struct
                 OperandType opType = getOperandType(cmd.machineCode, i);
                 if (opType == OPERAND_NUMBER || opType == OPERAND_MEMORY)
                 {
-                    cmd.operand[i] = *((ui32*)bytes);
+                    cmd.operand[i].ivalue = *((ui32*)bytes);
                     bytes += sizeof(ui32);
-                    operandStr[i] = getStrByNumber(cmd.operand[i]);
+                    operandStr[i] = getStrByNumber(cmd.operand[i].ivalue);
 
                 }
                 if (opType == OPERAND_REGISTER || opType == OPERAND_MEM_BY_REG)
                 {
-                    cmd.operand[i] = *((ui8*)bytes);
+                    cmd.operand[i].ivalue = *((ui8*)bytes);
                     bytes += sizeof(ui8);
-                    operandStr[i] = getRegisterName(cmd.operand[i]);
+                    operandStr[i] = getRegisterName(cmd.operand[i].ivalue);
                 }
                 isInvalidOperands |= !operandStr[i];
             }
@@ -835,20 +833,20 @@ struct
                 }
                 if (lxt == LEX_NUMBER)
                 {
-                    cmd.operand[i] = *((ui32*)ptr);
+                    cmd.operand[i].ivalue = *((ui32*)ptr);
                     setOperandType(&cmd.machineCode, i, OPERAND_NUMBER);
                     currentPosition += sizeof(ui32);
                 }
                 if (lxt == LEX_REGISTER)
                 {
-                    cmd.operand[i] = *((ui8*)ptr);
+                    cmd.operand[i].ivalue = *((ui8*)ptr);
                     setOperandType(&cmd.machineCode, i, OPERAND_REGISTER);
                     currentPosition += sizeof(ui8);
                 }
                 if (lxt == LEX_MEMORY || lxt == LEX_MEM_BY_REG)
                 {
-                    cmd.operand[i] = getMemoryOperand(ptr,lables,nLables);
-                    if (cmd.operand[i] == ASM_ERROR_CODE)
+                    cmd.operand[i].ivalue = getMemoryOperand(ptr,lables,nLables);
+                    if (cmd.operand[i].ivalue == ASM_ERROR_CODE)
                     {
                         logger("Compilator error", "Invalid link to memory: \"%s\" ", ptr);
                         return ASM_ERROR_INVALID_OPERAND_SYNTAX;
@@ -871,7 +869,7 @@ struct
                     }
                     setOperandType(&cmd.machineCode, i, OPERAND_NUMBER);
                     currentPosition += sizeof(ui32);
-                    cmd.operand[i] = lables[labelIndex].pos;
+                    cmd.operand[i].ivalue = lables[labelIndex].pos;
                 }
                 
             }
@@ -899,12 +897,12 @@ struct
                 OperandType opType = getOperandType(cmd.machineCode, i);
                 if (opType == OPERAND_NUMBER || opType == OPERAND_MEMORY)
                 {
-                    *((ui32*)bytes) = cmd.operand[i];
+                    *((ui32*)bytes) = cmd.operand[i].ivalue;
                     bytes += sizeof(ui32);
                 }
                 if (opType == OPERAND_REGISTER || opType == OPERAND_MEM_BY_REG)
                 {
-                    *((ui8*)bytes) = cmd.operand[i];
+                    *((ui8*)bytes) = cmd.operand[i].ivalue;
                     bytes += sizeof(ui8);
                 }
             }

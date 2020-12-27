@@ -14,7 +14,8 @@
 
 #include <GL\freeglut.h>
 
-
+#include <iostream>
+#include <fstream>
 
 
 /**
@@ -165,7 +166,6 @@ int initOutStream(char* outputFileName, FILE** outStreamPtr, char* mode,InputPar
     }
     $$ return 0;
 }
-
 
 
 

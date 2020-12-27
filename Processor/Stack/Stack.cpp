@@ -386,7 +386,8 @@ void _stackDump(const void* stk, const dbgCallInfo dbgInfo,FILE* outStream)
         fprintf(outStream,"           leftSide[0x%X] = 0x%llX\n", ptrData + capacity*elementSize, *((CanaryType*)(ptrData + capacity*elementSize)));
         fprintf(outStream,"       }\n");
     #endif
-        
+       
+    #ifdef STK_LIST_FORMAT_PRINT_DATA
     for (int i = 0; i < size; i++)
     {
         fprintf(outStream,"        ");
@@ -399,6 +400,43 @@ void _stackDump(const void* stk, const dbgCallInfo dbgInfo,FILE* outStream)
             fprintf(outStream,"%X", *((char*)stack->data + i*elementSize + j) & 0xFF);
         fprintf(outStream,"\n");
     }
+    #endif
+
+
+    #ifdef STK_TABLE_FORMAT_PRINT_DATA
+    for (int i = 0; i < size / 16 + 1; i++)
+    {
+        fprintf(outStream, "        ");
+        for (int j = 0; j < 16; j++)
+        {
+            if(i * 16 + j < size)
+                fprintf(outStream, "0x%02X ", *((char*)stack->data + i*16 + j) & 0xFF);
+        }
+        fprintf(outStream, "\n");
+    }
+    #endif
+
+    union
+    {
+        float fvalue;
+        ui32 ivalue;
+        ui8 arr[4];
+    }number;
+
+
+    #define STK_FLOAT_FORMAT_PRINT_DATA
+
+
+
+    #ifdef STK_FLOAT_FORMAT_PRINT_DATA
+        for (int i = 0; i < 4*16 ; i+=4)
+        {
+            for (ui8 j = 0; j < 4; j++)
+                number.arr[j] = *((char*)stack->data + size - 4 - i + j) & 0xFF;
+            fprintf(outStream, "        [0x%X]:0x%08X (%f)\n", size - 4 - i,number.ivalue, number.fvalue);
+        }
+    #endif
+
     
     fprintf(outStream,"   }\n");
     fprintf(outStream,"}\n");

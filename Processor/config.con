@@ -1,4 +1,4 @@
-memorySize=50000
+memorySize=2048
 nCols=100
 nLines=100
 entryPoint=0
