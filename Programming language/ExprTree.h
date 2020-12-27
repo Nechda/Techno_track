@@ -61,7 +61,7 @@ struct NodeInfo
     UnionData dataUnion;
 };
 
-enum EvaluationErrors
+enum CompilatorError
 {
     STATUS_OK,
     ERR_INVALID_TREE_STRUCTURE,
@@ -73,22 +73,23 @@ enum EvaluationErrors
     ERR_FUNCTION_PARAM_REDEFINITION,
     ERR_INVALID_NUMBER_OF_FUNCTION_ARGUMENTS,
     ERR_FORGOTTEN_RETURN_OPERATOR,
+    ERR_NO_ENTRY_POINT_FUNCTION
 };
 
 class Expression : public Tree<NodeInfo>
 {
     private:
-        static const pair<EvaluationErrors, const C_string> errorExplanationTable[];
+        static const pair<CompilatorError, const C_string> errorExplanationTable[];
         static const Hash entryPointHash;
         stack<double> programStack;
         bool isCurrentFunctionCalledReturn;
-        EvaluationErrors errorCode;
+        CompilatorError errorCode;
 
         void printNodeInDotFile(TNode* node, Stream stream);
         void readTreeFromFile(const C_string filename);
 
         map<Hash, TNode*> functionsTable;
-        EvaluationErrors genFunctionTable();
+        CompilatorError genFunctionTable();
         void customFunctionEvaluate(Hash functionHash, stack<double>& argc);
         double treeEvaluate(TNode* node, map<Hash, pair<double, ui32>>& variables);
     public:

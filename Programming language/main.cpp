@@ -4,27 +4,32 @@
 #include "ExprTree.h"
 #include "Parser.h"
 #include "CallStack.h"
-
-#include <ctype.h>
-#include <vector>
-#include <stack>
+#include "Argparser.h"
 
 
 
-int main()
+int main(int argc, char** argv)
 {
+    InputParams inputParams;
     initCallStack();
     loggerInit("log.log");
     $
-    printf("Start parsing program...\n");
-    Expression exprTree("program.pr");
+    parseConsoleArguments(argc, argv, &inputParams);
+    printf("Start parsing program...   ");
+    Expression exprTree(inputParams.inputFilename);
     printf("Done!\n");
-    //printf("Start draw tree\n");
-    //exprTree.drawGraph("originalTree");
-    //printf("Start evaluate...\n");
-    //exprTree.evaluate();
-    //exprTree.getEvaluateStatus();
-    exprTree.compile("prog.asm");
+    printf("Tree simplification...     ");
+    exprTree.simplify();
+    printf("Done!\n");
+    if (inputParams.wantDrawTree)
+    {
+        printf("Start drawing tree...      ");
+        exprTree.drawGraph();
+        printf("Done!\n");
+    }
+    printf("Compiation...              ");
+    exprTree.compile(inputParams.outputFilename);
+    exprTree.getEvaluateStatus();
     system("pause");
     $$
     loggerDestr();

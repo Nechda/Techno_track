@@ -6,18 +6,23 @@
            |     |
            |     |          Enum для определения типа команды. (См ExprTree.h-> enum OpType)
            |     |          |
-           |     |          |                 Приоритет операции
+           |     |          |                 Приоритет операции (использовался для построения теха,
+           |     |          |                 |    сейчас все приоритеты зашиты в рекурсивном спуске)
            |     |          |                 |
-           |     |          |                 |    Формальная реализация
+           |     |          |                 |    Формальная реализация для вычисления дерева
            |     |          |                 |    |
-           |     |          |                 |    |                        */
-//         V     V          V                 V    V 
-OP_DEFINE("+",  sum,        OP_SUM,           2,  {return left+right;}, true,
-{
-    preparationForOperatorWith2Operands(node, asmInfo);
-    throwLineForOperatorWith2Operands("add", asmInfo);
-}
-)
+           |     |          |                 |    |                    Можно ли на этапе компиляции вычислить эту функцию
+           |     |          |                 |    |                    |
+           |     |          |                 |    |                    |
+           |     |          |                 |    |                    |               Код, транслирующий дерево в ASM процессора
+           |     |          |                 |    |                    |                       |                                                */
+//         V     V          V                 V    V                    V                       |
+OP_DEFINE("+",  sum,        OP_SUM,           2,  {return left+right;}, true,//                 |
+{                                                                            //                 |        
+    preparationForOperatorWith2Operands(node, asmInfo);                      //   <-------------+
+    throwLineForOperatorWith2Operands("add", asmInfo);                       //
+}                                                                            //
+)                                                                            //
 
 OP_DEFINE("-",  sub,        OP_SUB,           2,  {return left-right;}, true,
 {
@@ -51,7 +56,7 @@ OP_DEFINE("=",  assigment,  OP_ASSIGMENT,     3,  {return left;}, false,
 {
     if (node->link[0]->ptrToData->type == NODE_TYPE_VARIABLE_SPECIFICALOR)
     {
-        genAsmByTree(node->link[0], asmInfo); // этот вызов позволит запиать в таблицу новую переменную
+        genAsmByTree(node->link[0], asmInfo); // этот вызов позволит записать в таблицу новую переменную
         variableNameHash = node->link[0]->link[0]->ptrToData->dataUnion.ivalue;
     }
     else
@@ -62,19 +67,13 @@ OP_DEFINE("=",  assigment,  OP_ASSIGMENT,     3,  {return left;}, false,
     if (!asmInfo.tableAdrVariables.count(variableNameHash))
     {
         Assert_c("Undefined variable");
+        $$$("Undefined variable");
         return;
     }
 
-    pushLine("");
-    pushLine("push ebp");
-    pushLine("add ebp, %d", asmInfo.tableAdrVariables[variableNameHash] * SIZE_OPERANDS);
-    pushLine("mov esi, ebp");
-    pushLine("pop ebp");
-    pushLine("pop [esi]");
-    pushLine("");
+    throwLineForAccessToVariable(variableNameHash, OperationOnVar::VAR_OP_SET, asmInfo);
 
     //pushLine("pop [ebp + %d]", asmInfo.tableAdrVariables[variableNameHash] * SIZE_OPERANDS);
-
 }
 )
 
@@ -182,18 +181,15 @@ OP_DEFINE("$", dollar_impl, OP_DOLLAR,        3, { return 0;}, false,
 
 OP_DEFINE("ret", ret_impl,  OP_RETURN,        3, { return 0;}, false,
 {
-    pushLine("");
     genAsmByTree(node->link[0], asmInfo);
     pushLine("pop eax");
     pushLine("mov esp, ebp");
     pushLine("ret");
-    pushLine("");
 }
 )
 
 OP_DEFINE("while", whl_impl,OP_WHILE,         3, { return 0;}, false,
 {
-    pushLine("");
     pushLine("loop_%X:",asmInfo.labelCountLoopOperator);
     genAsmByTree(node->link[0], asmInfo);
     pushLine("pop ecx");
@@ -202,8 +198,6 @@ OP_DEFINE("while", whl_impl,OP_WHILE,         3, { return 0;}, false,
     genAsmByTree(node->link[1], asmInfo);
     pushLine("jmp loop_%X", asmInfo.labelCountLoopOperator);
     pushLine("end_loop_%X:", asmInfo.labelCountLoopOperator);
-    pushLine("");
-
     asmInfo.labelCountLoopOperator++;
 }
 )

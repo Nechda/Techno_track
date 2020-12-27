@@ -61,14 +61,15 @@ class Parser
         void parse_branch(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent);
         void parse_loop(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent);
         void parse_var(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent);
-        
         void parse_logicExpr1(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent);
         void parse_logicExpr2(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent);
         void parse_logicExpr3(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent);
         void parse_expr(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent);
         void parse_term(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent);
         void parse_divider(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent);
-        void parse_fact(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent);
+        void parse_unaryOperator(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent);
+        void parse_operand(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent);
+        void parse_namedOperand(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent);
         Token getNextToken(C_string& str);
     public:
         Parser() {};

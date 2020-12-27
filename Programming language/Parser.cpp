@@ -47,11 +47,9 @@ ui8 Parser::getTokenIndexByString(C_string str)
 
 
 Parser::~Parser()
-{
-    $
-
-        tokens.clear();
-    $$
+{$
+    tokens.clear();
+    $$ return;
 }
 
 
@@ -72,22 +70,55 @@ Parser::~Parser()
     T  - Term (?)
     D  - Divider
     F  - Factor
-    N  - Can be function, number or variable
+    Uo - unary operation
+    Op - operands
+    No - named operand (function or variable)
+
     Fl -> Fu Fl | Fu
     Fu -> def fN(Ar){G}
     Ar -> vT vN , Ar | vT vN |
     G  -> L ; G | B G
     B  -> if(LE1){G}else{G} | if(LE1){G}
-    L  -> V = LE1 | LE1
+    L  -> ret LE1 | vT vN = LE1 | LE1
     V  -> vT vN | vN
     LE1 -> LE2 || LE1 | LE2
     LE2 -> LE3 && LE2 | LE3
     LE3 -> E < E | E > E | E <= E | E >= E | E == E | E != E | E = E
     E -> T + E | T - E | T
     T -> D * T | D ^ T | D
-    D -> F / F | F
-    F -> N     | (LE1)   | -(LE1)  | -F
+    D -> Uo / Uo | Uo
+    Uo-> -Op | Op
+    Op-> Number | No | (LE1)
+    No-> Name | Name(Av) | STD_function(LE1)
+
 */
+
+#define Assert_parser( expr_ )\
+    if(!(expr_))\
+    {\
+        $$$("Invalid sequence of lexemas.");\
+        if (*ptrNode) rCleanUp(*ptrNode);\
+        *ptrNode = NULL;\
+        return;\
+    }
+
+#define standartVariableBlock\
+    ui32 maxSize = tokens.size();\
+    UnionData dataUnion;\
+
+#define $$return\
+    {$$ return; }
+
+#define safeINC(x)\
+    {\
+        (x)++;\
+        if((x) >= maxSize)\
+        {\
+            $$$("Out of range");\
+            return;\
+        }\
+    }
+
 
 /*
     tokens[] содержит 2 поля:
@@ -96,6 +127,9 @@ Parser::~Parser()
     dataUnion --- объединение double и ui32, при записи числа в узел дерева
     считывается поле dvalue, в противном случае необходимо работать с ivalue
     причем ivalue хранит в себе ИНДЕКС в таблице токенов, а не enum операции!!!
+
+    в частности, если type == TOKEN_FUNCTION, то поле dataUnion.ivalue содержит
+    enum данной функции
 */
 
 static i32 findOperation(const ui8* arr, ui8 value)
@@ -112,9 +146,9 @@ static i32 findOperation(const ui8* arr, ui8 value)
 
 
 void Parser::parse_file(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
-{
-    $
-        Expression::TNode* link = NULL;
+{$
+    standartVariableBlock;
+    Expression::TNode* link = NULL;
     parse_function(&link, p, parent);
 
     if (!link)
@@ -123,152 +157,113 @@ void Parser::parse_file(Expression::TNode** ptrNode, ui32& p, Expression::TNode*
         return;
     }
 
-    if (p >= tokens.size())
+    if (maxSize <= p)
     {
         *ptrNode = link;
-        $$
-            return;
+        $$return;
     }
 
-    UnionData unionData;
-
-    unionData.ivalue = OP_DOLLAR;
-    *ptrNode = createNode(link, NULL, NODE_TYPE_OPERATION, unionData, parent);
+    dataUnion.ivalue = OP_DOLLAR;
+    *ptrNode = createNode(link, NULL, NODE_TYPE_OPERATION, dataUnion, parent);
     parse_file(&(*ptrNode)->link[1], p, *ptrNode);
 
-    $$
-        return;
+    $$return;
 }
 
 void Parser::parse_function(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
-{
-    $
-    ui32 maxSize = tokens.size();
-    #define checkErrors()\
-     if(isErrorOccur)\
-     {\
-        $$$("Invalid sequence of lexemas.");\
-        if (*ptrNode) rCleanUp(*ptrNode);\
-        *ptrNode = NULL;\
-        return;\
-     } 
-    #define safeINC(x) (x)++; if((x) >= maxSize) {$$$("Out of range");return;}
-    UnionData unionData;
+{$
+    standartVariableBlock;
 
-    unionData.ivalue = OP_DEF;
-    bool isErrorOccur = 0;
-    isErrorOccur |= !(tokens[p].type == TOKEN_DEF);
-    checkErrors();
+    dataUnion.ivalue = OP_DEF;
+    Assert_parser(tokens[p].type == TOKEN_DEF);
     safeINC(p);
 
-    *ptrNode = createNode(NULL, NULL, NODE_TYPE_OPERATION, unionData, parent);
+    *ptrNode = createNode(NULL, NULL, NODE_TYPE_OPERATION, dataUnion, parent);
 
-    isErrorOccur |= !(tokens[p].type == TOKEN_NAME);
-    unionData = tokens[p].dataUnion;
-    checkErrors();
+    Assert_parser(tokens[p].type == TOKEN_NAME);
+    dataUnion = tokens[p].dataUnion;
     safeINC(p);
-    (*ptrNode)->link[0] = createNode(NULL, NULL, NODE_TYPE_NAME, unionData, *ptrNode);
+    (*ptrNode)->link[0] = createNode(NULL, NULL, NODE_TYPE_NAME, dataUnion, *ptrNode);
 
-    isErrorOccur |= !(tokens[p].type == TOKEN_BRACKET);
-    checkErrors();
+    Assert_parser(tokens[p].type == TOKEN_BRACKET);
     safeINC(p);
     parse_arguments(&(*ptrNode)->link[1], p, *ptrNode);
-    isErrorOccur |= !(tokens[p].type == TOKEN_BRACKET);
-    checkErrors();
+    Assert_parser(tokens[p].type == TOKEN_BRACKET);
     safeINC(p);
 
-    isErrorOccur |= !(tokens[p].type == TOKEN_CURLY_BACKET);
-    checkErrors();
+    Assert_parser(tokens[p].type == TOKEN_CURLY_BACKET);
     safeINC(p);
     parse_general(&(*ptrNode)->link[2], p, *ptrNode);
-    isErrorOccur |= !(tokens[p].type == TOKEN_CURLY_BACKET);
-    checkErrors();
+    Assert_parser(tokens[p].type == TOKEN_CURLY_BACKET);
     safeINC(p);
 }
 
 void Parser::parse_arguments(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
-{
-    $
-        Expression::TNode* link = NULL;
-    UnionData unionData;
+{$
+    standartVariableBlock;
+    Expression::TNode* link = NULL;
 
-    if (tokens[p].type == TOKEN_VARIABLE_TYPE)
-    {
-        link = createNode(NULL, NULL, NODE_TYPE_VARIABLE_SPECIFICALOR, tokens[p].dataUnion, parent);
-        p++;
-        parse_fact(&link->link[0], p, link);
-    }
-    else
-    {
-        $$
-            return;
-    }
-    if (p >= tokens.size())
-    {
-        $$$("Out of range tokens array");
-        return;
-    }
+    if (tokens[p].type != TOKEN_VARIABLE_TYPE)
+        $$return;
+
+    parse_var(&link, p, parent);
 
     if (tokens[p].type == TOKEN_COMMA)
     {
-        unionData.ivalue = OP_COMMA;
-        *ptrNode = createNode(link, NULL, NODE_TYPE_OPERATION, unionData, parent);
-        p++;
+        dataUnion.ivalue = OP_COMMA;
+        *ptrNode = createNode(link, NULL, NODE_TYPE_OPERATION, dataUnion, parent);
+        safeINC(p);
         parse_arguments(&(*ptrNode)->link[1], p, *ptrNode);
     }
     else
         *ptrNode = link;
-    $$
-        return;
+
+    $$return;
 }
 
 void Parser::parse_argumentsValue(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
-{
-    $
-        Expression::TNode* link = NULL;
-    UnionData unionData;
+{$
+    standartVariableBlock;
+    Expression::TNode* link = NULL;
 
     parse_logicExpr1(&link, p, link);
-
-    if (p >= tokens.size())
-    {
-        $$$("Out of range tokens array");
-        return;
-    }
-
+    Assert_c(p < maxSize);
     if (tokens[p].type == TOKEN_COMMA)
     {
-        unionData.ivalue = OP_COMMA;
-        *ptrNode = createNode(link, NULL, NODE_TYPE_OPERATION, unionData, parent);
-        p++;
+        dataUnion.ivalue = OP_COMMA;
+        *ptrNode = createNode(link, NULL, NODE_TYPE_OPERATION, dataUnion, parent);
+        safeINC(p);
         parse_argumentsValue(&(*ptrNode)->link[1], p, *ptrNode);
     }
     else
         *ptrNode = link;
-    $$
-        return;
+    $$return;
 }
 
 void Parser::parse_general(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
-{
-    $
-        static const ui8 operations[] = { getTokenIndexByString(";"), -1 };
+{$
+    standartVariableBlock;
+    static const ui8 operations[] = { getTokenIndexByString(";"), -1 };
     Expression::TNode* link = NULL;
 
-    if (p >= tokens.size()) { $$ return; }
-    parse_line(&link, p, parent);
+    if (maxSize <= p)
+        $$return;
 
-    if (tokens[p].type != TOKEN_SEMICOLON && link)
+    if (!link)
+        parse_branch(&link, p, parent);
+    if (!link)
+        parse_loop(&link, p, parent);
+    if (!link)
     {
-        $$$("Skipped ;");
-        return;
+        parse_line(&link, p, parent);
+        Assert_parser(tokens[p].type == TOKEN_SEMICOLON || !link);
     }
-    while (link && p < tokens.size() && tokens[p].type == TOKEN_SEMICOLON)
-        p++;
+    Assert_c(link);
+    while (p < tokens.size() && tokens[p].type == TOKEN_SEMICOLON)
+        safeINC(p);
 
 
-    UnionData unionData;
-    unionData.ivalue = OP_SEMICOLON;
+    dataUnion.ivalue = OP_SEMICOLON;
 
     bool throwLine = 0;
     throwLine |= p >= tokens.size();
@@ -277,468 +272,399 @@ void Parser::parse_general(Expression::TNode** ptrNode, ui32& p, Expression::TNo
     if (throwLine)
     {
         (*ptrNode) = link;
-        $$
-            return;
-    }
-
-    if (!link)
-    {
-        if (tokens[p].type == TOKEN_IF)
-            parse_branch(&link, p, parent);
-        else if (tokens[p].type == TOKEN_WHILE)
-            parse_loop(&link, p, parent);
-        else
-        {
-            $$$("Undefined lexema.");
-            return;
-        }
+        $$return;
     }
 
     Expression::TNode* tmpLink = NULL;
     parse_general(&tmpLink, p, parent);
 
     if (tmpLink)
-        *ptrNode = createNode(link, tmpLink, NODE_TYPE_OPERATION, unionData, parent);
+        *ptrNode = createNode(link, tmpLink, NODE_TYPE_OPERATION, dataUnion, parent);
     else
         *ptrNode = link;
 
-    $$
-        return;
+    $$return;
 }
 
+
+/*
+
+разобраться с грамматикой присвоения, с ретурном все ок
+ 
+*/
+
+
 void Parser::parse_line(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
-{
-    $
-        static const ui8 operations[] = { getTokenIndexByString("="), -1 };
+{$
+    standartVariableBlock;
+    static const ui8 operations[] = { getTokenIndexByString("="), -1 };
     Expression::TNode* link = NULL;
 
-    parse_var(&link, p, parent);
-    if (tokens.size() <= p)
+    Assert_parser(p < maxSize);
+    if (tokens[p].type == TOKEN_RETURN)
     {
-        (*ptrNode) = link;
-        $$
-            return;
+        dataUnion.ivalue = OP_RETURN;
+        safeINC(p);
+        *ptrNode = createNode(NULL, NULL, NODE_TYPE_OPERATION, dataUnion, parent);
+        if(tokens[p].type != TOKEN_SEMICOLON)
+            parse_logicExpr1(&(*ptrNode)->link[0], p, *ptrNode);
+        $$return;
     }
-
-    i32 op = findOperation(operations, tokens[p].dataUnion.ivalue);
-    if (op != -1 && link)
+    
+    if (tokens[p].type == TOKEN_VARIABLE_TYPE)
     {
-        UnionData unionData;
-        unionData.ivalue = OP_ASSIGMENT;
-        p++;
-        *ptrNode = createNode(NULL, NULL, NODE_TYPE_OPERATION, unionData, parent);
-        (*ptrNode)->link[0] = link;
-        link->parent = (*ptrNode);
+        parse_var(&link, p, parent);
+        if (tokens[p].type == TOKEN_SEMICOLON)
+            $$return;
+
+        Assert_parser(tokens[p].type == TOKEN_ASSIGMENT);
+        safeINC(p);
+        dataUnion.ivalue = OP_ASSIGMENT;
+        *ptrNode = createNode(link, NULL, NODE_TYPE_OPERATION, dataUnion, parent);
         parse_logicExpr1(&(*ptrNode)->link[1], p, *ptrNode);
-    }
-    else
-    {
-        parse_logicExpr1(&link, p, parent);
-        (*ptrNode) = link;
+        $$return;
     }
 
-    $$
-        return;
+    parse_logicExpr1(ptrNode, p, parent);
+    $$return;
 }
 
 void Parser::parse_branch(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
-{
-    $
-        ui32 maxSize = tokens.size();
-#define checkErrors()\
-     if(isErrorOccur)\
-     {\
-        $$$("Invalid sequence of lexemas.");\
-        if (*ptrNode) rCleanUp(*ptrNode);\
-        *ptrNode = NULL;\
-        return;\
-     } 
-#define safeINC(x) (x)++; if((x) >= maxSize) {$$$("Out of range");return;}
-    UnionData unionData;
+{$
+    standartVariableBlock;
 
-
-    unionData.ivalue = OP_BRANCH;
-    bool isErrorOccur = 0;
-    isErrorOccur |= !(tokens[p].type == TOKEN_IF);
-    checkErrors();
+    dataUnion.ivalue = OP_BRANCH;
+    Assert_parser(tokens[p].type == TOKEN_IF);
     safeINC(p);
-    isErrorOccur |= !(tokens[p].type == TOKEN_BRACKET);
-    checkErrors();
+    Assert_parser(tokens[p].type == TOKEN_BRACKET);
     safeINC(p);
 
-    *ptrNode = createNode(NULL, NULL, NODE_TYPE_OPERATION, unionData, parent);
+    *ptrNode = createNode(NULL, NULL, NODE_TYPE_OPERATION, dataUnion, parent);
 
     parse_logicExpr1(&(*ptrNode)->link[0], p, *ptrNode);
-    isErrorOccur |= !(*ptrNode)->link[0];
-    checkErrors();
-    isErrorOccur |= !(tokens[p].type == TOKEN_BRACKET);
-    checkErrors();
+    Assert_parser((*ptrNode)->link[0]);
+    Assert_parser(tokens[p].type == TOKEN_BRACKET);
     safeINC(p);
 
 
-    isErrorOccur |= !(tokens[p].type == TOKEN_CURLY_BACKET);
-    checkErrors();
+    Assert_parser(tokens[p].type == TOKEN_CURLY_BACKET);
     safeINC(p);
     parse_general(&(*ptrNode)->link[1], p, *ptrNode);
-    isErrorOccur |= !(*ptrNode)->link[1];
-    checkErrors();
-    isErrorOccur |= !(tokens[p].type == TOKEN_CURLY_BACKET);
-    checkErrors();
+    Assert_parser((*ptrNode)->link[1]);
+    Assert_parser(tokens[p].type == TOKEN_CURLY_BACKET);
     safeINC(p);
 
     if (tokens[p].type != TOKEN_ELSE)
-    {
-        $$
-            return;
-    }
+        $$return;
     safeINC(p);
 
-    isErrorOccur |= !(tokens[p].type == TOKEN_CURLY_BACKET);
-    checkErrors();
+    Assert_parser(tokens[p].type == TOKEN_CURLY_BACKET);
     safeINC(p);
     parse_general(&(*ptrNode)->link[2], p, *ptrNode);
-    isErrorOccur |= !(*ptrNode)->link[2];
-    checkErrors();
-    isErrorOccur |= !(tokens[p].type == TOKEN_CURLY_BACKET);
-    checkErrors();
+    Assert_parser((*ptrNode)->link[2]);
+    Assert_parser(tokens[p].type == TOKEN_CURLY_BACKET);
     safeINC(p);
 }
 
 void Parser::parse_loop(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
 {$
-    ui32 maxSize = tokens.size();
-    #define checkErrors()\
-     if(isErrorOccur)\
-     {\
-        $$$("Invalid sequence of lexemas.");\
-        if (*ptrNode) rCleanUp(*ptrNode);\
-        *ptrNode = NULL;\
-        return;\
-     } 
-    #define safeINC(x) (x)++; if((x) >= maxSize) {$$$("Out of range");return;}
-    UnionData unionData;
+    standartVariableBlock;
 
-
-    unionData.ivalue = OP_WHILE;
-    bool isErrorOccur = 0;
-    isErrorOccur |= !(tokens[p].type == TOKEN_WHILE);
-    checkErrors();
+    dataUnion.ivalue = OP_WHILE;
+    Assert_parser(tokens[p].type == TOKEN_WHILE);
     safeINC(p);
-    isErrorOccur |= !(tokens[p].type == TOKEN_BRACKET);
-    checkErrors();
+    Assert_parser(tokens[p].type == TOKEN_BRACKET);
     safeINC(p);
 
-    *ptrNode = createNode(NULL, NULL, NODE_TYPE_OPERATION, unionData, parent);
+    *ptrNode = createNode(NULL, NULL, NODE_TYPE_OPERATION, dataUnion, parent);
 
     parse_logicExpr1(&(*ptrNode)->link[0], p, *ptrNode);
-    isErrorOccur |= !(*ptrNode)->link[0];
-    checkErrors();
-    isErrorOccur |= !(tokens[p].type == TOKEN_BRACKET);
-    checkErrors();
+    Assert_parser((*ptrNode)->link[0]);
+    Assert_parser(tokens[p].type == TOKEN_BRACKET);
     safeINC(p);
 
 
-    isErrorOccur |= !(tokens[p].type == TOKEN_CURLY_BACKET);
-    checkErrors();
+    Assert_parser(tokens[p].type == TOKEN_CURLY_BACKET);
     safeINC(p);
     parse_general(&(*ptrNode)->link[1], p, *ptrNode);
-    isErrorOccur |= !(*ptrNode)->link[1];
-    checkErrors();
-    isErrorOccur |= !(tokens[p].type == TOKEN_CURLY_BACKET);
-    checkErrors();
+    Assert_parser((*ptrNode)->link[1]);
+    Assert_parser(tokens[p].type == TOKEN_CURLY_BACKET);
     safeINC(p);
 }
 
 void Parser::parse_var(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
-{
-    $
-        switch (tokens[p].type)
-        {
-        case TOKEN_VARIABLE_TYPE:
-            *ptrNode = createNode(NULL, NULL, NODE_TYPE_VARIABLE_SPECIFICALOR, tokens[p].dataUnion, parent);
-            p++;
-            parse_fact(&(*ptrNode)->link[0], p, *ptrNode);
-            break;
-        case TOKEN_NAME:
-            if (tokens[p + 1].type != TOKEN_BRACKET)
-            {
-                *ptrNode = createNode(NULL, NULL, NODE_TYPE_NAME, tokens[p].dataUnion, parent);
-                p++;
-            }
-            break;
-        default:
-            Assert_c("Undefined token type.");
-            $$$("Undefined token type.");
-            return;
-        }
-    $$
+{$
+    standartVariableBlock;
+    Assert_parser( p < maxSize );
+
+    Expression::TNode** link = ptrNode;
+
+    if (tokens[p].type == TOKEN_VARIABLE_TYPE)
+    {
+        *ptrNode = createNode(NULL, NULL, NODE_TYPE_VARIABLE_SPECIFICALOR, tokens[p].dataUnion, parent);
+        {int a = 0; }
+        safeINC(p);
+        Assert_parser(tokens[p].type == TOKEN_NAME);
+        (*ptrNode)->link[0] = createNode(NULL, NULL, NODE_TYPE_NAME, tokens[p].dataUnion, *ptrNode);
+        safeINC(p);
+        $$return;
+    }
+
+    if (tokens[p].type == TOKEN_NAME)
+    {
+        *ptrNode = createNode(NULL, NULL, NODE_TYPE_NAME, tokens[p].dataUnion, *ptrNode);
+        safeINC(p);
+        $$return;
+    }
+
+    $$$("Invalid sequence of lexemas.");
+    return;
 }
 
 void Parser::parse_logicExpr1(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
-{
-    $
-        static const ui8 operations[] = { getTokenIndexByString("||"), -1 };
+{$
+    standartVariableBlock;
+    static const ui8 operations[] = { getTokenIndexByString("||"), -1 };
     Expression::TNode* link = NULL;
 
     parse_logicExpr2(&link, p, parent);
-    if (tokens.size() <= p)
+    if (maxSize <= p)
     {
         (*ptrNode) = link;
-        $$
-            return;
+        $$return;
     }
 
     i32 op = findOperation(operations, tokens[p].dataUnion.ivalue);
     if (op != -1)
     {
-        UnionData unionData;
-        unionData.ivalue = OP_OR;
-        p++;
-        *ptrNode = createNode(NULL, NULL, NODE_TYPE_OPERATION, unionData, parent);
-        (*ptrNode)->link[0] = link;
-        link->parent = (*ptrNode);
+        dataUnion.ivalue = OP_OR;
+        safeINC(p);
+        *ptrNode = createNode(link, NULL, NODE_TYPE_OPERATION, dataUnion, parent);
         parse_logicExpr1(&(*ptrNode)->link[1], p, *ptrNode);
     }
     else
         (*ptrNode) = link;
 
-    $$
-        return;
+    $$return;
 }
 
 void Parser::parse_logicExpr2(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
-{
-    $
-        static const ui8 operations[] = { getTokenIndexByString("&&"), -1 };
+{$
+    standartVariableBlock;
+    static const ui8 operations[] = { getTokenIndexByString("&&"), -1 };
     Expression::TNode* link = NULL;
 
     parse_logicExpr3(&link, p, parent);
-    if (tokens.size() <= p)
+    if (maxSize <= p)
     {
         (*ptrNode) = link;
-        $$
-            return;
+        $$return;
     }
 
     i32 op = findOperation(operations, tokens[p].dataUnion.ivalue);
     if (op != -1)
     {
-        UnionData unionData;
-        unionData.ivalue = OP_AND;
-        p++;
-        *ptrNode = createNode(NULL, NULL, NODE_TYPE_OPERATION, unionData, parent);
-        (*ptrNode)->link[0] = link;
-        link->parent = (*ptrNode);
+        dataUnion.ivalue = OP_AND;
+        safeINC(p);
+        *ptrNode = createNode(link, NULL, NODE_TYPE_OPERATION, dataUnion, parent);
         parse_logicExpr2(&(*ptrNode)->link[1], p, *ptrNode);
     }
     else
         (*ptrNode) = link;
 
-    $$
-        return;
+    $$return;
 }
 
 void Parser::parse_logicExpr3(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
-{
-    $
-        static const ui8 operations[] = {
-        getTokenIndexByString(">"),getTokenIndexByString("<"),
-        getTokenIndexByString(">="),getTokenIndexByString("<="),
-        getTokenIndexByString("=="),getTokenIndexByString("!="),
-        getTokenIndexByString("="),-1 };
+{$
+    standartVariableBlock;
+    static const ui8 operations[] = {
+        getTokenIndexByString(">"), getTokenIndexByString("<"),
+        getTokenIndexByString(">="), getTokenIndexByString("<="),
+        getTokenIndexByString("=="), getTokenIndexByString("!="),
+        getTokenIndexByString("="), -1 };
     Expression::TNode* link = NULL;
 
     parse_expr(&link, p, parent);
-    if (tokens.size() <= p)
+    if (maxSize <= p)
     {
         (*ptrNode) = link;
-        $$ return;
+        $$return;
     }
 
     i32 op = findOperation(operations, tokens[p].dataUnion.ivalue);
     if (op != -1)
     {
-        UnionData unionData;
-        unionData.ivalue = tokensTable[operations[op]].third;
-        p++;
-        *ptrNode = createNode(NULL, NULL, NODE_TYPE_OPERATION, unionData, parent);
-        (*ptrNode)->link[0] = link;
-        link->parent = (*ptrNode);
+        dataUnion.ivalue = tokensTable[operations[op]].third;
+        safeINC(p);
+        *ptrNode = createNode(link, NULL, NODE_TYPE_OPERATION, dataUnion, parent);
         parse_expr(&(*ptrNode)->link[1], p, *ptrNode);
     }
     else
         (*ptrNode) = link;
 
-    $$
-        return;
+    $$return;
 }
 
-
 void Parser::parse_expr(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
-{
-    $
-        static const ui8 operations[] = { getTokenIndexByString("+"), getTokenIndexByString("-"), -1 };
+{$
+    standartVariableBlock;
+    static const ui8 operations[] = { getTokenIndexByString("+"), getTokenIndexByString("-"), -1 };
     Expression::TNode* link = NULL;
 
     parse_term(&link, p, parent);
-    if (tokens.size() <= p)
+    if (maxSize <= p)
     {
         (*ptrNode) = link;
-        $$
-            return;
+        $$return;
     }
 
     i32 op = findOperation(operations, tokens[p].dataUnion.ivalue);
     if (op != -1)
     {
-        UnionData unionData;
-        unionData.ivalue = tokensTable[operations[op]].third;
-        p++;
-        *ptrNode = createNode(NULL, NULL, NODE_TYPE_OPERATION, unionData, parent);
-        (*ptrNode)->link[0] = link;
-        link->parent = (*ptrNode);
+        dataUnion.ivalue = tokensTable[operations[op]].third;
+        safeINC(p);
+        *ptrNode = createNode(link, NULL, NODE_TYPE_OPERATION, dataUnion, parent);
         parse_expr(&(*ptrNode)->link[1], p, *ptrNode);
 
     }
     else
         (*ptrNode) = link;
 
-    $$
-        return;
+    $$return;
 }
 
 void Parser::parse_term(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
-{
-    $
-        static const ui8 operations[] = { getTokenIndexByString("*"), getTokenIndexByString("^"), -1 };
+{$
+    standartVariableBlock;
+    static const ui8 operations[] = { getTokenIndexByString("*"), getTokenIndexByString("^"), -1 };
     Expression::TNode* link = NULL;
 
     parse_divider(&link, p, parent);
-    if (tokens.size() <= p || !link)
+    if (maxSize <= p || !link)
     {
         (*ptrNode) = link;
-        $$ return;
+        $$return;
     }
 
     i32 op = findOperation(operations, tokens[p].dataUnion.ivalue);
     if (op != -1)
     {
-        UnionData unionData;
-        unionData.ivalue = tokensTable[operations[op]].third;
-        p++;
-        *ptrNode = createNode(NULL, NULL, NODE_TYPE_OPERATION, unionData, parent);
-        (*ptrNode)->link[0] = link;
-        link->parent = (*ptrNode);
+        dataUnion.ivalue = tokensTable[operations[op]].third;
+        safeINC(p);
+        *ptrNode = createNode(link, NULL, NODE_TYPE_OPERATION, dataUnion, parent);
         parse_term(&(*ptrNode)->link[1], p, *ptrNode);
     }
     else
         (*ptrNode) = link;
 
-    $$ return;
+    $$return;
 }
 
 void Parser::parse_divider(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
-{
-    $
-        static const ui8 operations[] = { getTokenIndexByString("/"), -1 };
+{$
+    standartVariableBlock;
+    static const ui8 operations[] = { getTokenIndexByString("/"), -1 };
     Expression::TNode* link = NULL;
 
-    parse_fact(&link, p, parent);
-    if (tokens.size() <= p)
+    parse_unaryOperator(&link, p, parent);
+    if (maxSize <= p)
     {
         (*ptrNode) = link;
-        $$
-            return;
+        $$return;
     }
 
     i32 op = findOperation(operations, tokens[p].dataUnion.ivalue);
     if (op != -1)
     {
-        UnionData unionData;
-        unionData.ivalue = OP_DIV;
-        p++;
-        *ptrNode = createNode(NULL, NULL, NODE_TYPE_OPERATION, unionData, parent);
-        (*ptrNode)->link[0] = link;
-        link->parent = (*ptrNode);
-        parse_fact(&(*ptrNode)->link[1], p, *ptrNode);
+        dataUnion.ivalue = OP_DIV;
+        safeINC(p);
+        *ptrNode = createNode(link, NULL, NODE_TYPE_OPERATION, dataUnion, parent);
+        parse_unaryOperator(&(*ptrNode)->link[1], p, *ptrNode);
     }
     else
         (*ptrNode) = link;
 
-    $$
-        return;
+    $$return;
 }
 
-void Parser::parse_fact(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
-{
-    $
-        Expression::TNode* link = NULL;
-    UnionData dataUnion;
+void Parser::parse_unaryOperator(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
+{$
+    standartVariableBlock;
+    if (tokens[p].type == TOKEN_FUNCTION && tokens[p].dataUnion.ivalue == FUNC_NEG)
+    {
+        *ptrNode = createNode(NULL, NULL, NODE_TYPE_FUNCTION, tokens[p].dataUnion, parent);
+        safeINC(p);
+        parse_operand(&(*ptrNode)->link[0], p, *ptrNode);
+    }
+    else
+        parse_operand(ptrNode, p, *ptrNode);
+
+    $$return;
+}
+
+void Parser::parse_operand(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
+{$
+    standartVariableBlock;
     switch (tokens[p].type)
     {
+    case TOKEN_NUMBER:
+        *ptrNode = createNode(NULL, NULL, NODE_TYPE_NUMBER, tokens[p].dataUnion, parent);
+        safeINC(p);
+    break;
     case TOKEN_BRACKET:
-        p++;
+        safeINC(p);
         parse_logicExpr1(ptrNode, p, parent);
-        p++;
-        break;
-    case TOKEN_VARIABLE_TYPE:
-        *ptrNode = createNode(NULL, NULL, NODE_TYPE_VARIABLE_SPECIFICALOR, tokens[p].dataUnion, parent);
-        p++;
-        break;
+        safeINC(p);
+    break;
+    default:
+        parse_namedOperand(ptrNode, p, parent);
+    break;
+    }
+    $$return;
+}
+
+void Parser::parse_namedOperand(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
+{$
+    standartVariableBlock;
+    Expression::TNode* link = NULL;
+    switch (tokens[p].type)
+    {
     case TOKEN_NAME:
         link = createNode(NULL, NULL, NODE_TYPE_NAME, tokens[p].dataUnion, parent);
-        p++;
+        safeINC(p);
         if (tokens[p].type == TOKEN_BRACKET && tokens[p].dataUnion.ivalue == 0) /// открывается скобка
         {
-            p++;
+            safeINC(p);
             dataUnion.ivalue = 0;
             *ptrNode = createNode(link, NULL, NODE_TYPE_CUSTOM_FUNCTION, dataUnion, parent);
             parse_argumentsValue(&(*ptrNode)->link[1], p, *ptrNode);
-            p++;
+            Assert_c(tokens[p].type == TOKEN_BRACKET);
+            safeINC(p);
         }
         else
             *ptrNode = link;
-        break;
-    case TOKEN_NUMBER:
-        *ptrNode = createNode(NULL, NULL, NODE_TYPE_NUMBER, tokens[p].dataUnion, parent);
-        p++;
-        break;
-    case TOKEN_RETURN:
-        dataUnion.ivalue = OP_RETURN;
-        *ptrNode = createNode(NULL, NULL, NODE_TYPE_OPERATION, dataUnion, parent);
-        p++;
-        if (tokens[p].type == TOKEN_SEMICOLON)
-        {
-            dataUnion.dvalue = 0.0;
-            (*ptrNode)->link[0] = createNode(NULL, NULL, NODE_TYPE_NUMBER, dataUnion, *ptrNode);
-        }
-        else
-            parse_logicExpr1(&(*ptrNode)->link[0], p, *ptrNode);
-        break;
+    break;
     case TOKEN_FUNCTION:
         *ptrNode = createNode(NULL, NULL, NODE_TYPE_FUNCTION, tokens[p].dataUnion, parent);
-        if (tokens[p + 1].type == TOKEN_BRACKET)
-        {
-            p += 2;
-            if (tokens[p].type == TOKEN_BRACKET) {
-                p++;
-                break;
-            }
-
+        safeINC(p);
+        Assert_c(tokens[p].type == TOKEN_BRACKET);
+        safeINC(p);
+        if(tokens[p].type != TOKEN_BRACKET)
             parse_logicExpr1(&(*ptrNode)->link[0], p, *ptrNode);
-            p++;
-            break;
-        }
-        p++;
-        parse_fact(&(*ptrNode)->link[0], p, *ptrNode);
+        Assert_c(tokens[p].type == TOKEN_BRACKET);
+        safeINC(p);
         break;
+    break;
     default:
-        Assert_c("Undefined token type.");
-        $$$("Undefined token type.");
+        $$$("Undefined token.");
         return;
+    break;
     }
-    $$
+    $$return;
 }
+
+
 
 static bool isStrStartFromSubStr(C_string str, C_string sub)
 {
@@ -753,9 +679,8 @@ static bool isStrStartFromSubStr(C_string str, C_string sub)
 }
 
 Parser::Token Parser::getNextToken(C_string& str)
-{
-    $
-        static char buff[32] = {};
+{$
+    static char buff[32] = {};
     Token result;
     while (*str && strchr(" ", str[0]))
         str++;
@@ -768,8 +693,7 @@ Parser::Token Parser::getNextToken(C_string& str)
             result.type = tokensTable[tokenIndex].second;
             result.dataUnion.ivalue = tokenIndex;
             str += strlen(tokensTable[tokenIndex].first);
-            $$
-                return result;
+            $$ return result;
         }
     }
 
@@ -781,8 +705,7 @@ Parser::Token Parser::getNextToken(C_string& str)
             result.type = TOKEN_FUNCTION;
             result.dataUnion.ivalue = funcIndex;
             str += strlen(FUNCTION_NAMES_TABLE[funcIndex]);
-            $$
-                return result;
+            $$ return result;
         }
     }
 
@@ -814,14 +737,12 @@ Parser::Token Parser::getNextToken(C_string& str)
         str += strlen(buff);
     }
 
-    $$
-        return result;
+    $$ return result;
 }
 
 Expression::TNode* Parser::parse(C_string expression)
-{
-    $
-        Expression::TNode* root = NULL;
+{$
+    Expression::TNode* root = NULL;
     tokens.clear();
 
     while (*expression)
@@ -833,9 +754,6 @@ Expression::TNode* Parser::parse(C_string expression)
             return NULL;
         }
     }
-
-
-
 
     bool wasSpaceOrBracket = 1;
     for (std::vector<Token>::iterator it = tokens.begin(); it != tokens.end(); it++)
@@ -850,33 +768,32 @@ Expression::TNode* Parser::parse(C_string expression)
 
     //#define PARSER_DEBUG
 
-#ifdef PARSER_DEBUG
-    ui32 counter = 0;
-    for (std::vector<Token>::iterator it = tokens.begin(); it != tokens.end(); it++)
-    {
-        printf("[%d] data:", counter);
-        switch (it->type)
+    #ifdef PARSER_DEBUG
+        ui32 counter = 0;
+        for (std::vector<Token>::iterator it = tokens.begin(); it != tokens.end(); it++)
         {
-        case TOKEN_NUMBER:
-            printf("%lf", it->dataUnion.dvalue);
-            break;
-        case TOKEN_NAME:
-            printf("VARIABLE_HASH = 0x%X", it->dataUnion.ivalue);
-            break;
-        case TOKEN_FUNCTION:
-            printf("%s", FUNCTION_NAMES_TABLE[it->dataUnion.ivalue]);
-            break;
-        default:
-            printf("%s", tokensTable[it->dataUnion.ivalue].first);
-            break;
-        }
-        printf("\n");
-        counter++;
+            printf("[%d] data:", counter);
+            switch (it->type)
+            {
+            case TOKEN_NUMBER:
+                printf("%lf", it->dataUnion.dvalue);
+                break;
+            case TOKEN_NAME:
+                printf("VARIABLE_HASH = 0x%X", it->dataUnion.ivalue);
+                break;
+            case TOKEN_FUNCTION:
+                printf("%s", FUNCTION_NAMES_TABLE[it->dataUnion.ivalue]);
+                break;
+            default:
+                printf("%s", tokensTable[it->dataUnion.ivalue].first);
+                break;
+            }
+            printf("\n");
+            counter++;
 
-    }
-#endif
+        }
+    #endif
     ui32  p = 0;
     parse_file(&root, p, NULL);
-    $$
-        return root;
+    $$ return root;
 }

@@ -125,7 +125,8 @@ FUNC_DEFINE(
 	},
     true,
     {
-
+        Assert_c("This function doesn't implement");
+        return;
     }
 )
 
@@ -152,7 +153,8 @@ FUNC_DEFINE(
 	},
     true,
     {
-
+        Assert_c("This function doesn't implement");
+        return;
     }
 )
 

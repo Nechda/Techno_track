@@ -11,7 +11,7 @@
 #include "CallStack.h"
 
 const Hash Expression::entryPointHash = getHash("main", 4);
-const pair<EvaluationErrors, const C_string> Expression::errorExplanationTable[] =
+const pair<CompilatorError, const C_string> Expression::errorExplanationTable[] =
 {
     {STATUS_OK,                                 "Status Ok"},
     {ERR_INVALID_TREE_STRUCTURE,                "Tree structure is invalid"},
@@ -22,16 +22,27 @@ const pair<EvaluationErrors, const C_string> Expression::errorExplanationTable[]
     {ERR_REDIFINITION_FUNCTION,                 "Try to redefine already existed function"},
     {ERR_FUNCTION_PARAM_REDEFINITION,           "Function param redefinition"},
     {ERR_INVALID_NUMBER_OF_FUNCTION_ARGUMENTS,  "Invalid number of function params"},
-    {ERR_FORGOTTEN_RETURN_OPERATOR,             "The ret operator was expected, but there is not"}
+    {ERR_FORGOTTEN_RETURN_OPERATOR,             "The ret operator was expected, but there is not"},
+    {ERR_NO_ENTRY_POINT_FUNCTION,               "There isn't entry point function. By default it's def main()"}
 };
 
-#define ACCURACY 1E-3
-#define isZero(a) fabs((a)) < ACCURACY
-#define isInteger(a) isZero( (a) - ceil(a) )
-#define setLinkParent(node_)\
-    if ( (node_)->link[0] ) (node_)->link[0]->parent = (node_);\
-    if ( (node_)->link[1] ) (node_)->link[1]->parent = (node_);
+static const float ACCURACY = 1E-3;
 
+inline bool isZero(float num)
+{
+    return fabs(num) < ACCURACY;
+}
+
+inline bool isInteger(float num)
+{
+    return isZero(num - ceil(num));
+}
+
+inline void setLinkParent(Expression::TNode*& node)
+{
+    if (node->link[0]) node->link[0]->parent = node;
+    if (node->link[1]) node->link[1]->parent = node;
+}
 
 /*
     \brief Функция, отвечающая за преобразование узла дерева в строку
@@ -39,8 +50,7 @@ const pair<EvaluationErrors, const C_string> Expression::errorExplanationTable[]
            в противном случае выводить дерево в файл не получится
 */
 C_string expInfoToStr(NodeInfo* exp, bool printAddr = false)
-{
-    $
+{$
     if (!exp)
         return "";
     static char buffer[64] = {};
@@ -568,7 +578,7 @@ void Expression::simplify()
     {
         isChangedTree = 0;
         constantSimplify(getRoot(), isChangedTree);
-        //identitySimplify(getRoot(), isChangedTree);
+        identitySimplify(getRoot(), isChangedTree);
     } while (isChangedTree);
     $$
 }
@@ -699,7 +709,7 @@ double Expression::treeEvaluate(Expression::TNode* node, map<Hash, pair<double,u
     $$ return result;
 }
 
-static EvaluationErrors genFuncTableInteration(Expression::TNode* node, map<Hash, Expression::TNode*>& functionsTable)
+static CompilatorError genFuncTableInteration(Expression::TNode* node, map<Hash, Expression::TNode*>& functionsTable)
 {$
     if(!node){
         $$ return STATUS_OK;
@@ -708,7 +718,7 @@ static EvaluationErrors genFuncTableInteration(Expression::TNode* node, map<Hash
     bool isFunctionUnification = 0;
     isFunctionUnification = node->ptrToData->type == NODE_TYPE_OPERATION 
                          && node->ptrToData->dataUnion.ivalue == OP_DOLLAR;
-    EvaluationErrors errorCode = STATUS_OK;
+    CompilatorError errorCode = STATUS_OK;
 
     if (isFunctionUnification){
         errorCode = genFuncTableInteration(node->link[1], functionsTable);
@@ -729,7 +739,7 @@ static EvaluationErrors genFuncTableInteration(Expression::TNode* node, map<Hash
     $$ return errorCode;
 }
 
-EvaluationErrors Expression::genFunctionTable()
+CompilatorError Expression::genFunctionTable()
 {$
     Assert_c(isValid);
     if (!isValid){
@@ -746,7 +756,7 @@ EvaluationErrors Expression::genFunctionTable()
     $$ return genFuncTableInteration(node, functionsTable);
 }
 
-static EvaluationErrors genVarTableInteration(Expression::TNode* node, map<Hash, pair<double, ui32>>& varablesTable, stack<double>& argc)
+static CompilatorError genVarTableInteration(Expression::TNode* node, map<Hash, pair<double, ui32>>& varablesTable, stack<double>& argc)
 {$
     if (!node){
         $$ return STATUS_OK;
@@ -755,7 +765,7 @@ static EvaluationErrors genVarTableInteration(Expression::TNode* node, map<Hash,
     bool isVariableUnification = 0;
     isVariableUnification = node->ptrToData->type == NODE_TYPE_OPERATION
         && node->ptrToData->dataUnion.ivalue == OP_COMMA;
-    EvaluationErrors errorCode = STATUS_OK;
+    CompilatorError errorCode = STATUS_OK;
 
     if (isVariableUnification){
         errorCode = genVarTableInteration(node->link[1], varablesTable, argc);
@@ -817,6 +827,7 @@ void Expression::evaluate()
     if (functionsTable.count(entryPointHash))
         customFunctionEvaluate(entryPointHash, programStack);
     else{
+        errorCode = ERR_NO_ENTRY_POINT_FUNCTION;
         $$$("There is no entry point. By default use main().");
         return;
     }
@@ -830,7 +841,7 @@ void Expression::evaluate()
 //|                                                                                                                             |
 //|                                                                                                                             |
 //|                                  это самая вызываемая функция из всех написанных                                            |
-//|                                                                                                                             |
+//|                                         (создает новый узел для дерева)                                                     |
 //|                                                                                                                             |
 //|_____________________________________________________________________________________________________________________________|
 //|                                                                                                                             |
