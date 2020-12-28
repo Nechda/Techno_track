@@ -20,16 +20,9 @@ static void pushLine(const C_string format, ...)
 }
 
 /*
-    Немного констант, задающие работу процессора
+    Немного(одна) констант, задающие работу процессора
 */
 const ui32 SIZE_OPERANDS = sizeof(float);
-
-/*
-    скорее всего, потребуется функция, которая будет выдавать строку
-    в 10 + 27 ричной системе счисления, это требуется для того, чтобы
-    можно было по максимому использовать имена меток
-*/
-
 
 struct DataForAssembler
 {
@@ -241,14 +234,9 @@ void Expression::compile(const C_string filename)
     for (auto it : functionsTable)
     {
         pushLine("func_%X:", it.first);
-        if (it.first == entryPointHash && false)
-            pushLine("mov ebp, esp");
-        else
-        {
-            pushLine("pop [ebp]");
-            pushLine("add ebp, 4");
-            pushLine("add esp, %d", *vit * SIZE_OPERANDS);
-        }
+        pushLine("pop [ebp]");
+        pushLine("add ebp, 4");
+        pushLine("add esp, %d", *vit * SIZE_OPERANDS);
         genAsmByTree(it.second, asmInfo);
         if (errorCode)
         {

@@ -1,4 +1,5 @@
 #include "Parser.h"
+#include "Logger.h"
 #include "CallStack.h"
 #include "Hash.h"
 
@@ -54,49 +55,60 @@ Parser::~Parser()
 
 
 /*
-    Fl - File
-    Fu - Function
-    fN - Function name
-    Ar - Arguments of function
-    Av - Portable arguments
-    G  - General (base block of code)
-    L  - Line
-    B  - Branch
-    V  - Variable
-    vT - Variable type
-    vN - Variable name
-    LE - Logical expression (number means order)
-    E  - Expression
-    T  - Term (?)
-    D  - Divider
-    F  - Factor
-    Uo - unary operation
-    Op - operands
-    No - named operand (function or variable)
+    File  - File
+    Func  - Function
+    Args  - Arguments of function
+    Avar  - Enumeration of the elements
+            (uses as sequence of expression, divided by ",",
+            that interpretates as function's arguments)
+    Blck  - Block of code
+    Line  - Line of the code
+    Brch  - Branch implements if-else construction
+    Loop  - Loop implements while loop
+    Var   - Variable definition
+    OrLE  - Logic expression with "or" operator
+    AndLE - Logic expression with "and" operator
+    CmpLe - Logic expression that is consisting compare operators
+    AddE  - Additive exprression
+    MulE  - Multiplicative exprression
+    FraE  - Logic expression with "div" operator
+    UnarE - Expression that is consisting unary operations
+    Oprnd - Operand
+    Nopr  - Named operand (variable or function name)
+    Name  - A sequence of characters
+    Numbr - Number
+    STDF  - Standart language function
 
-    Fl -> Fu Fl | Fu
-    Fu -> def fN(Ar){G}
-    Ar -> vT vN , Ar | vT vN |
-    G  -> L ; G | B G
-    B  -> if(LE1){G}else{G} | if(LE1){G}
-    L  -> ret LE1 | vT vN = LE1 | LE1
-    V  -> vT vN | vN
-    LE1 -> LE2 || LE1 | LE2
-    LE2 -> LE3 && LE2 | LE3
-    LE3 -> E < E | E > E | E <= E | E >= E | E == E | E != E | E = E
-    E -> T + E | T - E | T
-    T -> D * T | D ^ T | D
-    D -> Uo / Uo | Uo
-    Uo-> -Op | Op
-    Op-> Number | No | (LE1)
-    No-> Name | Name(Av) | STD_function(LE1)
+    File  -> Func File | Func
+    Func  -> def Name(Args){G}
+    Args  -> Var  , Args | Var        |
+    Blck  -> Line ; Blck | Brch  Blck | Loop Blck
+    Line  -> ret    OrLE | Var = OrLE | OrLE
+    Brch  -> if(OrLE){Blck}else{Blck} | if(OrLE){Blck}
+    Loop  -> while(OrLE){Blck}
+    Var   -> vT Name
 
+    OrLE  -> AndLE || AndLE | AndLE
+    AndLE -> CmpLe && CmpLe | CmpLe
+    CmpLe -> AddE  <  AddE  | AddE  >  AddE
+             AddE  <= AddE  | AddE  >= AddE
+             AddE  == AddE  | AddE  != AddE
+             AddE  =  AddE
+
+    AddE  -> MulE  +  AddE  | MulE  -  AddE  | MulE
+    MulE  -> DivE  *  MulE  | DivE  ^  MulE  | DivE
+    FraE  -> UnarE /  UnarE | UnarE
+    UnarE ->       -  Oprnd | Oprnd
+    Oprnd -> Numbr |  Nopr  | (OrLE)
+
+    Nopr  -> Name  | Name(Avar) | STDF(OrLE)
 */
 
-#define Assert_parser( expr_ )\
+#define Assert_parser( expr_, msg )\
     if(!(expr_))\
     {\
-        $$$("Invalid sequence of lexemas.");\
+        logger("Parser error","%s", msg);\
+        $$$("Invalid sequence of lexemas: %s", msg);\
         if (*ptrNode) rCleanUp(*ptrNode);\
         *ptrNode = NULL;\
         return;\
@@ -175,26 +187,26 @@ void Parser::parse_function(Expression::TNode** ptrNode, ui32& p, Expression::TN
     standartVariableBlock;
 
     dataUnion.ivalue = OP_DEF;
-    Assert_parser(tokens[p].type == TOKEN_DEF);
+    Assert_parser(tokens[p].type == TOKEN_DEF, "The \'def\' keyword was expected.");
     safeINC(p);
 
     *ptrNode = createNode(NULL, NULL, NODE_TYPE_OPERATION, dataUnion, parent);
 
-    Assert_parser(tokens[p].type == TOKEN_NAME);
+    Assert_parser(tokens[p].type == TOKEN_NAME, "The function name was expected.");
     dataUnion = tokens[p].dataUnion;
     safeINC(p);
     (*ptrNode)->link[0] = createNode(NULL, NULL, NODE_TYPE_NAME, dataUnion, *ptrNode);
 
-    Assert_parser(tokens[p].type == TOKEN_BRACKET);
+    Assert_parser(tokens[p].type == TOKEN_BRACKET, "\'(\' was expected.");
     safeINC(p);
     parse_arguments(&(*ptrNode)->link[1], p, *ptrNode);
-    Assert_parser(tokens[p].type == TOKEN_BRACKET);
+    Assert_parser(tokens[p].type == TOKEN_BRACKET, "\')\' was expected.");
     safeINC(p);
 
-    Assert_parser(tokens[p].type == TOKEN_CURLY_BACKET);
+    Assert_parser(tokens[p].type == TOKEN_CURLY_BACKET, "\'{\' was expected.");
     safeINC(p);
-    parse_general(&(*ptrNode)->link[2], p, *ptrNode);
-    Assert_parser(tokens[p].type == TOKEN_CURLY_BACKET);
+    parse_codeblock(&(*ptrNode)->link[2], p, *ptrNode);
+    Assert_parser(tokens[p].type == TOKEN_CURLY_BACKET, "\'}\' was expected.");
     safeINC(p);
 }
 
@@ -203,9 +215,7 @@ void Parser::parse_arguments(Expression::TNode** ptrNode, ui32& p, Expression::T
     standartVariableBlock;
     Expression::TNode* link = NULL;
 
-    if (tokens[p].type != TOKEN_VARIABLE_TYPE)
-        $$return;
-
+    Assert_parser(tokens[p].type == TOKEN_VARIABLE_TYPE, "The \'var\' keyword was expected.");
     parse_var(&link, p, parent);
 
     if (tokens[p].type == TOKEN_COMMA)
@@ -226,8 +236,8 @@ void Parser::parse_argumentsValue(Expression::TNode** ptrNode, ui32& p, Expressi
     standartVariableBlock;
     Expression::TNode* link = NULL;
 
-    parse_logicExpr1(&link, p, link);
-    Assert_c(p < maxSize);
+    parse_ORLogicExpr(&link, p, link);
+    Assert_c(p < maxSize, "The file ended unexpectedly.");
     if (tokens[p].type == TOKEN_COMMA)
     {
         dataUnion.ivalue = OP_COMMA;
@@ -240,7 +250,7 @@ void Parser::parse_argumentsValue(Expression::TNode** ptrNode, ui32& p, Expressi
     $$return;
 }
 
-void Parser::parse_general(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
+void Parser::parse_codeblock(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
 {$
     standartVariableBlock;
     static const ui8 operations[] = { getTokenIndexByString(";"), -1 };
@@ -256,9 +266,9 @@ void Parser::parse_general(Expression::TNode** ptrNode, ui32& p, Expression::TNo
     if (!link)
     {
         parse_line(&link, p, parent);
-        Assert_parser(tokens[p].type == TOKEN_SEMICOLON || !link);
+        Assert_parser(link, "Parser couldn\'t parse the current line of code.");
+        Assert_parser(tokens[p].type == TOKEN_SEMICOLON, "\';\' was expected.");
     }
-    Assert_c(link);
     while (p < tokens.size() && tokens[p].type == TOKEN_SEMICOLON)
         safeINC(p);
 
@@ -276,7 +286,7 @@ void Parser::parse_general(Expression::TNode** ptrNode, ui32& p, Expression::TNo
     }
 
     Expression::TNode* tmpLink = NULL;
-    parse_general(&tmpLink, p, parent);
+    parse_codeblock(&tmpLink, p, parent);
 
     if (tmpLink)
         *ptrNode = createNode(link, tmpLink, NODE_TYPE_OPERATION, dataUnion, parent);
@@ -287,12 +297,6 @@ void Parser::parse_general(Expression::TNode** ptrNode, ui32& p, Expression::TNo
 }
 
 
-/*
-
-разобраться с грамматикой присвоения, с ретурном все ок
- 
-*/
-
 
 void Parser::parse_line(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
 {$
@@ -300,14 +304,14 @@ void Parser::parse_line(Expression::TNode** ptrNode, ui32& p, Expression::TNode*
     static const ui8 operations[] = { getTokenIndexByString("="), -1 };
     Expression::TNode* link = NULL;
 
-    Assert_parser(p < maxSize);
+    Assert_c(p < maxSize, "The file ended unexpectedly.");
     if (tokens[p].type == TOKEN_RETURN)
     {
         dataUnion.ivalue = OP_RETURN;
         safeINC(p);
         *ptrNode = createNode(NULL, NULL, NODE_TYPE_OPERATION, dataUnion, parent);
         if(tokens[p].type != TOKEN_SEMICOLON)
-            parse_logicExpr1(&(*ptrNode)->link[0], p, *ptrNode);
+            parse_ORLogicExpr(&(*ptrNode)->link[0], p, *ptrNode);
         $$return;
     }
     
@@ -317,15 +321,15 @@ void Parser::parse_line(Expression::TNode** ptrNode, ui32& p, Expression::TNode*
         if (tokens[p].type == TOKEN_SEMICOLON)
             $$return;
 
-        Assert_parser(tokens[p].type == TOKEN_ASSIGMENT);
+        Assert_parser(tokens[p].type == TOKEN_ASSIGMENT, "\'=\' was expected.");
         safeINC(p);
         dataUnion.ivalue = OP_ASSIGMENT;
         *ptrNode = createNode(link, NULL, NODE_TYPE_OPERATION, dataUnion, parent);
-        parse_logicExpr1(&(*ptrNode)->link[1], p, *ptrNode);
+        parse_ORLogicExpr(&(*ptrNode)->link[1], p, *ptrNode);
         $$return;
     }
 
-    parse_logicExpr1(ptrNode, p, parent);
+    parse_ORLogicExpr(ptrNode, p, parent);
     $$return;
 }
 
@@ -334,35 +338,35 @@ void Parser::parse_branch(Expression::TNode** ptrNode, ui32& p, Expression::TNod
     standartVariableBlock;
 
     dataUnion.ivalue = OP_BRANCH;
-    Assert_parser(tokens[p].type == TOKEN_IF);
+    Assert_parser(tokens[p].type == TOKEN_IF, "\'if\' was expected.");
     safeINC(p);
-    Assert_parser(tokens[p].type == TOKEN_BRACKET);
+    Assert_parser(tokens[p].type == TOKEN_BRACKET, "\'(\' was expected.");
     safeINC(p);
 
     *ptrNode = createNode(NULL, NULL, NODE_TYPE_OPERATION, dataUnion, parent);
 
-    parse_logicExpr1(&(*ptrNode)->link[0], p, *ptrNode);
-    Assert_parser((*ptrNode)->link[0]);
-    Assert_parser(tokens[p].type == TOKEN_BRACKET);
+    parse_ORLogicExpr(&(*ptrNode)->link[0], p, *ptrNode);
+    Assert_parser((*ptrNode)->link[0], "Parser couldn't parse the condition.");
+    Assert_parser(tokens[p].type == TOKEN_BRACKET, "\')\' was expected.");
     safeINC(p);
 
 
-    Assert_parser(tokens[p].type == TOKEN_CURLY_BACKET);
+    Assert_parser(tokens[p].type == TOKEN_CURLY_BACKET, "\'{\' was expected.");
     safeINC(p);
-    parse_general(&(*ptrNode)->link[1], p, *ptrNode);
-    Assert_parser((*ptrNode)->link[1]);
-    Assert_parser(tokens[p].type == TOKEN_CURLY_BACKET);
+    parse_codeblock(&(*ptrNode)->link[1], p, *ptrNode);
+    Assert_parser((*ptrNode)->link[1], "Parser couldn't parse the base block of code.");
+    Assert_parser(tokens[p].type == TOKEN_CURLY_BACKET, "\'}\' was expected.");
     safeINC(p);
 
     if (tokens[p].type != TOKEN_ELSE)
         $$return;
     safeINC(p);
 
-    Assert_parser(tokens[p].type == TOKEN_CURLY_BACKET);
+    Assert_parser(tokens[p].type == TOKEN_CURLY_BACKET, "\'{\' was expected.");
     safeINC(p);
-    parse_general(&(*ptrNode)->link[2], p, *ptrNode);
-    Assert_parser((*ptrNode)->link[2]);
-    Assert_parser(tokens[p].type == TOKEN_CURLY_BACKET);
+    parse_codeblock(&(*ptrNode)->link[2], p, *ptrNode);
+    Assert_parser((*ptrNode)->link[2], "Parser couldn't parse the base block of code.");
+    Assert_parser(tokens[p].type == TOKEN_CURLY_BACKET, "\'}\' was expected.");
     safeINC(p);
 }
 
@@ -371,63 +375,50 @@ void Parser::parse_loop(Expression::TNode** ptrNode, ui32& p, Expression::TNode*
     standartVariableBlock;
 
     dataUnion.ivalue = OP_WHILE;
-    Assert_parser(tokens[p].type == TOKEN_WHILE);
-    safeINC(p);
-    Assert_parser(tokens[p].type == TOKEN_BRACKET);
+    Assert_parser(tokens[p].type == TOKEN_WHILE, "\'if\' was expected.");
     safeINC(p);
 
+    Assert_parser(tokens[p].type == TOKEN_BRACKET, "\'(\' was expected.");
+    safeINC(p);
     *ptrNode = createNode(NULL, NULL, NODE_TYPE_OPERATION, dataUnion, parent);
-
-    parse_logicExpr1(&(*ptrNode)->link[0], p, *ptrNode);
-    Assert_parser((*ptrNode)->link[0]);
-    Assert_parser(tokens[p].type == TOKEN_BRACKET);
+    parse_ORLogicExpr(&(*ptrNode)->link[0], p, *ptrNode);
+    Assert_parser((*ptrNode)->link[0], "Parser couldn't parse the condition.");
+    Assert_parser(tokens[p].type == TOKEN_BRACKET, "\')\' was expected.");
     safeINC(p);
 
 
-    Assert_parser(tokens[p].type == TOKEN_CURLY_BACKET);
+    Assert_parser(tokens[p].type == TOKEN_CURLY_BACKET, "\'{\' was expected.");
     safeINC(p);
-    parse_general(&(*ptrNode)->link[1], p, *ptrNode);
-    Assert_parser((*ptrNode)->link[1]);
-    Assert_parser(tokens[p].type == TOKEN_CURLY_BACKET);
+    parse_codeblock(&(*ptrNode)->link[1], p, *ptrNode);
+    Assert_parser((*ptrNode)->link[1], "Parser couldn't parse the base block of code.");
+    Assert_parser(tokens[p].type == TOKEN_CURLY_BACKET, "\'}\' was expected.");
     safeINC(p);
 }
 
 void Parser::parse_var(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
 {$
     standartVariableBlock;
-    Assert_parser( p < maxSize );
+    Assert_c(p < maxSize, "The file ended unexpectedly.");
 
     Expression::TNode** link = ptrNode;
 
-    if (tokens[p].type == TOKEN_VARIABLE_TYPE)
-    {
-        *ptrNode = createNode(NULL, NULL, NODE_TYPE_VARIABLE_SPECIFICALOR, tokens[p].dataUnion, parent);
-        {int a = 0; }
-        safeINC(p);
-        Assert_parser(tokens[p].type == TOKEN_NAME);
-        (*ptrNode)->link[0] = createNode(NULL, NULL, NODE_TYPE_NAME, tokens[p].dataUnion, *ptrNode);
-        safeINC(p);
-        $$return;
-    }
-
-    if (tokens[p].type == TOKEN_NAME)
-    {
-        *ptrNode = createNode(NULL, NULL, NODE_TYPE_NAME, tokens[p].dataUnion, *ptrNode);
-        safeINC(p);
-        $$return;
-    }
-
-    $$$("Invalid sequence of lexemas.");
-    return;
+    Assert_c(tokens[p].type == TOKEN_VARIABLE_TYPE, "The \'var\' keyword was expected.");
+    *ptrNode = createNode(NULL, NULL, NODE_TYPE_VARIABLE_SPECIFICALOR, tokens[p].dataUnion, parent);
+    safeINC(p);
+    Assert_parser(tokens[p].type == TOKEN_NAME, "The variable name was expected.");
+    (*ptrNode)->link[0] = createNode(NULL, NULL, NODE_TYPE_NAME, tokens[p].dataUnion, *ptrNode);
+    safeINC(p);
+    $$return;
 }
 
-void Parser::parse_logicExpr1(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
+void Parser::parse_ORLogicExpr(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
 {$
     standartVariableBlock;
     static const ui8 operations[] = { getTokenIndexByString("||"), -1 };
     Expression::TNode* link = NULL;
 
-    parse_logicExpr2(&link, p, parent);
+    Assert_c(p < maxSize, "The file ended unexpectedly.");
+    parse_ANDLogicExpr(&link, p, parent);
     if (maxSize <= p)
     {
         (*ptrNode) = link;
@@ -440,7 +431,7 @@ void Parser::parse_logicExpr1(Expression::TNode** ptrNode, ui32& p, Expression::
         dataUnion.ivalue = OP_OR;
         safeINC(p);
         *ptrNode = createNode(link, NULL, NODE_TYPE_OPERATION, dataUnion, parent);
-        parse_logicExpr1(&(*ptrNode)->link[1], p, *ptrNode);
+        parse_ORLogicExpr(&(*ptrNode)->link[1], p, *ptrNode);
     }
     else
         (*ptrNode) = link;
@@ -448,13 +439,14 @@ void Parser::parse_logicExpr1(Expression::TNode** ptrNode, ui32& p, Expression::
     $$return;
 }
 
-void Parser::parse_logicExpr2(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
+void Parser::parse_ANDLogicExpr(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
 {$
     standartVariableBlock;
     static const ui8 operations[] = { getTokenIndexByString("&&"), -1 };
     Expression::TNode* link = NULL;
 
-    parse_logicExpr3(&link, p, parent);
+    Assert_c(p < maxSize, "The file ended unexpectedly.");
+    parse_CMPLogicExpr(&link, p, parent);
     if (maxSize <= p)
     {
         (*ptrNode) = link;
@@ -467,7 +459,7 @@ void Parser::parse_logicExpr2(Expression::TNode** ptrNode, ui32& p, Expression::
         dataUnion.ivalue = OP_AND;
         safeINC(p);
         *ptrNode = createNode(link, NULL, NODE_TYPE_OPERATION, dataUnion, parent);
-        parse_logicExpr2(&(*ptrNode)->link[1], p, *ptrNode);
+        parse_ANDLogicExpr(&(*ptrNode)->link[1], p, *ptrNode);
     }
     else
         (*ptrNode) = link;
@@ -475,7 +467,7 @@ void Parser::parse_logicExpr2(Expression::TNode** ptrNode, ui32& p, Expression::
     $$return;
 }
 
-void Parser::parse_logicExpr3(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
+void Parser::parse_CMPLogicExpr(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
 {$
     standartVariableBlock;
     static const ui8 operations[] = {
@@ -485,7 +477,8 @@ void Parser::parse_logicExpr3(Expression::TNode** ptrNode, ui32& p, Expression::
         getTokenIndexByString("="), -1 };
     Expression::TNode* link = NULL;
 
-    parse_expr(&link, p, parent);
+    Assert_c(p < maxSize, "The file ended unexpectedly.");
+    parse_additiveExpr(&link, p, parent);
     if (maxSize <= p)
     {
         (*ptrNode) = link;
@@ -498,7 +491,7 @@ void Parser::parse_logicExpr3(Expression::TNode** ptrNode, ui32& p, Expression::
         dataUnion.ivalue = tokensTable[operations[op]].third;
         safeINC(p);
         *ptrNode = createNode(link, NULL, NODE_TYPE_OPERATION, dataUnion, parent);
-        parse_expr(&(*ptrNode)->link[1], p, *ptrNode);
+        parse_additiveExpr(&(*ptrNode)->link[1], p, *ptrNode);
     }
     else
         (*ptrNode) = link;
@@ -506,13 +499,14 @@ void Parser::parse_logicExpr3(Expression::TNode** ptrNode, ui32& p, Expression::
     $$return;
 }
 
-void Parser::parse_expr(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
+void Parser::parse_additiveExpr(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
 {$
     standartVariableBlock;
     static const ui8 operations[] = { getTokenIndexByString("+"), getTokenIndexByString("-"), -1 };
     Expression::TNode* link = NULL;
 
-    parse_term(&link, p, parent);
+    Assert_c(p < maxSize, "The file ended unexpectedly.");
+    parse_multiplicativeExpr(&link, p, parent);
     if (maxSize <= p)
     {
         (*ptrNode) = link;
@@ -525,7 +519,7 @@ void Parser::parse_expr(Expression::TNode** ptrNode, ui32& p, Expression::TNode*
         dataUnion.ivalue = tokensTable[operations[op]].third;
         safeINC(p);
         *ptrNode = createNode(link, NULL, NODE_TYPE_OPERATION, dataUnion, parent);
-        parse_expr(&(*ptrNode)->link[1], p, *ptrNode);
+        parse_additiveExpr(&(*ptrNode)->link[1], p, *ptrNode);
 
     }
     else
@@ -534,14 +528,15 @@ void Parser::parse_expr(Expression::TNode** ptrNode, ui32& p, Expression::TNode*
     $$return;
 }
 
-void Parser::parse_term(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
+void Parser::parse_multiplicativeExpr(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
 {$
     standartVariableBlock;
     static const ui8 operations[] = { getTokenIndexByString("*"), getTokenIndexByString("^"), -1 };
     Expression::TNode* link = NULL;
 
-    parse_divider(&link, p, parent);
-    if (maxSize <= p || !link)
+    Assert_c(p < maxSize, "The file ended unexpectedly.");
+    parse_fractionExpr(&link, p, parent);
+    if (maxSize <= p)
     {
         (*ptrNode) = link;
         $$return;
@@ -553,7 +548,7 @@ void Parser::parse_term(Expression::TNode** ptrNode, ui32& p, Expression::TNode*
         dataUnion.ivalue = tokensTable[operations[op]].third;
         safeINC(p);
         *ptrNode = createNode(link, NULL, NODE_TYPE_OPERATION, dataUnion, parent);
-        parse_term(&(*ptrNode)->link[1], p, *ptrNode);
+        parse_multiplicativeExpr(&(*ptrNode)->link[1], p, *ptrNode);
     }
     else
         (*ptrNode) = link;
@@ -561,12 +556,13 @@ void Parser::parse_term(Expression::TNode** ptrNode, ui32& p, Expression::TNode*
     $$return;
 }
 
-void Parser::parse_divider(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
+void Parser::parse_fractionExpr(Expression::TNode** ptrNode, ui32& p, Expression::TNode* parent)
 {$
     standartVariableBlock;
     static const ui8 operations[] = { getTokenIndexByString("/"), -1 };
     Expression::TNode* link = NULL;
 
+    Assert_c(p < maxSize, "The file ended unexpectedly.");
     parse_unaryOperator(&link, p, parent);
     if (maxSize <= p)
     {
@@ -614,7 +610,7 @@ void Parser::parse_operand(Expression::TNode** ptrNode, ui32& p, Expression::TNo
     break;
     case TOKEN_BRACKET:
         safeINC(p);
-        parse_logicExpr1(ptrNode, p, parent);
+        parse_ORLogicExpr(ptrNode, p, parent);
         safeINC(p);
     break;
     default:
@@ -648,11 +644,11 @@ void Parser::parse_namedOperand(Expression::TNode** ptrNode, ui32& p, Expression
     case TOKEN_FUNCTION:
         *ptrNode = createNode(NULL, NULL, NODE_TYPE_FUNCTION, tokens[p].dataUnion, parent);
         safeINC(p);
-        Assert_c(tokens[p].type == TOKEN_BRACKET);
+        Assert_c(tokens[p].type == TOKEN_BRACKET, "\'(\' was expected.");
         safeINC(p);
         if(tokens[p].type != TOKEN_BRACKET)
-            parse_logicExpr1(&(*ptrNode)->link[0], p, *ptrNode);
-        Assert_c(tokens[p].type == TOKEN_BRACKET);
+            parse_ORLogicExpr(&(*ptrNode)->link[0], p, *ptrNode);
+        Assert_c(tokens[p].type == TOKEN_BRACKET, "\')\' was expected.");
         safeINC(p);
         break;
     break;
