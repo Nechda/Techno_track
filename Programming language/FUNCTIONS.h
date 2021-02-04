@@ -24,7 +24,7 @@ FUNC_DEFINE(
     },
     false,
     {
-        pushLine("in eax");
+        pushLine("fin eax");
         pushLine("push eax");
     }
 )
@@ -39,7 +39,7 @@ FUNC_DEFINE(
     {
         genAsmByTree(node->link[0], asmInfo);
         pushLine("pop eax");
-        pushLine("mul eax, -1.0");
+        pushLine("fmul eax, -1.0");
         pushLine("push eax");
     }
 )
@@ -54,7 +54,7 @@ FUNC_DEFINE(
     {
         genAsmByTree(node->link[0], asmInfo);
         pushLine("pop eax");
-        pushLine("sin eax");
+        pushLine("fsin eax");
         pushLine("push eax");
     }
 )
@@ -70,7 +70,7 @@ FUNC_DEFINE(
     {
         genAsmByTree(node->link[0], asmInfo);
         pushLine("pop eax");
-        pushLine("cos eax");
+        pushLine("fcos eax");
         pushLine("push eax");
     }
 )
@@ -86,11 +86,11 @@ FUNC_DEFINE(
         genAsmByTree(node->link[0], asmInfo);
         pushLine("pop eax");
         pushLine("mov ebx, eax");
-        pushLine("sin eax");
+        pushLine("fsin eax");
         pushLine("mov esi, eax");
-        pushLine("cos ebx");
+        pushLine("fcos ebx");
         pushLine("mov edi, eax");
-        pushLine("div esi, edi");
+        pushLine("fdiv esi, edi");
         pushLine("mov eax, esi");
         pushLine("push eax");
     }
@@ -107,11 +107,11 @@ FUNC_DEFINE(
         genAsmByTree(node->link[0], asmInfo);
         pushLine("pop eax");
         pushLine("mov ebx, eax");
-        pushLine("cos eax");
+        pushLine("fcos eax");
         pushLine("mov esi, eax");
-        pushLine("sin ebx");
+        pushLine("fsin ebx");
         pushLine("mov edi, eax");
-        pushLine("div esi, edi");
+        pushLine("fdiv esi, edi");
         pushLine("mov eax, esi");
         pushLine("push eax");
     }
@@ -140,7 +140,7 @@ FUNC_DEFINE(
     {
         genAsmByTree(node->link[0], asmInfo);
         pushLine("pop eax");
-        pushLine("sqrt eax");
+        pushLine("fsqrt eax");
         pushLine("push eax");
     }
 )
@@ -168,7 +168,7 @@ FUNC_DEFINE(
     {
         genAsmByTree(node->link[0], asmInfo);
         pushLine("pop eax");
-        pushLine("abs eax");
+        pushLine("fabs eax");
         pushLine("push eax");
     }
 )

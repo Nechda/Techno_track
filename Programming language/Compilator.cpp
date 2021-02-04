@@ -54,7 +54,7 @@ static void throwLineForСomparisonOperators(const C_string strJumpCommand, Data
 {
     pushLine("pop eax");
     pushLine("pop ebx");
-    pushLine("cmp eax, ebx");
+    pushLine("fcomp eax, ebx");
     pushLine("%s T_%s_%X", strJumpCommand, strJumpCommand, asmInfo.labelCountComparison);
     pushLine("push 0.0");
     pushLine("jmp end_%s_%X", strJumpCommand, asmInfo.labelCountComparison);
@@ -217,7 +217,6 @@ void Expression::compile(const C_string filename)
 
     if (functionsTable.count(entryPointHash))
     {
-        pushLine("fpmon");
         throwLineForCallFunctions(NULL, entryPointHash, asmInfo);
         pushLine("hlt");
     }

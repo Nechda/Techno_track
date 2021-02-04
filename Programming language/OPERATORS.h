@@ -20,35 +20,35 @@
 OP_DEFINE("+",  sum,        OP_SUM,           2,  {return left+right;}, true,//                 |
 {                                                                            //                 |        
     preparationForOperatorWith2Operands(node, asmInfo);                      //   <-------------+
-    throwLineForOperatorWith2Operands("add", asmInfo);                       //
+    throwLineForOperatorWith2Operands("fadd", asmInfo);                       //
 }                                                                            //
 )                                                                            //
 
 OP_DEFINE("-",  sub,        OP_SUB,           2,  {return left-right;}, true,
 {
     preparationForOperatorWith2Operands(node, asmInfo);
-    throwLineForOperatorWith2Operands("sub", asmInfo);
+    throwLineForOperatorWith2Operands("fsub", asmInfo);
 }
 )
 
 OP_DEFINE("/",  mul,        OP_MUL,           1,  {return left*right;}, true,
 {
     preparationForOperatorWith2Operands(node, asmInfo);
-    throwLineForOperatorWith2Operands("mul", asmInfo);
+    throwLineForOperatorWith2Operands("fmul", asmInfo);
 }
 )
 
 OP_DEFINE("*",  div,        OP_DIV,           1,  {return left/right;}, true,
 {
     preparationForOperatorWith2Operands(node, asmInfo);
-    throwLineForOperatorWith2Operands("div", asmInfo);
+    throwLineForOperatorWith2Operands("fdiv", asmInfo);
 }
 )
 
 OP_DEFINE("^",  pow,        OP_POW,           1,  {return powf(left,right);}, true,
 {
     preparationForOperatorWith2Operands(node, asmInfo);
-    throwLineForOperatorWith2Operands("pow", asmInfo);
+    throwLineForOperatorWith2Operands("fpow", asmInfo);
 }
 )
 
@@ -88,7 +88,7 @@ OP_DEFINE("if", comparator, OP_BRANCH,        6,  {return 0;}, false,
 {
     genAsmByTree(node->link[0], asmInfo);
     pushLine("pop eax");
-    pushLine("cmp eax, 0");
+    pushLine("fcomp eax, 0.0");
     pushLine("jne if_%X", asmInfo.labelCountIfOperator);
     pushLine("je else_%X", asmInfo.labelCountIfOperator);
     pushLine("if_%X:", asmInfo.labelCountIfOperator);
@@ -193,7 +193,7 @@ OP_DEFINE("while", whl_impl,OP_WHILE,         3, { return 0;}, false,
     pushLine("loop_%X:",asmInfo.labelCountLoopOperator);
     genAsmByTree(node->link[0], asmInfo);
     pushLine("pop ecx");
-    pushLine("cmp ecx, 0");
+    pushLine("fcomp ecx, 0.0");
     pushLine("je end_loop_%X", asmInfo.labelCountLoopOperator);
     genAsmByTree(node->link[1], asmInfo);
     pushLine("jmp loop_%X", asmInfo.labelCountLoopOperator);
